@@ -1,5 +1,6 @@
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackContext
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, MenuButtonWebApp
+import asyncio
 
 from config import TOKEN, web_app_info_ru, web_app_info_eng
 
@@ -17,6 +18,11 @@ lang_select = {"ru": {"response_text": "Что то на русском",
 
 
 async def start(update: Update, context: CallbackContext) -> None:
+    """
+    Обрабатывает команду инициализации бота, вывыодя пользователю приветсвенное сообщение
+    с кнопкой для перехода в мини приложение, также создает кнопку для перехода в мини приложение
+    В зависимсоти от языка пользователя меняет язык приветсвенного сообщения и мини приложения
+    """
     chat_id = update.effective_chat.id
     if update.message.from_user.language_code == "en":
         response_text = lang_select["en"]["response_text"]
@@ -31,15 +37,12 @@ async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(response_text, reply_markup=InlineKeyboardMarkup(response_keyboard))
 
 
-async def main():
+def main() -> None:
     bot1 = ApplicationBuilder().token(TOKEN).build()
     bot1.add_handler(CommandHandler("start", start))
 
-    await bot1.start()
-    await bot1.idle()
+    bot1.run_polling()
 
 
 if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())
+    main()
