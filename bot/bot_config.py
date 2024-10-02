@@ -1,6 +1,10 @@
 from telegram import WebAppInfo
+from dotenv import load_dotenv
+import os
 
-TOKEN: str = ""
+load_dotenv()
+
+TOKEN: str = os.getenv('TOKEN')
 '''
 Можно юзать https://www.temporary-url.com/ для временных ссылок
 '''

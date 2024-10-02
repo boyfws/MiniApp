@@ -2,7 +2,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackContext
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, MenuButtonWebApp
 import asyncio
 
-from config import TOKEN, web_app_info_ru, web_app_info_eng
+from bot_config import TOKEN, web_app_info_ru, web_app_info_eng
 
 lang_select = {"ru": {"response_text": "Что то на русском",
                       "keyboard": [
