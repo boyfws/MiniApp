@@ -1,0 +1,40 @@
+.restaurant-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 карточки в строке по умолчанию */
+  gap: 5px !important;
+
+}
+
+@media (min-width: 768px) {
+  .restaurant-cards {
+    grid-template-columns: repeat(3, 1fr); /* 3 карточки в строке на больших экранах */
+  }
+}
+
+@media (max-width: 380px) {
+  .restaurant-cards {
+    grid-template-columns: 1fr; /* 1 карточка в строке на маленьких экранах */
+  }
+}
+
+.image-container {
+  position: relative;
+  width: 100%; /* Ширина контейнера 100% от родительского */
+  padding-bottom: 90%; /* Соотношение сторон 4:3 */
+  overflow: hidden; /* Скроем всё, что не вписывается в контейнер */
+}
+
+.restaurant-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Полностью заполнит контейнер, сохраняя пропорции */
+}
+
+.card-chip {
+  position: absolute;
+  z-index: 2; /* Позиционирование поверх изображения */
+}
+
