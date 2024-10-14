@@ -24,12 +24,12 @@
   visibility: visible;
 }
 
-/* Стиль дорожки скроллбара */
-.category-buttons-wrapper::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-}
-
 .category-buttons {
   display: inline-flex;
   gap: 7px; /* Расстояние между кнопками */
+}
+
+category-button {
+  transition: background-color 0.1s, color 0.1s; 
+
 }
