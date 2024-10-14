@@ -1,11 +1,17 @@
-.loading {
+.loading-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center; /* Центрирует по горизонтали */
     align-items: center;     /* Центрирует по вертикали */
-    height: 100vh;           /* Высота 100% от высоты окна браузера */
+    height: 100vh;  /* Высота 100% от высоты окна браузера */       
   }
 
-.text_of_loading {
-    margin-top: 10px;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+/* Добавляем стили для плавного перехода */
+.page-content {
+  animation: fadeIn 0.28s ease-in-out;
   }

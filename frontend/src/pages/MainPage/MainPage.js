@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Title, Spinner, Text } from '@telegram-apps/telegram-ui';
 import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
+import Loader from '../../components/Loading/Loading';
 import './MainPage.css';
 
 const NUMBER_OF_RESTAURANTS_ON_PAGE = 2000;
@@ -12,6 +13,9 @@ const MainPage = () => {
   const [loading, setLoading] = useState(true); // Флаг загрузки
   const [selectedCategories, setSelectedCategories] = useState(new Set())
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Новое состояние для фильтрованных ресторанов
+  const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
+
+
 
   useEffect(() => {
     setFilteredRestaurants(() => {
@@ -42,12 +46,12 @@ const MainPage = () => {
   };
 
   // Выгружает категорий с бэка (Переписать после)
-  const fetchCategoriesFromBackend = () => {
+  const fetchCategoriesFromBackend = (id) => {
     return ['Категория 1', 'Категория 2', 'Категория 3', 'Шашлык', 'Японская кухня', 'Пиво', 'Бургеры', 'Другие'];
   }
 
   // Выгружает рестораны с бэка (Переписать после)
-  const fetchRestaurantsFromBackend = (count) => {
+  const fetchRestaurantsFromBackend = (id, count) => {
     const cat_for_generating_restaurants = ['Категория 1', 'Категория 2', 'Категория 3', 'Шашлык', 'Японская кухня', 'Пиво', 'Бургеры', 'Другие'];
     const baseImageUrl = 'https://i.imgur.com/892vhef.jpeg';
     
@@ -71,8 +75,8 @@ const MainPage = () => {
     // Функция для получения данных
     const fetchData = async () => {
       try {
-        const categoriesData = await fetchCategoriesFromBackend(); // Запрос категорий
-        const restaurantsData = await fetchRestaurantsFromBackend(NUMBER_OF_RESTAURANTS_ON_PAGE); // Запрос ресторанов
+        const categoriesData = await fetchCategoriesFromBackend(1); // Запрос категорий
+        const restaurantsData = await fetchRestaurantsFromBackend(1, NUMBER_OF_RESTAURANTS_ON_PAGE); // Запрос ресторанов
         
         const updatedRestaurantsData = restaurantsData.map(restaurant => ({
           ...restaurant, // Копируем все свойства ресторана
@@ -82,25 +86,28 @@ const MainPage = () => {
         setCategories(categoriesData);
         setRestaurants(updatedRestaurantsData);
         setFilteredRestaurants(updatedRestaurantsData);
-        setLoading(false); // Окончание загрузки
+        //setTimeout(() => setLoading(false), 3213); // Фича для тестов долого получения данных
+        setLoading(false);
+        
       } catch (error) {
         console.error('Ошибка при получении данных:', error);
       }
-    };
-
+    };  
     fetchData(); 
   }, []);
 
-  if (loading) {
-    return <div className='loading'>
-              <Spinner size="l" />
-              <div className='text_of_loading'>
-                <Text size="l" style={{ color: 'black' }}>
-                  Загрузка...
-                </Text>
-              </div>
-          </div>; // Показ сообщения о загрузке, пока данные не получены
-  }
+  const handleLoadingFinish = () => {
+    setShowContent(true); // Показ основного контента после завершения индикатора
+  };
+
+  if (!showContent) {
+    return (
+    <div className='loading-wrapper'>
+        <Loader loading={loading} onFinish={handleLoadingFinish} />
+    </div> // Показ сообщения о загрузке, пока данные не получены
+    )
+  };
+
   const intersection_checker = (setA, setB) => {
     if (setA.size > setB.size) {
       [setA, setB] = [setB, setA];
@@ -140,7 +147,7 @@ const MainPage = () => {
 // С цветом надписи нужно поработать 
   return (
     <div className="main-page-container">
-      <div className="main-page">
+      <div className={'page-content'}>
         <CategoryButtons categories={categories} onCategorySelect={handleCategorySelect} />
 
         <Title level="2" weight="1" plain={false} style={{ color: 'black' }}> 
