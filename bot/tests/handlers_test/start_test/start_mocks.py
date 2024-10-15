@@ -12,13 +12,11 @@ MAX_DELAY_IN_SEC = 0.1
 
 # Mock for User (with extra method get)
 class User:
-    def __init__(self, id: int, language_code: str) -> None:
+    def __init__(self, id: int) -> None:
         self.id: int = id
         """
-        lang_code:
         IETF language tag of the user’s language.
         """
-        self.language_code = language_code
         self.messages: List[Tuple[str, InlineKeyboardMarkup]] = []
 
     def get_message(self, data_to_add: Tuple[str, InlineKeyboardMarkup]) -> None:
