@@ -1,27 +1,14 @@
 .category-buttons-wrapper {
-  overflow-x: auto; /* Включение горизонтальной прокрутки */
+  overflow-x: scroll; /* Включение горизонтальной прокрутки */
   white-space: nowrap; /* Запрет переноса строк */
-  padding: 5px 0;
-  scrollbar-width: thin; /* Включить тонкий скроллбар в Firefox */
+  scrollbar-width: none; /* Скрыть скроллбар в Firefox */
+  -ms-overflow-style: none; /* Скрыть скроллбар в Internet Explorer и Edge */
   position: relative; /* Для удобного управления элементами */
 }
 
-/* Настройка скроллбара для браузеров WebKit (Chrome, Safari) */
+/* Скрыть скроллбар для браузеров WebKit (Chrome, Safari) */
 .category-buttons-wrapper::-webkit-scrollbar {
-  height: 8px; /* Высота скроллбара */
-  background-color: transparent; /* Скрываем фон по умолчанию */
-}
-
-/* Вид ползунка */
-.category-buttons-wrapper::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 10px;
-  visibility: hidden; /* Скрываем по умолчанию */
-}
-
-/* Показываем скроллбар при наведении */
-.category-buttons-wrapper:hover::-webkit-scrollbar-thumb {
-  visibility: visible;
+  display: none;
 }
 
 .category-buttons {
@@ -29,7 +16,5 @@
   gap: 7px; /* Расстояние между кнопками */
 }
 
-category-button {
-  transition: background-color 0.1s, color 0.1s; 
 
-}
+
