@@ -11,6 +11,13 @@
   <title>Restaurant App</title>
 </head>
 <body>
+  <script>
+    // Убедимся, что приложение готово к работе
+    window.Telegram.WebApp.ready();
+
+    // Расширяем приложение на весь экран
+    window.Telegram.WebApp.expand();
+  </script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script type="module" src="../telegramInit.js"></script>
   <div id="root"></div>
