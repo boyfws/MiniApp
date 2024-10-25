@@ -4,6 +4,7 @@ import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
 import Loader from '../../components/Loading/Loading';
 import './MainPage.css';
+import { userId } from '../../telegramInit.js'
 
 const NUMBER_OF_RESTAURANTS_ON_PAGE = 2000;
 
@@ -14,7 +15,7 @@ const MainPage = () => {
   const [selectedCategories, setSelectedCategories] = useState(new Set())
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Новое состояние для фильтрованных ресторанов
   const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
-
+  
 
 
   useEffect(() => {
@@ -75,8 +76,8 @@ const MainPage = () => {
     // Функция для получения данных
     const fetchData = async () => {
       try {
-        const categoriesData = await fetchCategoriesFromBackend(1); // Запрос категорий
-        const restaurantsData = await fetchRestaurantsFromBackend(1, NUMBER_OF_RESTAURANTS_ON_PAGE); // Запрос ресторанов
+        const categoriesData = await fetchCategoriesFromBackend(userId); // Запрос категорий
+        const restaurantsData = await fetchRestaurantsFromBackend(userId, NUMBER_OF_RESTAURANTS_ON_PAGE); // Запрос ресторанов
         
         const updatedRestaurantsData = restaurantsData.map(restaurant => ({
           ...restaurant, // Копируем все свойства ресторана
