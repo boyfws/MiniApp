@@ -4,10 +4,10 @@ import { Divider, Title, List} from '@telegram-apps/telegram-ui';
 import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
 import Loader from '../../components/Loading/Loading';
-import BackButton from '../../components/BackButton/BackButton';
 import AdressButton from '../../components/AdressButton/AdressButton';
 import SearchButton from '../../components/SearchButton/SearchButton';
 import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopButton';
+import ProfileAvatar from '../../components/ProfileAvatar/ProfileAvatar';
 
 import intersection_checker  from '../../utils/intersection_checker.js';
 import fetchCategories  from '../../api/fetchCategories.js';
@@ -102,17 +102,9 @@ const MainPage = () => {
     console.log('Переход на страницу ресторана:', restaurant);
   };
 
-
-  const handleClose = () => {
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.close();
-  } else {
-      console.error("Telegram WebApp API is not available");
-  }
-
-}
-
   const handleSearchClick = () => {console.log('Поиск');}
+
+  const handleProfileClick = () => {console.log('Профиль');}
 
 
 // С цветом надписи нужно поработать 
@@ -124,7 +116,7 @@ const MainPage = () => {
         <List className='list'>
 
             <div className="upper-level-wrapper">
-              <BackButton onBackClick={handleClose} className="back-button"/> 
+              <ProfileAvatar onClick={handleProfileClick} className="profile-button"/> 
               <AdressButton defaultAdress="Текущий адрес" openModal={() => console.log('Открытие модального окна')} className="adress-button"/>
               <SearchButton onSearchClick={handleSearchClick} className="search-button"/>
             </div>
