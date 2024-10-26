@@ -19,7 +19,7 @@
 }
 
 .image-container {
-  position: relative;
+  position: block;
   width: 100%; /* Ширина контейнера 100% от родительского */
   padding-bottom: 90%; /* Соотношение сторон 4:3 */
   overflow: hidden; /* Скроем всё, что не вписывается в контейнер */

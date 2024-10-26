@@ -3,7 +3,7 @@
   white-space: nowrap; /* Запрет переноса строк */
   scrollbar-width: none; /* Скрыть скроллбар в Firefox */
   -ms-overflow-style: none; /* Скрыть скроллбар в Internet Explorer и Edge */
-  position: relative; /* Для удобного управления элементами */
+  position: block; /* Для удобного управления элементами */
 }
 
 /* Скрыть скроллбар для браузеров WebKit (Chrome, Safari) */

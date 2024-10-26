@@ -1,0 +1,28 @@
+.scroll-to-top-button {
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 ! important;
+    width: 55px !important;
+    height: 55px !important;
+    border-radius: 50% !important;  
+
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+.scroll-to-top-visible {
+    opacity: 1 !important;
+    transition: opacity 0.15s ease-in;
+    pointer-events: auto !important; /* Включаем кликабельность */
+  }
+  
+.scroll-to-top-hidden {
+    opacity: 0 !important;
+    transition: opacity 0.15s ease-out;
+    pointer-events: none !important; /* Отключаем кликабельность */
+}

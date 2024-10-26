@@ -7,6 +7,7 @@ import Loader from '../../components/Loading/Loading';
 import BackButton from '../../components/BackButton/BackButton';
 import AdressButton from '../../components/AdressButton/AdressButton';
 import SearchButton from '../../components/SearchButton/SearchButton';
+import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopButton';
 
 import intersection_checker  from '../../utils/intersection_checker.js';
 import fetchCategories  from '../../api/fetchCategories.js';
@@ -15,7 +16,7 @@ import fetchRestaurants from '../../api/fetchRestaurants.js';
 import './MainPage.css';
 import { userId } from '../../telegramInit.js'
 
-const NUMBER_OF_RESTAURANTS_ON_PAGE = 2000;
+const NUMBER_OF_RESTAURANTS_ON_PAGE = 200;
 
 const MainPage = () => {
   const [categories, setCategories] = useState([]);
@@ -114,29 +115,31 @@ const MainPage = () => {
   const handleSearchClick = () => {console.log('Поиск');}
 
 
-
 // С цветом надписи нужно поработать 
   return (
+
+
     <div className="main-page-container">
       <div className={'page-content'}>
-
         <List className='list'>
+
             <div className="upper-level-wrapper">
               <BackButton onBackClick={handleClose} className="back-button"/> 
               <AdressButton defaultAdress="Текущий адрес" openModal={() => console.log('Открытие модального окна')} className="adress-button"/>
               <SearchButton onSearchClick={handleSearchClick} className="search-button"/>
             </div>
-          <Divider/>
+
           <CategoryButtons categories={categories} onCategorySelect={handleCategorySelect} style={{marginBottom: 0, marginTop: 0}}/>
         </List>
 
         <Title level="2" weight="1" plain={false} style={{ color: 'black', padding: 0}}> 
           Рестораны
         </Title>
-
         <RestaurantCards restaurants={filteredRestaurants} onCardClick={handleCardClick} />
+        <ScrollToTopButton className="scroll-to-top-button"/>
       </div>
     </div>
+
   );
 };
 
