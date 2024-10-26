@@ -6,6 +6,7 @@ import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
 import Loader from '../../components/Loading/Loading';
 import BackButton from '../../components/BackButton/BackButton';
 import AdressButton from '../../components/AdressButton/AdressButton';
+import SearchButton from '../../components/SearchButton/SearchButton';
 
 import intersection_checker  from '../../utils/intersection_checker.js';
 import fetchCategories  from '../../api/fetchCategories.js';
@@ -107,7 +108,11 @@ const MainPage = () => {
   } else {
       console.error("Telegram WebApp API is not available");
   }
+
 }
+
+  const handleSearchClick = () => {console.log('Поиск');}
+
 
 
 // С цветом надписи нужно поработать 
@@ -119,6 +124,7 @@ const MainPage = () => {
             <div className="upper-level-wrapper">
               <BackButton onBackClick={handleClose} className="back-button"/> 
               <AdressButton defaultAdress="Текущий адрес" openModal={() => console.log('Открытие модального окна')} className="adress-button"/>
+              <SearchButton onSearchClick={handleSearchClick} className="search-button"/>
             </div>
           <Divider/>
           <CategoryButtons categories={categories} onCategorySelect={handleCategorySelect} style={{marginBottom: 0, marginTop: 0}}/>

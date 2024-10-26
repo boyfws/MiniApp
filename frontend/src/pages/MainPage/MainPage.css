@@ -32,3 +32,12 @@
     flex-grow: 1;
     text-align: center;
 }
+
+.upper-level-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.search-button {
+  margin-left: auto;
+}
