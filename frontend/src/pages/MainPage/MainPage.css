@@ -16,4 +16,19 @@
   animation: fadeIn 0.28s ease-in-out;
   }
 
- 
+.upper-level-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0; /* По желанию: отступы по краям */
+  gap: 10px;
+}
+
+.back-button {
+    margin-right: auto; /* Зафиксирует кнопку "назад" слева */
+}
+
+.adress-button {
+    flex-grow: 1;
+    text-align: center;
+}

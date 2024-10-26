@@ -1,12 +1,18 @@
-import { Icon28Close } from "@telegram-apps/telegram-ui/dist/icons/28/close";
-import { IconContainer} from "@telegram-apps/telegram-ui";
+import React from 'react';
+import { Button } from "@telegram-apps/telegram-ui";
+import { Icon24ChevronLeft  } from "@telegram-apps/telegram-ui/dist/icons/24/chevron_left"
+import './BackButton.css';
 
-const BackButton = ({ onBackspace }) => {
+const BackButton = ({ onBackClick }) => {
     return (
-        <IconContainer>
-            <Icon28Close onClick={onBackspace}/>
-        </IconContainer>
-    )
+        <Button 
+            size="s" 
+            mode="bezeled" 
+            onClick={onBackClick}
+            className='back-button' >
+            <Icon24ChevronLeft  className='icon'/>
+        </Button>
+    );
 }
 
-export default BackButton
+export default BackButton;

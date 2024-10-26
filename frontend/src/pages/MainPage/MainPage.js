@@ -5,6 +5,7 @@ import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
 import Loader from '../../components/Loading/Loading';
 import BackButton from '../../components/BackButton/BackButton';
+import AdressButton from '../../components/AdressButton/AdressButton';
 
 import intersection_checker  from '../../utils/intersection_checker.js';
 import fetchCategories  from '../../api/fetchCategories.js';
@@ -114,8 +115,11 @@ const MainPage = () => {
     <div className="main-page-container">
       <div className={'page-content'}>
 
-        <List >
-          <BackButton handleClose={handleClose} />
+        <List className='list'>
+            <div className="upper-level-wrapper">
+              <BackButton onBackClick={handleClose} className="back-button"/> 
+              <AdressButton defaultAdress="Текущий адрес" openModal={() => console.log('Открытие модального окна')} className="adress-button"/>
+            </div>
           <Divider/>
           <CategoryButtons categories={categories} onCategorySelect={handleCategorySelect} style={{marginBottom: 0, marginTop: 0}}/>
         </List>
@@ -123,7 +127,7 @@ const MainPage = () => {
         <Title level="2" weight="1" plain={false} style={{ color: 'black', padding: 0}}> 
           Рестораны
         </Title>
-        
+
         <RestaurantCards restaurants={filteredRestaurants} onCardClick={handleCardClick} />
       </div>
     </div>
