@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Title, List} from '@telegram-apps/telegram-ui';
+import { Title, List, Modal } from '@telegram-apps/telegram-ui';
 
 import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
@@ -15,6 +15,8 @@ import fetchRestaurants from '../../api/fetchRestaurants.js';
 
 import './MainPage.css';
 import { userId } from '../../telegramInit.js'
+
+import ModalMainPage  from '../ModalMainPage/ModalMainPage';
 
 const NUMBER_OF_RESTAURANTS_ON_PAGE = 200;
 
@@ -116,8 +118,17 @@ const MainPage = () => {
         <List className='list'>
 
             <div className="upper-level-wrapper">
-              <ProfileAvatar onClick={handleProfileClick} className="profile-button"/> 
-              <AdressButton defaultAdress="Текущий адрес" openModal={() => console.log('Открытие модального окна')} className="adress-button"/>
+              <ProfileAvatar onClick={handleProfileClick} className="profile-button"/>
+
+              <Modal
+                header={<Modal.Header/>}
+                trigger={<AdressButton defaultAdress="Текущий адрес" className="adress-button"/>}
+                >
+
+                <ModalMainPage/>
+
+              </Modal>
+
               <SearchButton onSearchClick={handleSearchClick} className="search-button"/>
             </div>
 
