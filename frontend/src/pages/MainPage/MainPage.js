@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Title, List, Modal } from '@telegram-apps/telegram-ui';
+import { useHistory } from 'react-router-dom';
 
 import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
@@ -10,13 +11,17 @@ import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopBut
 import ProfileAvatar from '../../components/ProfileAvatar/ProfileAvatar';
 
 import intersection_checker  from '../../utils/intersection_checker.js';
+
 import fetchCategories  from '../../api/fetchCategories.js';
 import fetchRestaurants from '../../api/fetchRestaurants.js';
 
 import './MainPage.css';
 import { userId } from '../../telegramInit.js'
 
-import ModalMainPage  from '../ModalMainPage/ModalMainPage';
+import GetHandleProfileClick from '../../handlers/hadleProfileClick.js';
+import GetHandleCardClick from '../../handlers/handleRestCardClick.js';
+
+import ModalMainPage from '../../pages/ModalMainPage/ModalMainPage';
 
 const NUMBER_OF_RESTAURANTS_ON_PAGE = 200;
 
@@ -27,6 +32,12 @@ const MainPage = () => {
   const [selectedCategories, setSelectedCategories] = useState(new Set())
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Новое состояние для фильтрованных ресторанов
   const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
+  const [defaultAdress, setDefaultAdress] = useState({city: '', district: '', street: 'Введите свой адресс', house: ''}); // Состояние адреса по умолчанию
+
+  const history = useHistory();
+
+  const handleCardClick = GetHandleCardClick(history);
+  const handleProfileClick = GetHandleProfileClick(history);
   
 
 
@@ -73,13 +84,6 @@ const MainPage = () => {
     setShowContent(true); // Показ основного контента после завершения индикатора
   };
 
-  if (!showContent) {
-    return (
-    <div className='loading-wrapper' style={{backgroundColor: 'var(--tgui--bg_color)'}}>
-        <Loader loading={loading} onFinish={handleLoadingFinish} />
-    </div> // Показ сообщения о загрузке, пока данные не получены
-    )
-  };
 
   const handleCategorySelect = (category) => {
     // Сначала обновляем выбранные категории
@@ -97,19 +101,17 @@ const MainPage = () => {
       return updatedSelectedCategories;
     });
   };
-  
-
-  const handleCardClick = (restaurant) => {
-    // Здесь можно добавить логику для перехода на страницу ресторана
-    console.log('Переход на страницу ресторана:', restaurant);
-  };
 
   const handleSearchClick = () => {console.log('Поиск');}
 
-  const handleProfileClick = () => {console.log('Профиль');}
 
-  const handleAdressClick = (adress) => {console.log('Адрес');}
-
+  if (!showContent) {
+    return (
+    <div className='loading-wrapper' style={{backgroundColor: 'var(--tgui--bg_color)'}}>
+        <Loader loading={loading} onFinish={handleLoadingFinish} />
+    </div> // Показ сообщения о загрузке, пока данные не получены
+    )
+  };
 
   return (
 
@@ -127,7 +129,7 @@ const MainPage = () => {
 
               <Modal
                 header={<Modal.Header/>}
-                trigger={<AdressButton defaultAdress="Текущий адрес" className="adress-button"/>}
+                trigger={<AdressButton defaultAdress={defaultAdress.street} className="adress-button"/>}
                 >
 
                 <ModalMainPage/>
