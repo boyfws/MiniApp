@@ -17,7 +17,7 @@ const CategoryButton = ({ category, onClick }) => {
     <Button
       className='category-button' 
       size="s"
-      mode={isPressed ? "filled" : "bezeled"} // Цвет зависит только от локального состояния 
+      mode={isPressed ? "bezeled" : "gray"}
       onClick={handleClick}
     >
       {category}
