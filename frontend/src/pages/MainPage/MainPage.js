@@ -12,14 +12,17 @@ import ProfileAvatar from '../../components/ProfileAvatar/ProfileAvatar';
 
 import intersection_checker  from '../../utils/intersection_checker.js';
 
-import fetchCategories  from '../../api/fetchCategories.js';
-import fetchRestaurants from '../../api/fetchRestaurants.js';
-
 import './MainPage.css';
 import { userId } from '../../telegramInit.js'
 
+import fetchCategories from '../../api/fetchCategories';
+import fetchRestaurants from '../../api/fetchRestaurants';
+import fetchAdress from '../../api/fetchAdress';
+
 import GetHandleProfileClick from '../../handlers/hadleProfileClick.js';
 import GetHandleCardClick from '../../handlers/handleRestCardClick.js';
+import GetHandleCategorySelect from '../../handlers/handleCategorySelect.js';
+import GetHandleLoadingFinish from '../../handlers/handleLoadingFinish.js';
 
 import ModalMainPage from '../../pages/ModalMainPage/ModalMainPage';
 
@@ -32,14 +35,16 @@ const MainPage = () => {
   const [selectedCategories, setSelectedCategories] = useState(new Set())
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Новое состояние для фильтрованных ресторанов
   const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
-  const [defaultAdress, setDefaultAdress] = useState({city: '', district: '', street: 'Введите свой адресс', house: ''}); // Состояние адреса по умолчанию
+  const [defaultAdress, setDefaultAdress] = useState({});
+  const [ScrollPostionY, setScrollPostionY] = useState(0);
+  const [AdressLoaded, setAdressLoaded] = useState(false);
 
   const history = useHistory();
 
-  const handleCardClick = GetHandleCardClick(history);
-  const handleProfileClick = GetHandleProfileClick(history);
-  
-
+  const handleCardClick = GetHandleCardClick(history, setScrollPostionY);
+  const handleProfileClick = GetHandleProfileClick(history, setScrollPostionY);
+  const handleCategorySelect = GetHandleCategorySelect(setSelectedCategories);
+  const handleLoadingFinish = GetHandleLoadingFinish(setShowContent);
 
   useEffect(() => {
     setFilteredRestaurants(() => {
@@ -47,63 +52,53 @@ const MainPage = () => {
         return restaurants; 
         }
     
-      
+      console.log("Вызвана сортировка");
       return restaurants.filter((restaurant) =>
         intersection_checker(selectedCategories, restaurant.categories)
       );
     });
-  }, [selectedCategories]); 
+  }, [selectedCategories, restaurants]); 
 
 
   useEffect(() => {
     // Функция для получения данных
     const fetchData = async () => {
-      try {
-        const categoriesData = await fetchCategories(userId); // Запрос категорий
-        const restaurantsData = await fetchRestaurants(userId, NUMBER_OF_RESTAURANTS_ON_PAGE); // Запрос ресторанов
-        
-        const updatedRestaurantsData = restaurantsData.map(restaurant => ({
-          ...restaurant, // Копируем все свойства ресторана
-          categories: new Set(restaurant.categories) // Преобразуем categories в Set
-        }));
-
-        setCategories(categoriesData);
-        setRestaurants(updatedRestaurantsData);
-        setFilteredRestaurants(updatedRestaurantsData);
-        //setTimeout(() => setLoading(false), 3213); // Фича для тестов долого получения данных
-        setLoading(false);
-        
-      } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-      }
-    };  
-    fetchData(); 
+      const adress_query = await fetchAdress(userId);
+      const categories_query = await fetchCategories(userId);
+      if (!adress_query.error && !categories_query.error) {
+        setDefaultAdress(adress_query.data);
+        setCategories(categories_query.data)
+        setAdressLoaded(true);
+    };
+  }
+    fetchData();
   }, []);
 
-  const handleLoadingFinish = () => {
-    setShowContent(true); // Показ основного контента после завершения индикатора
-  };
 
+useEffect(() => {
+  const fetchData = async () => {
+    const restaurants_query = await fetchRestaurants(userId, NUMBER_OF_RESTAURANTS_ON_PAGE, defaultAdress);
+    if (!restaurants_query.error) {
 
-  const handleCategorySelect = (category) => {
-    // Сначала обновляем выбранные категории
-    setSelectedCategories((prevSelectedCategories) => {
-      const updatedSelectedCategories = new Set(prevSelectedCategories);
-  
-      if (updatedSelectedCategories.has(category)) {
-        updatedSelectedCategories.delete(category); 
-        console.log(`Убрана категория: ${category}`);
-      } else {
-        updatedSelectedCategories.add(category);
-        console.log(`Добавлена категория: ${category}`);
+      const RestaurnatsData = restaurants_query.data.map(restaurant => ({
+        ...restaurant, 
+        categories: new Set(restaurant.categories) 
+      }));
+
+      setRestaurants(RestaurnatsData);
+      setFilteredRestaurants(RestaurnatsData);
+      if (loading) {
+        setLoading(false);
       }
-  
-      return updatedSelectedCategories;
-    });
-  };
+    }
+    }
+    if (AdressLoaded) {
+      fetchData();
+    }
+  }, [defaultAdress]);
+
 
   const handleSearchClick = () => {console.log('Поиск');}
-
 
   if (!showContent) {
     return (
@@ -113,9 +108,8 @@ const MainPage = () => {
     )
   };
 
+
   return (
-
-
     <div className="main-page-container" 
     style={{
       background: 'var(--tgui--bg_color)',
@@ -129,7 +123,7 @@ const MainPage = () => {
 
               <Modal
                 header={<Modal.Header/>}
-                trigger={<AdressButton defaultAdress={defaultAdress.street} className="adress-button"/>}
+                trigger={<AdressButton defaultAdress={defaultAdress} className="adress-button"/>}
                 >
 
                 <ModalMainPage/>

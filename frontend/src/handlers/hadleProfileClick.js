@@ -1,4 +1,5 @@
-const GetHandleProfileClick = (history) => () => {
+const GetHandleProfileClick = (history, setterForScrollPosition) => () => {
+    setterForScrollPosition(window.scrollY);
     history.push(`/profile`);
   };
   

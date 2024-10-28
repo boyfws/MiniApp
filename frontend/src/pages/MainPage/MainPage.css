@@ -29,16 +29,15 @@
 }
 
 .adress-button {
+    width: 48px !important;
+    height: 36px !important;
     flex-grow: 1;
     text-align: center;
 }
 
-.upper-level-wrapper {
-  display: flex;
-  align-items: center;
-}
-
 .search-button {
+  width: 48px !important;
+  height: 36px !important;
   margin-left: auto;
 }
 

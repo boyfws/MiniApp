@@ -2,6 +2,19 @@ import React from 'react';
 import { Button } from '@telegram-apps/telegram-ui';
 import './AdressButton.css';
 
+const getadress = (adress) => {
+    const district = adress?.district ?? '';
+    const street = adress?.street ?? '';
+    const house = adress?.house ?? '';
+
+    if (street) {
+        return `ул.${street} д.${house}`;
+    }
+    else {
+        return `${district} райн.`
+    }
+}
+
 const AdressButton = React.forwardRef(({ defaultAdress, onClick }, ref) => {
     return (
         <Button
@@ -11,7 +24,7 @@ const AdressButton = React.forwardRef(({ defaultAdress, onClick }, ref) => {
             className='adress-button'
             ref={ref} // Передаем ref дочернему элементу
         >
-            {defaultAdress}
+            {getadress(defaultAdress)}
         </Button>
     );
 });

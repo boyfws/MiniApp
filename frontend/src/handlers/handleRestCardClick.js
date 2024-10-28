@@ -1,5 +1,6 @@
 // Пользовательский хук для доступа к объекту истории
-const GetHandleCardClick = (history) => (restaurant) => {
+const GetHandleCardClick = (history, setterForScrollPosition) => (restaurant) => {
+  setterForScrollPosition(window.scrollY);
   history.push(`/restaurant/${restaurant.id}`);
 };
 

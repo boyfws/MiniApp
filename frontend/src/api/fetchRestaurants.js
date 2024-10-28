@@ -1,3 +1,6 @@
+import fetchWithRetry from "../queries/GET_query";
+  
+  
   // Заглшука для тестов 
   const getRandomCategories = (arr, n) => {
     const result = [];
@@ -13,7 +16,9 @@
   };
 
 
-const fetchRestaurants = (id, count) => {
+const fetchRestaurants = (id, count, address={}) => {
+
+    console.log("Вызвано api ресторана");
     const cat_for_generating_restaurants = ['Категория 1', 'Категория 2', 'Категория 3', 'Шашлык', 'Японская кухня', 'Пиво', 'Бургеры', 'Другие'];
     const baseImageUrl = 'https://i.imgur.com/892vhef.jpeg';
     
@@ -30,7 +35,7 @@ const fetchRestaurants = (id, count) => {
         distance: randomDistance,
       });
     }
-    return restaurants;
+    return {data: restaurants, error: false};
   }
 
 export default fetchRestaurants
