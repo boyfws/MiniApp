@@ -16,6 +16,7 @@
   animation: fadeIn 0.28s ease-in-out;
   }
 
+
 .upper-level-wrapper {
   display: flex;
   align-items: center;
@@ -24,22 +25,32 @@
   gap: 10px;
 }
 
-.profile-button {
-    margin-right: auto; /* Зафиксирует кнопку "назад" слева */
+
+.profile-avatar, .search-button {
+    width: 48px !important;
+    height: 36px !important;
+    padding: 0 0 !important;
+    border-radius: 20px !important;
 }
 
+.profile-avatar {
+    margin-right: auto !important;
+}
+
+
+.search-button {
+    margin-left: auto !important;
+}
+
+
 .adress-button {
-    width: 48px !important;
     height: 36px !important;
     flex-grow: 1;
     text-align: center;
+    padding: 0 0 !important;
+    margin : 0 0 !important;
 }
 
-.search-button {
-  width: 48px !important;
-  height: 36px !important;
-  margin-left: auto;
-}
 
 .scroll-to-top-button {
   position: fixed !important;

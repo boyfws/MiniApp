@@ -1,0 +1,19 @@
+.tgui-8ca550c2fc85eff5 {
+    padding: 2px 2px !important;
+    background: unset !important;
+}
+
+.input{
+    height: 32px !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+    max-width: unset !important;
+    background-color: var(--tgui--secondary_fill) !important;
+}
+
+
+.close-icon {
+    fill: var(--tgui--link_color) !important;
+    width: 24;
+    height: 24;
+}

@@ -119,7 +119,8 @@ useEffect(() => {
         <List className='list'>
 
             <div className="upper-level-wrapper">
-              <ProfileAvatar onClick={handleProfileClick} className="profile-button"/>
+
+              <ProfileAvatar onClick={handleProfileClick} className="profile-avatar"/>
 
               <Modal
                 header={<Modal.Header/>}
@@ -131,9 +132,12 @@ useEffect(() => {
               </Modal>
 
               <SearchButton onSearchClick={handleSearchClick} className="search-button"/>
+
             </div>
 
-          <CategoryButtons categories={categories} onCategorySelect={handleCategorySelect} style={{marginBottom: 0, marginTop: 0}}/>
+            <CategoryButtons categories={categories} onCategorySelect={handleCategorySelect} style={{marginBottom: 0, marginTop: 0}}/>
+
+
         </List>
 
         <Title level="2" weight="1" plain={false} style={{padding: 0}}> 
