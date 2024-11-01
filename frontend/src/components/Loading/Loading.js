@@ -33,7 +33,7 @@ const Loader = ({ loading, onFinish }) => {
                 // Когда загрузка завершена, плавно доводим до завершения
                 newProgress = Math.min(newProgress, count);
                 setProgress(newProgress);
-                if (newProgress <+ count) {
+                if (newProgress < count) {
                     // Продолжаем анимацию, пока прогресс не достигнет максимума
                     requestId = requestAnimationFrame(updateProgress);
                 } else {
