@@ -16,7 +16,6 @@ async def start(update: Update, context: CallbackContext) -> None:
     """
     chat_id = update.effective_chat.id
     start_logger.info(f"Пришло сообщение от пользователя {update.message.from_user.id}")
-
     await context.bot.set_chat_menu_button(chat_id=chat_id, menu_button=menu_bottom_miniapp)
     await update.message.reply_text(response_text, reply_markup=start_keyboard)
 
