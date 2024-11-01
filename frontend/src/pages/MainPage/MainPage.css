@@ -18,11 +18,13 @@
 
 
 .upper-level-wrapper {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 0; /* По желанию: отступы по краям */
   gap: 10px;
+
 }
 
 
@@ -60,4 +62,28 @@
 }
 
 
+.upper-level {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0; /* По желанию: отступы по краям */
+  gap: 10px;
+}
+
+.upper-level-hidden {
+  display: none;
+}
+
+.search {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0; /* По желанию: отступы по краям */
+}
+
+.search-hidden{
+  display: none;
+}
 

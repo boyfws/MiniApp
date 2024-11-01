@@ -9,8 +9,9 @@ import AdressButton from '../../components/AdressButton/AdressButton';
 import SearchButton from '../../components/SearchButton/SearchButton';
 import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopButton';
 import ProfileAvatar from '../../components/ProfileAvatar/ProfileAvatar';
+import SearchForm from '../../components/SearchForm/SearchForm';
 
-import intersection_checker  from '../../utils/intersection_checker.js';
+import intersection_checker  from '../../utils/intersection_checker';
 
 import './MainPage.css';
 import { userId } from '../../telegramInit.js'
@@ -19,10 +20,11 @@ import fetchCategories from '../../api/fetchCategories';
 import fetchRestaurants from '../../api/fetchRestaurants';
 import fetchAdress from '../../api/fetchAdress';
 
-import GetHandleProfileClick from '../../handlers/hadleProfileClick.js';
-import GetHandleCardClick from '../../handlers/handleRestCardClick.js';
-import GetHandleCategorySelect from '../../handlers/handleCategorySelect.js';
-import GetHandleLoadingFinish from '../../handlers/handleLoadingFinish.js';
+import GetHandleProfileClick from '../../handlers/hadleProfileClick';
+import GetHandleCardClick from '../../handlers/handleRestCardClick';
+import GetHandleCategorySelect from '../../handlers/handleCategorySelect';
+import GetHandleLoadingFinish from '../../handlers/handleLoadingFinish';
+import GetHandleBackFromSearch from '../../handlers/handleBackFromSearch';
 
 import ModalMainPage from '../../pages/ModalMainPage/ModalMainPage';
 
@@ -36,8 +38,12 @@ const MainPage = () => {
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Новое состояние для фильтрованных ресторанов
   const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
   const [defaultAdress, setDefaultAdress] = useState({});
+  const [Adress_coordinates, setAdress_coordinates] = useState({});
+  const [Adresses, setAdresses] = useState([]);
   const [ScrollPostionY, setScrollPostionY] = useState(0);
   const [AdressLoaded, setAdressLoaded] = useState(false);
+  const [searchClicked, setSearchClicked] = useState(false);
+  const [InputValue, setInputValue] = useState('');
 
   const history = useHistory();
 
@@ -45,6 +51,13 @@ const MainPage = () => {
   const handleProfileClick = GetHandleProfileClick(history, setScrollPostionY);
   const handleCategorySelect = GetHandleCategorySelect(setSelectedCategories);
   const handleLoadingFinish = GetHandleLoadingFinish(setShowContent);
+  const handleBackFromSearch = GetHandleBackFromSearch(setSearchClicked);
+
+
+  useEffect(() => {
+    console.log(InputValue)
+  }, [InputValue]);
+
 
   useEffect(() => {
     setFilteredRestaurants(() => {
@@ -61,23 +74,27 @@ const MainPage = () => {
 
 
   useEffect(() => {
-    // Функция для получения данных
+    // Функция для получения данных, запускается один раз
     const fetchData = async () => {
       const adress_query = await fetchAdress(userId);
       const categories_query = await fetchCategories(userId);
       if (!adress_query.error && !categories_query.error) {
-        setDefaultAdress(adress_query.data);
-        setCategories(categories_query.data)
+        setDefaultAdress(adress_query.data.last_adress.properties);
+        setAdress_coordinates(adress_query.data.last_adress.geometry.coordinates);
+
+        setAdresses(adress_query.data.adresses);
+        setCategories(categories_query.data);
         setAdressLoaded(true);
+
     };
   }
     fetchData();
-  }, []);
+}, []);
 
 
 useEffect(() => {
   const fetchData = async () => {
-    const restaurants_query = await fetchRestaurants(userId, NUMBER_OF_RESTAURANTS_ON_PAGE, defaultAdress);
+    const restaurants_query = await fetchRestaurants(userId, NUMBER_OF_RESTAURANTS_ON_PAGE, Adress_coordinates);
     if (!restaurants_query.error) {
 
       const RestaurnatsData = restaurants_query.data.map(restaurant => ({
@@ -98,7 +115,10 @@ useEffect(() => {
   }, [defaultAdress]);
 
 
-  const handleSearchClick = () => {console.log('Поиск');}
+  const handleSearchClick = () => {
+    console.log('Поиск');
+    setSearchClicked(true);
+  }
 
   if (!showContent) {
     return (
@@ -119,19 +139,27 @@ useEffect(() => {
         <List className='list'>
 
             <div className="upper-level-wrapper">
+              <div className={`upper-level${searchClicked ? '-hidden' : ''}`}>
+                <ProfileAvatar onClick={handleProfileClick} className='profile-avatar'/>
 
-              <ProfileAvatar onClick={handleProfileClick} className="profile-avatar"/>
+                <Modal
+                  header={<Modal.Header/>}
+                  trigger={<AdressButton defaultAdress={defaultAdress} className='adress-button'/>}
+                  >
 
-              <Modal
-                header={<Modal.Header/>}
-                trigger={<AdressButton defaultAdress={defaultAdress} className="adress-button"/>}
-                >
+                  <ModalMainPage/>
 
-                <ModalMainPage/>
+                </Modal>
 
-              </Modal>
+                <SearchButton onSearchClick={handleSearchClick} className='search-button' />
 
-              <SearchButton onSearchClick={handleSearchClick} className="search-button"/>
+              </div>
+
+              <div className={`search${searchClicked ? '' : '-hidden'}`}>
+                <SearchForm 
+                handleBack={handleBackFromSearch} 
+                ChangeValueInMainPage={setInputValue}/>
+              </div>
 
             </div>
 
