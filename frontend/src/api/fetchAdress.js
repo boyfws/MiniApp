@@ -21,26 +21,26 @@ import fetchWithRetry from "../queries/GET_query";
  * Пример возвращаемых данных:
  * {
  *   error: false,
- *   data: {last_adress:{ 
- *     type: 'Feature',
- *     geometry: {
- *       type: 'Point',
- *       coordinates: [37.587914, 55.783954]
- *     },
- *     properties: {
- *       street: 'Поликарпова',
- *       house: '1',
- *       district: 'Хорошёвский',
- *       city: 'Москва'
- *     }
- *   }
- *   adresses: [{...}, {...}, {...}]}
+ *   data: [{...}, {...}, {...}]
  * }
+ * Пример GEOJSON-данных:
+ * {
+ *    type: 'Feature',
+ *    geometry: {
+        type: 'Point',
+        coordinates: [37.587914, 55.783954]
+      },
+      properties: {
+        street: 'Поликарпова',
+        house: '1',
+        district: 'Хорошёвский',
+        city: 'Москва'
+      }
  */
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 
 const fetchAdress = async (id) => {
-    console.log("Вызвано api адреса")
     const def_adress = {
       type: 'Feature',
       geometry: {
@@ -54,9 +54,10 @@ const fetchAdress = async (id) => {
         city: 'Москва'
       }
     }
+    await sleep(1000)
     return {
            error: false,
-           data: {adresses: [def_adress, def_adress, def_adress], last_adress: def_adress}
+           data: [def_adress, def_adress, def_adress]
           }
          }
 

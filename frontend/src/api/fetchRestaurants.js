@@ -16,9 +16,8 @@ import fetchWithRetry from "../queries/GET_query";
   };
 
 
-const fetchRestaurants = (id, count, address={}) => {
+const fetchRestaurants = (id, count, coordinates) => {
 
-    console.log("Вызвано api ресторана");
     const cat_for_generating_restaurants = ['Категория 1', 'Категория 2', 'Категория 3', 'Шашлык', 'Японская кухня', 'Пиво', 'Бургеры', 'Другие'];
     const baseImageUrl = 'https://i.imgur.com/892vhef.jpeg';
     
@@ -31,7 +30,7 @@ const fetchRestaurants = (id, count, address={}) => {
         name: `Ресторан ${i + 1}`, // Циклично выбираем имена из массива
         image: baseImageUrl,
         categories: getRandomCategories(cat_for_generating_restaurants, 3),
-        tag: Math.random() < 0.2 ? 'Ваше любимоое' : undefined,
+        tag: i % 10 == 0 ? 'Ваше любимоое' : undefined,
         distance: randomDistance,
       });
     }

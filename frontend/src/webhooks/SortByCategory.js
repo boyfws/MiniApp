@@ -11,7 +11,7 @@ const GetSortByCategory = (setFilteredRestaurants, selectedCategories, restauran
       return restaurants.filter((restaurant) =>
         intersection_checker(selectedCategories, restaurant.categories)
       );
-    });
+    }); console.log("Вызвана сортировка");
   }
 
 

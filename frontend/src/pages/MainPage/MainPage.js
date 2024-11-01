@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Title, List, Modal } from '@telegram-apps/telegram-ui';
 import { useHistory } from 'react-router-dom';
 
@@ -20,6 +20,8 @@ import './MainPage.css';
 import GetLoadMainPageInitData from '../../webhooks/LoadMainPageInitData'
 import GetSortByCategory from '../../webhooks/SortByCategory';
 import GetLoadRestByAdress from '../../webhooks/LoadRestByAdress';
+import GetDependency from '../../webhooks/DepBetwDefRestAndRest';
+import GetLoadRestFromSearch from '../../webhooks/GetNewRestFromSearch';
 
 // Handlers
 import GetHandleProfileClick from '../../handlers/hadleProfileClick';
@@ -34,16 +36,22 @@ const NUMBER_OF_RESTAURANTS_ON_PAGE = 200;
 
 const MainPage = () => {
   const [categories, setCategories] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true); // Флаг загрузки
   const [selectedCategories, setSelectedCategories] = useState(new Set())
+
+  const [restaurants, setRestaurants] = useState([]); // Состояние для показываемых на данный момент рестораноов
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Новое состояние для фильтрованных ресторанов
+  const [defaultRestaurants, setDefaultRestaurants] = useState([]); // Состояние для дефолтных ресторанов на данный момент 
+
+  const [loading, setLoading] = useState(true); // Флаг загрузки
   const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
+
   const [defaultAdress, setDefaultAdress] = useState({});
   const [Adress_coordinates, setAdress_coordinates] = useState({});
   const [Adresses, setAdresses] = useState([]);
-  const [ScrollPostionY, setScrollPostionY] = useState(0);
   const [AdressLoaded, setAdressLoaded] = useState(false);
+
+  const [ScrollPostionY, setScrollPostionY] = useState(0);
+
   const [searchClicked, setSearchClicked] = useState(false);
   const [InputValue, setInputValue] = useState('');
 
@@ -54,7 +62,11 @@ const MainPage = () => {
   const handleProfileClick = GetHandleProfileClick(history, setScrollPostionY);
   const handleCategorySelect = GetHandleCategorySelect(setSelectedCategories);
   const handleLoadingFinish = GetHandleLoadingFinish(setShowContent);
-  const handleBackFromSearch = GetHandleBackFromSearch(setSearchClicked);
+  const handleBackFromSearch = GetHandleBackFromSearch(
+    setSearchClicked, 
+    setRestaurants, 
+    defaultRestaurants
+  );
   const handleSearchClick = GetHandleSearchClick(setSearchClicked);
   
 
@@ -66,34 +78,44 @@ const MainPage = () => {
     setCategories, 
     setAdressLoaded
   );
+
   const SortByCategory = GetSortByCategory(
     setFilteredRestaurants, 
     selectedCategories, 
     restaurants
   );
+
   const LoadRestByAdress = GetLoadRestByAdress(
     NUMBER_OF_RESTAURANTS_ON_PAGE, 
     Adress_coordinates, 
-    setRestaurants, 
-    setFilteredRestaurants, 
-    loading, 
-    setLoading, 
-    AdressLoaded
+    setDefaultRestaurants, 
+    AdressLoaded, 
+    loading,
+    setLoading
   );
 
-  // Wil be added soon 
-  useEffect(() => {
-    console.log(InputValue)
-  }, [InputValue]);
-
-
-  useEffect(SortByCategory, [selectedCategories, restaurants]); 
+  const Dependency = GetDependency(
+    setRestaurants, 
+    defaultRestaurants
+  );
+  
+  const LoadRestFromSearch = GetLoadRestFromSearch(
+    InputValue, 
+    Adress_coordinates, 
+    setRestaurants
+  );
 
   useEffect(LoadMainPageInitData, []);
 
   useEffect(LoadRestByAdress, [defaultAdress]);
 
+  useEffect(Dependency, [defaultRestaurants]);
 
+  useEffect(SortByCategory, [selectedCategories, restaurants]); 
+
+  useEffect(LoadRestFromSearch, [InputValue]);
+
+  
   if (!showContent) {
     return (
     <div className='loading-wrapper' style={{backgroundColor: 'var(--tgui--bg_color)'}}>

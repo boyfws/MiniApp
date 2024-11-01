@@ -1,7 +1,7 @@
 import fetchRestaurants from "../api/fetchRestaurants";
 import { userId } from "../telegramInit";
 
-const GetLoadRestByAdress = (num, Adress_coordinates, setRestaurants, setFilteredRestaurants, loading, setLoading, AdressLoaded) => () => {
+const GetLoadRestByAdress = (num, Adress_coordinates, setDefaultRestaurants, AdressLoaded, loading, setLoading) => () => {
     const fetchData = async () => {
       const restaurants_query = await fetchRestaurants(userId, num, Adress_coordinates);
       if (!restaurants_query.error) {
@@ -11,15 +11,14 @@ const GetLoadRestByAdress = (num, Adress_coordinates, setRestaurants, setFiltere
           categories: new Set(restaurant.categories) 
         }));
   
-        setRestaurants(RestaurnatsData);
-        setFilteredRestaurants(RestaurnatsData);
+        setDefaultRestaurants(RestaurnatsData);
         if (loading) {
-          setLoading(false);
-        }
+          setLoading(false);}
       }
       }
       if (AdressLoaded) {
         fetchData();
+        console.log("Вызвана инициализация ресторанов");
       }
 }
 
