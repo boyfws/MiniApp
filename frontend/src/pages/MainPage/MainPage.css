@@ -87,3 +87,6 @@
   display: none;
 }
 
+.main-page-container {
+  min-height: 100vh; /* Минимальная высота 100% экрана */
+}
