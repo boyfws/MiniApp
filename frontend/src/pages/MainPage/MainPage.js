@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Title, List, Modal } from '@telegram-apps/telegram-ui';
 import { useHistory } from 'react-router-dom';
 
+// Components
 import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
 import Loader from '../../components/Loading/Loading';
@@ -10,23 +11,24 @@ import SearchButton from '../../components/SearchButton/SearchButton';
 import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopButton';
 import ProfileAvatar from '../../components/ProfileAvatar/ProfileAvatar';
 import SearchForm from '../../components/SearchForm/SearchForm';
+import ModalMainPage from '../../pages/ModalMainPage/ModalMainPage';
 
-import intersection_checker  from '../../utils/intersection_checker';
-
+// Design
 import './MainPage.css';
-import { userId } from '../../telegramInit.js'
 
-import fetchCategories from '../../api/fetchCategories';
-import fetchRestaurants from '../../api/fetchRestaurants';
-import fetchAdress from '../../api/fetchAdress';
+// Webhooks
+import GetLoadMainPageInitData from '../../webhooks/LoadMainPageInitData'
+import GetSortByCategory from '../../webhooks/SortByCategory';
+import GetLoadRestByAdress from '../../webhooks/LoadRestByAdress';
 
+// Handlers
 import GetHandleProfileClick from '../../handlers/hadleProfileClick';
 import GetHandleCardClick from '../../handlers/handleRestCardClick';
 import GetHandleCategorySelect from '../../handlers/handleCategorySelect';
 import GetHandleLoadingFinish from '../../handlers/handleLoadingFinish';
 import GetHandleBackFromSearch from '../../handlers/handleBackFromSearch';
+import GetHandleSearchClick from '../../handlers/handleSearchClick';
 
-import ModalMainPage from '../../pages/ModalMainPage/ModalMainPage';
 
 const NUMBER_OF_RESTAURANTS_ON_PAGE = 200;
 
@@ -47,78 +49,50 @@ const MainPage = () => {
 
   const history = useHistory();
 
+  // Handlers
   const handleCardClick = GetHandleCardClick(history, setScrollPostionY);
   const handleProfileClick = GetHandleProfileClick(history, setScrollPostionY);
   const handleCategorySelect = GetHandleCategorySelect(setSelectedCategories);
   const handleLoadingFinish = GetHandleLoadingFinish(setShowContent);
   const handleBackFromSearch = GetHandleBackFromSearch(setSearchClicked);
+  const handleSearchClick = GetHandleSearchClick(setSearchClicked);
+  
 
+  // Webhooks
+  const LoadMainPageInitData = GetLoadMainPageInitData(
+    setDefaultAdress, 
+    setAdress_coordinates, 
+    setAdresses, 
+    setCategories, 
+    setAdressLoaded
+  );
+  const SortByCategory = GetSortByCategory(
+    setFilteredRestaurants, 
+    selectedCategories, 
+    restaurants
+  );
+  const LoadRestByAdress = GetLoadRestByAdress(
+    NUMBER_OF_RESTAURANTS_ON_PAGE, 
+    Adress_coordinates, 
+    setRestaurants, 
+    setFilteredRestaurants, 
+    loading, 
+    setLoading, 
+    AdressLoaded
+  );
 
+  // Wil be added soon 
   useEffect(() => {
     console.log(InputValue)
   }, [InputValue]);
 
 
-  useEffect(() => {
-    setFilteredRestaurants(() => {
-      if (selectedCategories.size === 0) {
-        return restaurants; 
-        }
-    
-      console.log("Вызвана сортировка");
-      return restaurants.filter((restaurant) =>
-        intersection_checker(selectedCategories, restaurant.categories)
-      );
-    });
-  }, [selectedCategories, restaurants]); 
+  useEffect(SortByCategory, [selectedCategories, restaurants]); 
 
+  useEffect(LoadMainPageInitData, []);
 
-  useEffect(() => {
-    // Функция для получения данных, запускается один раз
-    const fetchData = async () => {
-      const adress_query = await fetchAdress(userId);
-      const categories_query = await fetchCategories(userId);
-      if (!adress_query.error && !categories_query.error) {
-        setDefaultAdress(adress_query.data.last_adress.properties);
-        setAdress_coordinates(adress_query.data.last_adress.geometry.coordinates);
+  useEffect(LoadRestByAdress, [defaultAdress]);
 
-        setAdresses(adress_query.data.adresses);
-        setCategories(categories_query.data);
-        setAdressLoaded(true);
-
-    };
-  }
-    fetchData();
-}, []);
-
-
-useEffect(() => {
-  const fetchData = async () => {
-    const restaurants_query = await fetchRestaurants(userId, NUMBER_OF_RESTAURANTS_ON_PAGE, Adress_coordinates);
-    if (!restaurants_query.error) {
-
-      const RestaurnatsData = restaurants_query.data.map(restaurant => ({
-        ...restaurant, 
-        categories: new Set(restaurant.categories) 
-      }));
-
-      setRestaurants(RestaurnatsData);
-      setFilteredRestaurants(RestaurnatsData);
-      if (loading) {
-        setLoading(false);
-      }
-    }
-    }
-    if (AdressLoaded) {
-      fetchData();
-    }
-  }, [defaultAdress]);
-
-
-  const handleSearchClick = () => {
-    console.log('Поиск');
-    setSearchClicked(true);
-  }
 
   if (!showContent) {
     return (

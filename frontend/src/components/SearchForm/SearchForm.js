@@ -25,7 +25,7 @@ const SearchForm = ({ handleBack, ChangeValueInMainPage }) => {
             if (searchValue.length > CALLBACK_SYMBOL_LIMIT) {
                 ChangeValueInMainPage(searchValue);
             }
-        }, CALLBACK_DELAY_MS); // Задержка в 300 мс
+        }, CALLBACK_DELAY_MS); // Задержка 
     };
 
     // Очистка таймера при размонтировании компонента
