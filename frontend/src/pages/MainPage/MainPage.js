@@ -115,7 +115,7 @@ const MainPage = () => {
 
   useEffect(LoadRestFromSearch, [InputValue]);
 
-  
+
   if (!showContent) {
     return (
     <div className='loading-wrapper' style={{backgroundColor: 'var(--tgui--bg_color)'}}>
@@ -143,7 +143,9 @@ const MainPage = () => {
                   trigger={<AdressButton defaultAdress={defaultAdress} className='adress-button'/>}
                   >
 
-                  <ModalMainPage/>
+                  <ModalMainPage 
+                  Adresses={Adresses} 
+                  setAdresses={setAdresses}/>
 
                 </Modal>
 
@@ -159,7 +161,11 @@ const MainPage = () => {
 
             </div>
 
-            <CategoryButtons categories={categories} onCategorySelect={handleCategorySelect} style={{marginBottom: 0, marginTop: 0}}/>
+            <CategoryButtons 
+            categories={categories} 
+            onCategorySelect={handleCategorySelect} 
+            style={{marginBottom: 0, marginTop: 0}} 
+            className='category-buttons'/>
 
 
         </List>
