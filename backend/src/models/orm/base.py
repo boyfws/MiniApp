@@ -12,5 +12,5 @@ class BaseTable:
     __allow_unmapped__ = False
 
     id: Mapped[int] = mapped_column(
-        Integer, autoincrement=True, primary_key=True
+        Integer, autoincrement=True, primary_key=True, nullable=False
     )
