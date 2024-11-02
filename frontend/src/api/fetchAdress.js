@@ -57,7 +57,17 @@ const fetchAdress = async (id) => {
     await sleep(1000)
     return {
            error: false,
-           data: [def_adress, def_adress, def_adress]
+           data: [def_adress, def_adress, def_adress, {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [37.587914, 55.783954]
+            },
+            properties: {
+              city: 'Москва',
+              district: 'Хорошёвский',
+            }
+          }]
           }
          }
 
