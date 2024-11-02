@@ -1,10 +1,11 @@
 from telegram import WebAppInfo
 from dotenv import load_dotenv
+from typing import cast
 import os
 
 load_dotenv()
 
-TOKEN: str = os.getenv('TOKEN')
+TOKEN: str = cast(str, os.getenv('TOKEN'))
 '''
 Можно юзать https://www.temporary-url.com/ для временных ссылок для теста
 '''
