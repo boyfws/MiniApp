@@ -35,13 +35,11 @@ jobs:
     - name: Run mypy for backend 
       run: |
         mypy --strict backend
-      continue-on-error: true
 
 
     - name: Run test for backend
       run: |
         pytest backend
-      continue-on-error: true
 
 
     
