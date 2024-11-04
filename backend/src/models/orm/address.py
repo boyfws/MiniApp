@@ -33,5 +33,5 @@ class Addresses(BaseTable):
     house: Mapped[int] = relationship("House", back_populates='id')
     location = mapped_column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
     __table_args__ = (
-        sa.PrimaryKeyConstraint("city", "district", "street", "house", name='address_for_user_id'),
+        sa.PrimaryKeyConstraint("city", "district", "street", "house", name='address_id'),
     )
