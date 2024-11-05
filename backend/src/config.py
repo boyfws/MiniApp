@@ -12,6 +12,10 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
+@dataclass
+class YandexAPIConfig:
+    TOKEN_FOR_GEOSUGGEST: str = os.getenv("TOKEN_FOR_GEOSUGGEST")
+    TOKEN_FOR_GEOCODER: str = os.getenv("TOKEN_FOR_GEOCODER")
 
 @dataclass
 class NGINXConfig:
@@ -68,11 +72,9 @@ class Configuration:
 
     debug = bool(os.getenv('DEBUG'))
     logging_level = int(os.getenv('LOGGING_LEVEL', logging.INFO))
-
+    yandex_api = YandexAPIConfig()
     db = DatabaseConfig()
     app = AppConfig()
-
-
 
 
 configuration = Configuration()
