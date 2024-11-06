@@ -1,45 +1,37 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update
 
-from src.models.dto.user import UserDTO, UserResult
-from src.models.orm.user import User
-from src.repository.tables.interface import TablesRepositoryInterface
+from src.models.dto.user import UserResult, UserRequest, UserRequestUpdate
+from src.models.orm.user import Users
 
 
-class UserRepo(TablesRepositoryInterface):
+class UserRepo:
 
-    def __init__(self, model: User):
-        self.model: User = model
+    def __init__(self):
+        self.model: Users = Users()
 
-    async def delete(
+    async def create_user(
             self,
             session: AsyncSession,
-            model: UserDTO
+            model: UserRequest
     ) -> UserResult:
-        await session.scalars(
-            delete(self.model.__tablename__)
-            .where(self.model.id == model.user_id)
-        )
-        return ...
-
-    async def update(
-            self,
-            session: AsyncSession,
-            model: UserDTO
-    ) -> UserResult:
-        await session.scalars(
+        result = await session.scalars(
             insert(self.model.__tablename__)
-            .values(**model.dict())
+            .values(**{"name": model.name})
+            .returning(self.model.id)
         )
-        return ...
+        return UserResult.model_validate(result, from_attributes=True)
 
-    async def get(
+    async def update_username(
             self,
             session: AsyncSession,
-            model: UserDTO
-    ) -> UserDTO:
-        await session.scalars(
-            select(self.model)
-            .where(self.model.id == model.user_id)
+            model: UserRequestUpdate
+    ) -> UserResult:
+        result = await session.scalars(
+            update(self.model.__tablename__)
+            .where(self.model.name == model.old_name)
+            .values(**{"name": model.new_name})
+            .returning(self.model.id)
         )
-        return ...
+        return UserResult.model_validate(result, from_attributes=True)
+
