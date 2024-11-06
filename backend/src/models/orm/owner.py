@@ -1,5 +1,10 @@
-from base import BaseTable
+from sqlalchemy import BigInteger
+from sqlalchemy.orm import Mapped, mapped_column
+
+from . import BaseTable
 
 
-class Owner(BaseTable):
-    __tablename__ = "owner"
+class Owners(BaseTable):
+    __tablename__ = "owners"
+
+    id: Mapped[BigInteger] = mapped_column(BigInteger, primary_key=True)

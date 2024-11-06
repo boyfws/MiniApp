@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .interface import TablesRepositoryInterface
 from src.models.dto.favourites import (FavouriteCategoryRequest, FavouriteCategoryResponse,
                                        FavouriteCategoryDTO, AllFavouriteCategoriesRequest)
-from src.models.orm.favourites.category import FavouriteCategory
+from src.models.orm.category.favourite import FavouriteCategory
 
 
 class FavouriteCategoryRepo(TablesRepositoryInterface):

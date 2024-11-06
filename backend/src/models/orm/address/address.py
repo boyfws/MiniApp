@@ -3,6 +3,9 @@ from sqlalchemy.orm import Mapped, mapped_column, as_declarative, relationship
 import sqlalchemy as sa
 from geoalchemy2.types import Geometry
 
+from src.models.orm.address.addresses_for_user import AddressesForUser
+
+
 class City(BaseTable):
     __tablename__ = "city"
     name: Mapped[str]
@@ -44,4 +47,4 @@ class Addresses(BaseTable):
         sa.PrimaryKeyConstraint("city_id", "district_id", "street_id", "house_id", name='address_id'),
     )
 
-    address_for_user: Mapped["AddressesForUser"] = relationship(back_populates="address")
+    address_for_user: Mapped[AddressesForUser] = relationship(back_populates="address")

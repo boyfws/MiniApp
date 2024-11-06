@@ -1,24 +1,26 @@
-from datetime import datetime
-from typing import Optional
+from sqlalchemy import BigInteger, ForeignKey, SmallInteger, Integer
 
-import sqlalchemy as sa
+from .log_actions import LogActions
 from ..base import BaseTable
 from sqlalchemy.orm import mapped_column, Mapped, relationship
+
+from ..user import Users
 
 
 class UserActivityLogs(BaseTable):
     __tablename__ = "user_activity_logs"
 
-    user_id: Mapped[int] = mapped_column(sa.Integer, sa.ForeignKey("user.id"), nullable=False)
-    user: Mapped["User"] = relationship(back_populates="user_activity_logs")
+    id: Mapped[BigInteger] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    user_id: Mapped[BigInteger] = mapped_column(BigInteger,
+                                                ForeignKey('user.id', ondelete='RESTRICT', onupdate='RESTRICT'),
+                                                nullable=False)
+    log_time: Mapped[BigInteger] = mapped_column(BigInteger, nullable=False)  # UNIX timestamp GMT+0
+    action_id: Mapped[SmallInteger] = mapped_column(SmallInteger, ForeignKey('log_actions.id', ondelete='RESTRICT',
+                                                                             onupdate='RESTRICT'), nullable=False)
+    cat_link: Mapped[SmallInteger] = mapped_column(SmallInteger, ForeignKey('categories.id', ondelete='RESTRICT',
+                                                                            onupdate='RESTRICT'))
+    restaurant_link: Mapped[Integer] = mapped_column(Integer, ForeignKey('restaurants.id', ondelete='CASCADE',
+                                                                         onupdate='RESTRICT'))
 
-    action_id: Mapped[int] = mapped_column(sa.Integer, sa.ForeignKey("log_actions.id"), nullable=False)
-    action: Mapped["LogActions"] = relationship(back_populates="user_activity_logs")
-
-    category_opt_id: Mapped[Optional[int]] = mapped_column(sa.ForeignKey("category.id"))
-    category: Mapped[Optional["Category"]] = relationship(back_populates="user_activity_logs")
-
-    rest_opt_id: Mapped[Optional[int]] = mapped_column(sa.ForeignKey('restaurant.id'))
-    restaurant: Mapped[Optional["Restaurant"]] = relationship(back_populates="user_activity_logs")
-
-    log_time: Mapped[datetime] = mapped_column(sa.DateTime, nullable=False)
+    log_action: Mapped[LogActions] = relationship("LogAction", back_populates="user_activity_logs")
+    user: Mapped[Users] = relationship("Users", back_populates="activity_logs")

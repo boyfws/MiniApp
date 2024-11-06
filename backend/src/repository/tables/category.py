@@ -1,5 +1,5 @@
 from src.models.dto.category import CategoryRequest, CategoryDTO, CategoryResult, CategoryRequestUpdate
-from src.models.orm.category import Category
+from src.models.orm.category.category import Category
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update
 from src.repository.tables.interface import TablesRepositoryInterface
