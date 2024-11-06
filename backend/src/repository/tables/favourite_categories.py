@@ -1,17 +1,15 @@
 from sqlalchemy import select, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from interface import TablesRepositoryInterface
-from src.models.dto.favourites import FavouriteCategoryRequest, FavouriteCategoryResponse, FavouriteRestaurantRequest, \
-    FavouriteRestaurantResponse, FavouriteCategoryDTO, FavouriteRestaurantDTO, AllFavouriteCategoriesRequest, \
-    AllFavouriteRestaurantsRequest
+from .interface import TablesRepositoryInterface
+from src.models.dto.favourites import (FavouriteCategoryRequest, FavouriteCategoryResponse,
+                                       FavouriteCategoryDTO, AllFavouriteCategoriesRequest)
 from src.models.orm.favourites.category import FavouriteCategory
-from src.models.orm.favourites.restaurant import FavouriteRestaurant
 
 
 class FavouriteCategoryRepo(TablesRepositoryInterface):
 
-    def __init__(self, model: FavouriteCategory):
-        self.model: FavouriteCategory = model
+    def __init__(self):
+        self.model: FavouriteCategory = FavouriteCategory()
 
     async def delete(
             self,
@@ -52,7 +50,7 @@ class FavouriteCategoryRepo(TablesRepositoryInterface):
             self,
             session: AsyncSession,
             model: AllFavouriteCategoriesRequest
-    ) -> FavouriteRestaurantDTO:
+    ) -> FavouriteCategoryDTO:
         await session.scalars(
             select(self.model.__tablename__)
             .where(self.model.user_id == model.user_id)

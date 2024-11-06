@@ -7,8 +7,8 @@ from src.repository.tables.interface import TablesRepositoryInterface
 
 class CategoryRepo(TablesRepositoryInterface):
 
-    def __init__(self, model: Category):
-        self.model: Category = model
+    def __init__(self):
+        self.model: Category = Category()
 
     async def delete(
             self,
