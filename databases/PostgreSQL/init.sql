@@ -1,7 +1,8 @@
+-- Extensions
 CREATE EXTENSION postgis;
 
 
-
+-- Tables
 CREATE TABLE log_actions (
     id SMALLINT 
        GENERATED ALWAYS AS IDENTITY 
@@ -14,42 +15,9 @@ CREATE TABLE log_actions (
 
 
 
-CREATE TABLE user_activity_logs (
+CREATE TABLE users (
     id BIGINT 
-       GENERATED ALWAYS AS IDENTITY 
-       PRIMARY KEY,
-
-    user_id BIGINT 
-            FOREIGN KEY REFERENCES user(id)
-            ON DELETE RESTRICT -- Доп защита, так как удалние пользоавтелей не предусмотрено 
-            ON UPDATE RESTRICT
-            NOT NULL,
-
-    log_time BIGINT 
-             NOT NULL, -- UNIX timestamp GMT+0
-
-    action_id SMALLINT 
-              FOREIGN KEY REFERENCES log_actions(id) 
-              ON DELETE RESTRICT  -- Доп защита, так как удалние действий - рекдая операция, меняющая систему и необходимо вручную очистить логи
-              ON UPDATE RESTRICT,
-              NOT NULL,
-
-    cat_link SMALLINT 
-             FOREIGN KEY REFERENCES categories(id)
-             ON DELETE RESTRICT -- Доп защита, так как удалние категорий - рекдая операция, меняющая систему и необходимо вручную очистить логи
-             ON UPDATE RESTRICT,
-
-    restaurant_link INTEGER 
-                    FOREIGN KEY REFERENCES restaurants(id) 
-                    ON DELETE CASCADE
-                    ON UPDATE RESTRICT
-);
-
-
-
-CREATE TABLE user (
-    id BIGINT 
-       PRIMARY KEY,
+       PRIMARY KEY
 );
 
 
@@ -62,10 +30,44 @@ CREATE TABLE categories (
     name 
     VARCHAR(20) -- Может измениться в будущем (посмотрим)
     UNIQUE 
-    NOT NULL, 
-)
+    NOT NULL 
+);
 
 CREATE INDEX idx_categories_name ON categories USING HASH (name);
+
+
+
+CREATE TABLE user_activity_logs (
+    id BIGINT 
+       GENERATED ALWAYS AS IDENTITY 
+       PRIMARY KEY,
+
+    user_id BIGINT 
+            REFERENCES users(id)
+            ON DELETE RESTRICT -- Доп защита, так как удалние пользоавтелей не предусмотрено 
+            ON UPDATE RESTRICT
+            NOT NULL,
+
+    log_time BIGINT 
+             NOT NULL, -- UNIX timestamp GMT+0
+
+    action_id SMALLINT 
+              REFERENCES log_actions(id) 
+              ON DELETE RESTRICT  -- Доп защита, так как удалние действий - рекдая операция, меняющая систему и необходимо вручную очистить логи
+              ON UPDATE RESTRICT
+              NOT NULL,
+
+    cat_link SMALLINT 
+             REFERENCES categories(id)
+             ON DELETE RESTRICT -- Доп защита, так как удалние категорий - рекдая операция, меняющая систему и необходимо вручную очистить логи
+             ON UPDATE RESTRICT,
+
+    restaurant_link INTEGER 
+                    REFERENCES restaurants(id) 
+                    ON DELETE CASCADE
+                    ON UPDATE RESTRICT
+);
+
 
 
 
@@ -76,7 +78,7 @@ CREATE TABLE city (
     name VARCHAR(255)
          UNIQUE
          NOT NULL
-)
+);
 
 CREATE INDEX idx_city_name ON city USING HASH (name);
 
@@ -103,7 +105,7 @@ CREATE TABLE street (
     name VARCHAR(255)
          UNIQUE
          NOT NULL
-)
+);
 
 CREATE INDEX idx_street_name ON street USING HASH (name);
 
@@ -112,23 +114,23 @@ CREATE INDEX idx_street_name ON street USING HASH (name);
 
 CREATE TABLE address (
     city INTEGER
-          FOREIGN KEY REFERENCES city(id)
-          ON DELETE RESTRICT
-          ON UPDATE RESTRICT
-          NOT NULL,
+         REFERENCES city(id)
+         ON DELETE RESTRICT
+         ON UPDATE RESTRICT
+         NOT NULL,
 
     district INTEGER                              
-             FOREIGN KEY REFERENCES district(id) 
+             REFERENCES district(id) 
              ON DELETE RESTRICT
              ON UPDATE RESTRICT
              NOT NULL,
              -- Район может быть пустым но тогда он ссылается на пустую строку (API модет возрашать пустой район)
 
     street INTEGER 
-            FOREIGN KEY REFERENCES street(id)
-            ON DELETE RESTRICT
-            ON UPDATE RESTRICT
-            NOT NULL,
+           REFERENCES street(id)
+           ON DELETE RESTRICT
+           ON UPDATE RESTRICT
+           NOT NULL,
             -- Улица может быть пустым но тогда он ссылается на пустую строку (Пользоавтелю для поиска достаточно города)
     house SMALLINT
 
@@ -136,7 +138,8 @@ CREATE TABLE address (
              NOT NULL, 
     PRIMARY KEY (city, district, street, house)
 );
-    
+
+
 
 
 
