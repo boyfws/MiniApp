@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from src.models.dto.category import CategoryRequestUpdate, CategoryResult
+from src.models.dto.category import CategoryRequestUpdate, CategoryResult, CategoryDTO, CategoryRequest
 from src.service.tables.category import get_category_service, CategoryService
 
 category_router = APIRouter(
@@ -19,22 +19,24 @@ async def update_category_name(
 
 @category_router.delete("/delete_category/")
 async def delete_category(
-        name: str,
+        model: CategoryRequest,
         service: CategoryService = Depends(get_category_service)
-):
-    ...
+) -> CategoryResult:
+    return await service.delete(model)
+
 
 
 @category_router.post("/add_category/")
 async def add_category(
-        name: str,
+        model: CategoryRequest,
         service: CategoryService = Depends(get_category_service)
-):
-    ...
+) -> CategoryResult:
+    return await service.create(model)
 
 @category_router.get("/get_category_id")
 async def get_category_id(
-        name: str,
+        model: CategoryRequest,
         service: CategoryService = Depends(get_category_service)
-):
-    ...
+) -> CategoryDTO:
+    return await service.get(model)
+
