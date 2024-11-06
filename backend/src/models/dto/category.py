@@ -3,7 +3,10 @@ from pydantic import BaseModel
 
 class CategoryRequest(BaseModel):
     name: str
-    cat_id: int
+
+class CategoryRequestUpdate(BaseModel):
+    old_name: str
+    new_name: str
 
 class CategoryDTO(BaseModel):
     cat_id: int

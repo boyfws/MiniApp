@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-from base import BaseTable
+from .base import BaseTable
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 
