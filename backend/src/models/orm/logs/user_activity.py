@@ -1,10 +1,7 @@
 from sqlalchemy import BigInteger, ForeignKey, SmallInteger, Integer
 
-from .log_actions import LogActions
 from ..base import BaseTable
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-
-from ..user import Users
 
 
 class UserActivityLogs(BaseTable):
@@ -22,5 +19,5 @@ class UserActivityLogs(BaseTable):
     restaurant_link: Mapped[Integer] = mapped_column(Integer, ForeignKey('restaurants.id', ondelete='CASCADE',
                                                                          onupdate='RESTRICT'))
 
-    log_action: Mapped[LogActions] = relationship("LogAction", back_populates="user_activity_logs")
-    user: Mapped[Users] = relationship("Users", back_populates="activity_logs")
+    log_action: Mapped["LogActions"] = relationship("LogAction", back_populates="user_activity_logs")
+    user: Mapped["Users"] = relationship("Users", back_populates="activity_logs")
