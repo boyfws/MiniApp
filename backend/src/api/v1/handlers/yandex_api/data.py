@@ -137,7 +137,7 @@ async def get_coords_for_ceratin_location(location: AddressPart) -> GeoJson:
             }
 
 
-#@app.get("blabla")
+#@main_app.get("blabla")
 async def get_suggestions(text: str, longitude: float = None, latitude: float = None) -> List[AddressPart]:
     """
     Возвращает подсказки пользоавтелю при вводе адреса
