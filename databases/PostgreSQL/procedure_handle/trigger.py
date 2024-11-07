@@ -28,18 +28,6 @@ file_handler.setFormatter(formatter)
 
 logger.addHandler(file_handler)
 
-
-def meters_to_degrees_approx(meters: float) -> float:
-    """
-    Преобразует расстояние в метрах в градусы без учета широты.
-
-    :param meters: Расстояние в метрах.
-    :return: Градусы.
-    """
-    return meters / 111321.0
-    
-
-
 def call_stored_procedure(distance_threshold: float, max_retries: int=5 , delay: float=5) -> None:
     """
     Вызывает хранимую процедуру update_empty_districts с заданным порогом расстояния.
@@ -62,11 +50,10 @@ def call_stored_procedure(distance_threshold: float, max_retries: int=5 , delay:
             )
             cursor = conn.cursor()
 
-            argument = meters_to_degrees_approx(distance_threshold)
-            argument = max(10 ** -14, argument)
+            distance_threshold = max(10 ** -14, distance_threshold) # Точночть на уровне сервера float64 
 
             # Вызов хранимой процедуры
-            cursor.callproc('update_empty_districts', (argument,))
+            cursor.callproc('update_empty_districts', (distance_threshold,))
 
             # Фиксация изменений
             conn.commit()
