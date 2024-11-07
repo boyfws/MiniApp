@@ -8,10 +8,10 @@ import os
 dotenv.load_dotenv()
 DISTANCE_THRESHOLD = 0.1 # В метрах
 DBNAME = os.getenv("DBNAME")
-USERNAME = os.getenv("USERNAME")
-PASSWORD = os.getenv("PASSWORD")
+USERNAME = 'clearing_trigger'
+PASSWORD = os.getenv("CLEARING_TRIGGER_PASSWORD")
 HOST = os.getenv("HOST")
-PORT = os.getenv("PORT")
+PORT = 5432
 
 logging.basicConfig(
     level=logging.INFO,

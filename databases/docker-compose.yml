@@ -1,0 +1,23 @@
+services:
+  db:
+    user: root
+    build: 
+      context: ./PostgreSQL
+      dockerfile: Dockerfile
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: db_admin
+      POSTGRES_PASSWORD: ${ADMIN_PASSWORD}
+      POSTGRES_DB: ${DBNAME}
+      BACKEND_PASSWORD: ${BACKEND_PASSWORD} 
+      CLEARING_TRIGGER_PASSWORD: ${CLEARING_TRIGGER_PASSWORD}
+      LOGGER_PASSWORD: ${LOGGER_PASSWORD}
+      READER_PASSWORD: ${READER_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./PostgreSQL/init.sql:/init.sql
+
+volumes:
+  postgres_data: # Креатим том для хранения базы данных

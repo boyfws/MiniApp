@@ -1,5 +1,6 @@
 -- Extensions
-CREATE EXTENSION postgis;
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 
 
@@ -25,7 +26,7 @@ CREATE TABLE users (
 );
 
 
-
+ 
 CREATE TABLE categories (
     id SMALLINT 
        GENERATED ALWAYS AS IDENTITY 
@@ -343,3 +344,55 @@ CREATE TRIGGER prevent_category_update_trigger
 BEFORE UPDATE ON categories
 FOR EACH ROW
 EXECUTE FUNCTION prevent_category_update();
+
+
+
+-- Users
+CREATE USER backend WITH PASSWORD '${BACKEND_PASSWORD}';
+CREATE USER clearing_trigger WITH PASSWORD '${CLEARING_TRIGGER_PASSWORD}';
+CREATE USER logger WITH PASSWORD '${LOGGER_PASSWORD}';
+CREATE USER reader WITH PASSWORD '${READER_PASSWORD}';
+
+
+
+-- Roots
+ -- db_admin
+GRANT ALL PRIVILEGES ON DATABASE "${POSTGRES_DB}" TO db_admin;
+GRANT ALL PRIVILEGES ON SCHEMA public TO db_admin;
+
+ -- backend
+-- Разрешение на подключение и использоавние 
+GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO backend;
+-- Сначала отзываем все права потом даем права на работу с данными, но не даем менять структуру
+REVOKE ALL ON SCHEMA public FROM backend;
+GRANT USAGE ON SCHEMA public TO backend;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO backend;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO backend;
+
+ --clearing_trigger
+-- Даем права на подключение и процедуру
+GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO clearing_trigger;
+GRANT EXECUTE ON FUNCTION update_empty_districts(FLOAT) TO clearing_trigger;
+-- Даем права на обновление и удаление для выполнение процедуры
+GRANT SELECT, UPDATE, DELETE ON address TO clearing_trigger;
+GRANT SELECT, UPDATE ON addresses_for_user TO clearing_trigger;
+GRANT SELECT ON district TO clearing_trigger;
+GRANT SELECT ON street TO clearing_trigger;
+
+ --logger
+GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO logger;
+-- Даем права для записей логов и выборки данных для удобства записи 
+GRANT INSERT ON user_activity_logs TO logger;
+GRANT SELECT ON users TO logger;
+GRANT SELECT ON log_actions TO logger;
+GRANT SELECT ON categories TO logger;
+GRANT SELECT ON restaurants TO logger;
+
+ --reader
+GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO reader;
+-- Предоставление прав на чтение всех таблиц в базе данных
+GRANT USAGE ON SCHEMA public TO reader;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO reader;
+-- Для будущих таблиц, чтобы права на чтение автоматически предоставлялись
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT ON TABLES TO reader;
