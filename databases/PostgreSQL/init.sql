@@ -6,8 +6,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- Tables
 CREATE TABLE log_actions (
-    id SMALLINT 
-       GENERATED ALWAYS AS IDENTITY 
+    id SMALLSERIAL 
        PRIMARY KEY,
 
     description VARCHAR(255) 
@@ -28,8 +27,7 @@ CREATE TABLE users (
 
  
 CREATE TABLE categories (
-    id SMALLINT 
-       GENERATED ALWAYS AS IDENTITY 
+    id SMALLSERIAL 
        PRIMARY KEY,
 
     name 
@@ -43,8 +41,7 @@ CREATE INDEX idx_categories_name ON categories USING HASH (name);
 
 
 CREATE TABLE restaurants (
-    id INTEGER 
-       GENERATED ALWAYS AS IDENTITY 
+    id SERIAL 
        PRIMARY KEY,
     owner_id BIGINT 
             REFERENCES users(id)
@@ -80,7 +77,7 @@ CREATE TABLE restaurants (
     wapp_phone VARCHAR(11),
 
     -- Адрес ресторана
-    location GEOGRAPHY(POINT, 4326) NOT NULL,
+    location GEOGRAPHY(POINT, 4326),
     adress JSONB NOT NULL, 
 
     categories SMALLINT[] NOT NULL, -- Формально массив внешних ключей для id categories
@@ -96,8 +93,7 @@ CREATE INDEX idx_location_search On restaurants USING SPGiST (location);
 
 
 CREATE TABLE user_activity_logs (
-    id BIGINT 
-       GENERATED ALWAYS AS IDENTITY 
+    id BIGSERIAL 
        PRIMARY KEY,
 
     user_id BIGINT 
@@ -130,8 +126,7 @@ CREATE TABLE user_activity_logs (
 
 
 CREATE TABLE city (
-    id INTEGER 
-       GENERATED ALWAYS AS IDENTITY
+    id SERIAL 
        PRIMARY KEY,
     name VARCHAR(255)
          UNIQUE
@@ -144,8 +139,7 @@ CREATE INDEX idx_city_name ON city USING HASH (name);
 
 
 CREATE TABLE district (
-    id INTEGER 
-       GENERATED ALWAYS AS IDENTITY 
+    id SERIAL 
        PRIMARY KEY,
     name VARCHAR(255)
          UNIQUE
@@ -157,8 +151,7 @@ CREATE INDEX idx_district_name ON district USING HASH (name);
 
 
 CREATE TABLE street (
-    id INTEGER 
-       GENERATED ALWAYS AS IDENTITY 
+    id SERIAL  
        PRIMARY KEY,
     name VARCHAR(255)
          UNIQUE
@@ -177,8 +170,7 @@ CREATE INDEX idx_street_name ON street USING HASH (name);
 -- Для быстрого поиска и вставки id в таблицу addresses_for_user строится индекс на наборе  
 -- (city, district, street, house)
 CREATE TABLE address (
-    id BIGINT 
-       GENERATED ALWAYS AS IDENTITY 
+    id BIGSERIAL 
        PRIMARY KEY,
 
     city INTEGER
@@ -393,6 +385,42 @@ CREATE TRIGGER prevent_category_update_trigger
 BEFORE UPDATE ON categories
 FOR EACH ROW
 EXECUTE FUNCTION prevent_category_update();
+
+
+
+-- Автораспаковка адреса
+CREATE OR REPLACE FUNCTION update_location()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Проверка наличия ключей в JSONB
+    IF NEW.adress ? 'geometry' AND NEW.adress->'geometry' ? 'coordinates' THEN
+        -- Проверка типа данных координат
+        IF jsonb_typeof(NEW.adress->'geometry'->'coordinates') = 'array' THEN
+            -- Проверка наличия двух элементов в массиве координат
+            IF jsonb_array_length(NEW.adress->'geometry'->'coordinates') = 2 THEN
+                -- Извлечение координат и преобразование в тип float
+                NEW.location := ST_SetSRID(ST_MakePoint(
+                    (NEW.adress->'geometry'->'coordinates'->>0)::float,
+                    (NEW.adress->'geometry'->'coordinates'->>1)::float
+                ), 4326);
+            ELSE
+                RAISE EXCEPTION 'Координаты должны быть массивом из двух элементов';
+            END IF;
+        ELSE
+            RAISE EXCEPTION 'Координаты должны быть массивом';
+        END IF;
+    ELSE
+        RAISE EXCEPTION 'JSONB должен содержать ключи "geometry" и "coordinates"';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_update_location
+BEFORE INSERT OR UPDATE ON restaurants
+FOR EACH ROW
+EXECUTE FUNCTION update_location();
 
 
 
