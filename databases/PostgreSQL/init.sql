@@ -356,10 +356,6 @@ CREATE USER reader WITH PASSWORD '${READER_PASSWORD}';
 
 
 -- Roots
- -- db_admin
-GRANT ALL PRIVILEGES ON DATABASE "${POSTGRES_DB}" TO db_admin;
-GRANT ALL PRIVILEGES ON SCHEMA public TO db_admin;
-
  -- backend
 -- Разрешение на подключение и использоавние 
 GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO backend;
