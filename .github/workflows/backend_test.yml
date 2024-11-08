@@ -21,8 +21,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r backend/main_app/requirements.txt
+        cd backend
+        cd main_app
+        python3 -m venv venv
+        source venv/vin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
 
     - name: Install mypy
       run: |
@@ -34,12 +38,12 @@ jobs:
 
     - name: Run mypy for backend 
       run: |
-        mypy --strict backend
+        mypy --strict .
 
 
     - name: Run test for backend
       run: |
-        pytest backend
+        pytest
 
 
     
