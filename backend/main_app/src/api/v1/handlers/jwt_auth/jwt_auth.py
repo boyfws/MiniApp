@@ -4,7 +4,6 @@ from fastapi import (
 )
 from fastapi.security import (
     HTTPBearer,
-    # HTTPAuthorizationCredentials,
 )
 from pydantic import BaseModel
 
