@@ -13,7 +13,6 @@ from src.api.v1.handlers.jwt_auth.helpers import (
     create_refresh_token,
 )
 from src.api.v1.handlers.jwt_auth.validation import (
-    get_current_token_payload,
     get_current_auth_user_for_refresh,
     validate_auth_user,
     # REFRESH_TOKEN_TYPE,
