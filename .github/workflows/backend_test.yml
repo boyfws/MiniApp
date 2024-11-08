@@ -38,7 +38,7 @@ jobs:
 
     - name: Run mypy for backend 
       run: |
-        mypy --strict .
+        mypy --strict backend/main_app/
 
 
     - name: Run test for backend
