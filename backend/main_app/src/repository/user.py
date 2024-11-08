@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, update
+from sqlalchemy import insert, update, select
 
-from src.models.dto.user import UserResult, UserRequest, UserRequestUpdate
+from src.models.dto.user import UserResult, UserRequest, UserRequestUpdate, UserGetByUsername
 from src.models.orm.user import Users
 
 
@@ -35,3 +35,13 @@ class UserRepo:
         )
         return UserResult.model_validate(result, from_attributes=True)
 
+    async def get_by_username(
+            self,
+            session: AsyncSession,
+            model: UserGetByUsername
+    ) -> UserRequest:
+        result = await session.scalars(
+            select(self.model.__tablename__)
+            .where(self.model.name == model.username)
+        )
+        return UserRequest.model_validate(result, from_attributes=True)

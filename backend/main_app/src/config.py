@@ -1,5 +1,6 @@
 import os
 import logging
+from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -8,9 +9,18 @@ from sqlalchemy.engine import URL
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+BASE_DIR = Path(__file__).parent.parent
 
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
+
+@dataclass
+class AuthJWTConfig:
+    private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
+    public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
+    algorithm: str = "RS256"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 30
 
 @dataclass
 class YandexAPIConfig:
@@ -75,6 +85,7 @@ class Configuration:
     yandex_api = YandexAPIConfig()
     db = DatabaseConfig()
     app = AppConfig()
+    auth_jwt: AuthJWTConfig = AuthJWTConfig()
 
 
 configuration = Configuration()
