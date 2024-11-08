@@ -90,7 +90,9 @@ CREATE TABLE restaurants (
     CONSTRAINT check_wapp_phone_first_digit CHECK (LEFT(wapp_phone, 1) = '7')
 );
 
-    
+CREATE INDEX idx_gin_name_search ON restaurants USING GIN (name gin_trgm_ops);
+CREATE INDEX idx_location_search On restaurants USING SPGiST (location);
+
 
 
 CREATE TABLE user_activity_logs (
@@ -168,6 +170,12 @@ CREATE INDEX idx_street_name ON street USING HASH (name);
 
 
 
+-- !!! IMPORTANT NOTE: Тут может возникнуть ситуация что при пустом district 
+-- при одинаковых city street и house будут разные location. Это необходимо учитывать 
+-- при добавлении ссылки в таблицу addresses_for_user. Ппри нахождении нескольких id 
+-- с одинаковыми парметрами city, street, house и пустым district необходимо сверить еще и локацию.
+-- Для быстрого поиска и вставки id в таблицу addresses_for_user строится индекс на наборе  
+-- (city, district, street, house)
 CREATE TABLE address (
     id BIGINT 
        GENERATED ALWAYS AS IDENTITY 
@@ -198,6 +206,10 @@ CREATE TABLE address (
              NOT NULL 
 );
 
+-- B-tree index 
+CREATE INDEX idx_address_composite ON address (city, district, street, house);
+
+
 
 
 CREATE TABLE addresses_for_user (
@@ -218,6 +230,43 @@ CREATE TABLE addresses_for_user (
 
 CREATE INDEX idx_addresses_for_user_address_id ON addresses_for_user USING HASH (user_id);
 
+
+
+CREATE TABLE fav_cat_for_user (
+    user_id BIGINT 
+            REFERENCES users(id)
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT
+            NOT NULL,
+
+    cat_id SMALLINT 
+          REFERENCES categories(id)
+          ON DELETE RESTRICT
+          ON UPDATE RESTRICT
+          NOT NULL,
+    PRIMARY KEY (user_id, cat_id)
+);
+
+CREATE INDEX idx_fav_cat_for_user_user_id ON fav_cat_for_user USING HASH (user_id);
+
+
+
+CREATE TABLE fav_rest_for_user (
+    user_id BIGINT 
+            REFERENCES users(id)
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT
+            NOT NULL,
+
+    rest_id INTEGER 
+            REFERENCES restaurants(id)
+            ON DELETE RESTRICT
+            ON UPDATE RESTRICT
+            NOT NULL,
+    PRIMARY KEY (user_id, rest_id)
+);
+
+CREATE INDEX idx_fav_rest_for_user_user_id ON fav_rest_for_user USING HASH (user_id);
 
 
 
