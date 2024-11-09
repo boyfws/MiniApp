@@ -77,8 +77,8 @@ CREATE TABLE restaurants (
     wapp_phone VARCHAR(11),
 
     -- Адрес ресторана
-    location GEOGRAPHY(POINT, 4326),
-    adress JSONB NOT NULL, 
+    location GEOGRAPHY(POINT, 4326), --lon lat
+    address JSONB NOT NULL, 
 
     categories SMALLINT[] NOT NULL, -- Формально массив внешних ключей для id categories
 
@@ -194,13 +194,12 @@ CREATE TABLE address (
             -- Улица может быть пустым но тогда он ссылается на пустую строку (Пользоавтелю для поиска достаточно города)
     house SMALLINT,
 
-    location GEOGRAPHY(POINT, 4326)
+    location GEOGRAPHY(POINT, 4326) --lon lat
              NOT NULL 
 );
 
 -- B-tree index 
 CREATE INDEX idx_address_composite ON address (city, district, street, house);
-
 
 
 
@@ -264,57 +263,63 @@ CREATE INDEX idx_fav_rest_for_user_user_id ON fav_rest_for_user USING HASH (user
 
 -- Procedures 
 
-CREATE OR REPLACE FUNCTION update_empty_districts(distance_threshold FLOAT)
-RETURNS VOID AS $$
+CREATE OR REPLACE PROCEDURE update_empty_districts(distance_threshold FLOAT)
+AS $$
 DECLARE
     empty_address RECORD;
     full_address RECORD;
 BEGIN
     -- Начинаем транзакцию
-    BEGIN
+    START TRANSACTION;
         -- Находим все адреса с пустым district и непустым street
-        FOR empty_address IN (
-            SELECT * FROM address
-            WHERE district IN (
-                SELECT id FROM district WHERE name = ''
-            )
-            AND street NOT IN (
-                SELECT id FROM street WHERE name = ''
-            )
-        ) LOOP
+    FOR empty_address IN (SELECT * FROM address WHERE 
+                            district = (
+                                       SELECT id FROM district WHERE name = ''
+                                       )
+                            AND 
+                            street != (
+                                      SELECT id FROM street WHERE name = ''
+                                      ) 
+                            -- Значения точно уникальны (исходя из условий в street, district)
+                        ) 
+    LOOP
             -- Находим соответствующий адрес с заполненным district
-            FOR full_address IN (
-                SELECT * FROM address
-                WHERE district NOT IN (
-                    SELECT id FROM district WHERE name = ''
-                )
-                AND ST_Distance(empty_address.location, location) <= distance_threshold
-                AND city = empty_address.city
-                AND street = empty_address.street
-                AND house = empty_address.house
-            ) LOOP
+        FOR full_address IN (SELECT * FROM address WHERE 
+                                district != (
+                                            SELECT id FROM district WHERE name = ''
+                                            )
+                                -- Значение точно уникально
+                                AND 
+                                ST_Distance(empty_address.location, location) <= distance_threshold
+                                AND 
+                                city = empty_address.city
+                                AND 
+                                street = empty_address.street
+                                AND 
+                                house = empty_address.house
+                            ) 
+        LOOP
                 -- Обновляем ссылки в таблице user_address
-                UPDATE addresses_for_user
-                SET address_id = full_address.id
-                WHERE address_id = empty_address.id;
+            UPDATE addresses_for_user
+            SET address_id = full_address.id
+            WHERE address_id = empty_address.id;
 
-                -- Удаляем старый адрес с пустым district
-                DELETE FROM address
-                WHERE id = empty_address.id;
+             -- Удаляем старый адрес с пустым district
+            DELETE FROM address
+            WHERE id = empty_address.id;
 
-                -- Выходим из цикла, так как нашли соответствующий адрес
-                EXIT;
-            END LOOP;
         END LOOP;
 
-        -- Фиксируем транзакцию
-        COMMIT;
-    EXCEPTION
-        WHEN OTHERS THEN
-            -- Откатываем транзакцию в случае ошибки
-            ROLLBACK;
-            RAISE;
-    END;
+
+    END LOOP;
+
+    -- Фиксируем транзакцию
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Откатываем транзакцию в случае ошибки
+        ROLLBACK;
+        RAISE EXCEPTION 'Произошла ошибка в процедуре update_empty_districts';
 END;
 $$ LANGUAGE plpgsql;
 
@@ -393,15 +398,15 @@ CREATE OR REPLACE FUNCTION update_location()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Проверка наличия ключей в JSONB
-    IF NEW.adress ? 'geometry' AND NEW.adress->'geometry' ? 'coordinates' THEN
+    IF NEW.address ? 'geometry' AND NEW.address->'geometry' ? 'coordinates' THEN
         -- Проверка типа данных координат
-        IF jsonb_typeof(NEW.adress->'geometry'->'coordinates') = 'array' THEN
+        IF jsonb_typeof(NEW.address->'geometry'->'coordinates') = 'array' THEN
             -- Проверка наличия двух элементов в массиве координат
-            IF jsonb_array_length(NEW.adress->'geometry'->'coordinates') = 2 THEN
+            IF jsonb_array_length(NEW.address->'geometry'->'coordinates') = 2 THEN
                 -- Извлечение координат и преобразование в тип float
                 NEW.location := ST_SetSRID(ST_MakePoint(
-                    (NEW.adress->'geometry'->'coordinates'->>0)::float,
-                    (NEW.adress->'geometry'->'coordinates'->>1)::float
+                    (NEW.address->'geometry'->'coordinates'->>0)::float,
+                    (NEW.address->'geometry'->'coordinates'->>1)::float
                 ), 4326);
             ELSE
                 RAISE EXCEPTION 'Координаты должны быть массивом из двух элементов';
@@ -445,7 +450,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE O
  --clearing_trigger
 -- Даем права на подключение и процедуру
 GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO clearing_trigger;
-GRANT EXECUTE ON FUNCTION update_empty_districts(FLOAT) TO clearing_trigger;
+GRANT EXECUTE ON PROCEDURE update_empty_districts(FLOAT) TO clearing_trigger;
 -- Даем права на обновление и удаление для выполнение процедуры
 GRANT SELECT, UPDATE, DELETE ON address TO clearing_trigger;
 GRANT SELECT, UPDATE ON addresses_for_user TO clearing_trigger;
