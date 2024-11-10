@@ -21,9 +21,10 @@ jobs:
 
     - name: Install dependencies
       run: |
+        cd backend/main_app/
         pwd
         python -m pip install --upgrade pip setuptools
-        pip install -r backend/main_app/requirements.txt
+        pip install -r requirements.txt
 
     - name: Install mypy
       run: |
