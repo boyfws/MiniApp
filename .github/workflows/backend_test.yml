@@ -39,7 +39,7 @@ jobs:
 
     - name: Run mypy for backend 
       run: |
-        ls
+        cd backend/main_app/
         mypy --strict main.py
 
 
