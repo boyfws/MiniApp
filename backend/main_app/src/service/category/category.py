@@ -4,7 +4,7 @@ from src.repository.category.category import CategoryRepo
 from src.service.interface import ServiceInterface
 
 
-class CategoryService(ServiceInterface):
+class CategoryService:
 
     def __init__(self, repo: CategoryRepo):
         self.repo = repo

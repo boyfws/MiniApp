@@ -18,54 +18,32 @@ class FavouriteCategoryRepo:
             session: AsyncSession,
             model: FavouriteCategoryRequest
     ) -> FavouriteCategoryResponse:
-        await session.scalars(
-            delete(self.model.__tablename__)
-            .where(self.model.cat_id == model.cat_id)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteCategoryResponse()
 
     async def update(
             self,
             session: AsyncSession,
             model: FavouriteCategoryRequest
     ) -> FavouriteCategoryResponse:
-        await session.scalars(
-            insert(self.model.__tablename__)
-            .values(**model.dict())
-        )
-        return ...
+        return FavouriteCategoryResponse()
 
     async def get(
             self,
             session: AsyncSession,
             model: FavouriteCategoryRequest
     ) -> FavouriteCategoryDTO:
-        await session.scalars(
-            select(self.model)
-            .where(self.model.cat_id == model.cat_id)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteCategoryDTO()
 
     async def get_all_user_fav_categories(
             self,
             session: AsyncSession,
             model: AllFavouriteCategoriesRequest
     ) -> FavouriteCategoryDTO:
-        await session.scalars(
-            select(self.model)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteCategoryDTO()
 
     async def drop_all_user_fav_categories(
             self,
             session: AsyncSession,
             model: AllFavouriteCategoriesRequest
     ) -> FavouriteCategoryResponse:
-        await session.scalars(
-            delete(self.model.__tablename__)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteCategoryResponse()

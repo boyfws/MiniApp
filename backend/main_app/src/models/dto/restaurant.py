@@ -5,15 +5,13 @@ class RestaurantRequestUsingGeoPoint(BaseModel):
     ...
 
 class RestaurantRequestUsingGeoPointAndName(BaseModel):
-    name: str
     ...
 
 class RestaurantRequestUsingOwner(BaseModel):
-    owner_id: int
+    ...
 
 class RestaurantRequestUsingID(BaseModel):
-    rest_id: int
-    user_id: int
+    ...
 
 class RestaurantRequestFullModel(BaseModel):
     ...

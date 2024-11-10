@@ -19,76 +19,48 @@ class RestaurantRepo(TablesRepositoryInterface):
             session: AsyncSession,
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
-        await session.scalars(
-            insert(self.model)
-            .values(**model.dict())
-        )
-        return ...
+        return RestaurantResult()
 
     async def delete(
             self,
             session: AsyncSession,
             model: RestaurantRequestUsingID
     ) -> RestaurantResult:
-        await session.scalars(
-            delete(self.model)
-            .where(self.model.id == model.rest_id)
-        )
-        return ...
+        return RestaurantResult()
 
     async def update(
             self,
             session: AsyncSession,
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
-        await session.scalars(
-            update(self.model)
-            # TODO: сделать норм модель ресторана
-        )
-        return ...
+        return RestaurantResult()
 
     async def get(
             self,
             session: AsyncSession,
             model: RestaurantRequestUsingID
     ) -> RestaurantResponse:
-        await session.scalars(
-            select(self.model)
-            .where(self.model.id == model.rest_id)
-        )
-        return ...
+        return RestaurantResponse()
 
     async def get_by_geo(
             self,
             session: AsyncSession,
             model: RestaurantRequestUsingGeoPoint
     ) -> RestaurantResponse:
-        await session.scalars(
-            select(self.model)
-            # TODO: сделать тут как-то фильтрацию по геопозиции
-        )
-        return ...
+        return RestaurantResponse()
 
     async def get_by_geo_and_name(
             self,
             session: AsyncSession,
             model: RestaurantRequestUsingGeoPointAndName
     ) -> RestaurantResponse:
-        await session.scalars(
-            select(self.model)
-            # TODO: сделать фильтрацию через гео и паттерн названия
-        )
-        return ...
+        return RestaurantResponse()
 
     async def get_by_owner(
             self,
             session: AsyncSession,
             model: RestaurantRequestUsingOwner
     ) -> RestaurantResponse:
-        await session.scalars(
-            select(self.model)
-            .where(self.model.owner_id == model.owner_id)
-        )
-        return ...
+        return RestaurantResponse()
 
 

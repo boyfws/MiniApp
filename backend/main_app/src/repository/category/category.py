@@ -5,7 +5,7 @@ from sqlalchemy import select, insert, delete, update
 from src.repository.interface import TablesRepositoryInterface
 
 
-class CategoryRepo(TablesRepositoryInterface):
+class CategoryRepo:
 
     def __init__(self) -> None:
         self.model: Category = Category()
@@ -15,43 +15,25 @@ class CategoryRepo(TablesRepositoryInterface):
             session: AsyncSession,
             model: CategoryRequest
     ) -> CategoryResult:
-        await session.scalars(
-            delete(self.model.__tablename__)
-            .where(self.model.name == model.name)
-        )
-        return ...
+        return CategoryResult()
 
     async def update(
             self,
             session: AsyncSession,
             model: CategoryRequestUpdate
     ) -> CategoryResult:
-        await session.scalars(
-            update(self.model.__tablename__)
-            .where(self.model.name == model.old_name)
-            .values(**{"name": model.new_name})
-        )
-        return ...
+        return CategoryResult()
 
     async def get(
             self,
             session: AsyncSession,
             model: CategoryRequest
     ) -> CategoryDTO:
-        await session.scalars(
-            select(self.model.__tablename__)
-            .where(self.model.id == model.cat_id)
-            .where(self.model.name == model.name)
-        )
-        return ...
+        return CategoryDTO()
 
     async def create(
             self,
             session: AsyncSession,
             model: CategoryRequest
     ) -> CategoryResult:
-        await session.scalars(
-            insert(self.model.__tablename__)
-            .values(**model.dict())
-        )
-        return ...
+        return CategoryResult()

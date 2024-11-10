@@ -16,54 +16,32 @@ class FavouriteRestaurantRepo:
             session: AsyncSession,
             model: FavouriteRestaurantRequest
     ) -> FavouriteRestaurantResponse:
-        await session.scalars(
-            delete(self.model)
-            .where(self.model.rest_id == model.rest_id)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteRestaurantResponse()
 
     async def update(
             self,
             session: AsyncSession,
             model: FavouriteRestaurantRequest
     ) -> FavouriteRestaurantResponse:
-        await session.scalars(
-            insert(self.model)
-            .values(**model.dict())
-        )
-        return ...
+        return FavouriteRestaurantResponse()
 
     async def get(
             self,
             session: AsyncSession,
             model: FavouriteRestaurantRequest
     ) -> FavouriteRestaurantDTO:
-        await session.scalars(
-            select(self.model)
-            .where(self.model.rest_id == model.rest_id)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteRestaurantDTO()
 
     async def drop_all_user_fav_restaurants(
             self,
             session: AsyncSession,
             model: AllFavouriteRestaurantsRequest
     ) -> FavouriteRestaurantResponse:
-        await session.scalars(
-            delete(self.model)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteRestaurantResponse()
 
     async def get_all_user_fav_restaurants(
             self,
             session: AsyncSession,
             model: AllFavouriteRestaurantsRequest
     ) -> FavouriteRestaurantDTO:
-        await session.scalars(
-            select(self.model)
-            .where(self.model.user_id == model.user_id)
-        )
-        return ...
+        return FavouriteRestaurantDTO()

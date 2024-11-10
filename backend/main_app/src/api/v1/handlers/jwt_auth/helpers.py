@@ -1,4 +1,6 @@
 from datetime import timedelta
+from typing import Any
+
 from src.auth import utils as auth_utils
 from src.config import configuration as settings
 from src.models.dto.user import UserRequest
@@ -10,7 +12,7 @@ REFRESH_TOKEN_TYPE = "refresh"
 
 def create_jwt(
     token_type: str,
-    token_data: dict,
+    token_data: dict[str, Any],
     expire_minutes: int = settings.auth_jwt.access_token_expire_minutes,
     expire_timedelta: timedelta | None = None,
 ) -> str:
@@ -22,8 +24,11 @@ def create_jwt(
         expire_timedelta=expire_timedelta,
     )
 
+class UserRequestMock:
+    name: str
+    is_owner: bool
 
-def create_access_token(user: UserRequest) -> str:
+def create_access_token(user: UserRequestMock) -> str:
     jwt_payload = {
         # subject
         "sub": user.name,
@@ -37,7 +42,7 @@ def create_access_token(user: UserRequest) -> str:
     )
 
 
-def create_refresh_token(user: UserRequest) -> str:
+def create_refresh_token(user: UserRequestMock) -> str:
     jwt_payload = {
         "sub": user.name,
     }

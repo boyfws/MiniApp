@@ -1,6 +1,6 @@
 import aiohttp
 from fastapi import HTTPException
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, no_type_check
 from typing_extensions import TypedDict
 from src.config import configuration
 
@@ -48,6 +48,7 @@ class LocationNotFoundError(ValueError):
     pass
 
 
+@no_type_check
 @yandex_api_router.get("/get_similar_locations/", response_model=List[AddressPart])
 async def get_similar_locations(
         text: str,
@@ -55,9 +56,8 @@ async def get_similar_locations(
         longitude: Optional[float] = None,
         latitude: Optional[float] = None,
 ) -> List[AddressPart]:
-
-    url: str = "https://suggest-maps.yandex.ru/v1/suggest"
-    params: Dict[str, int | str] = {
+    url = "https://suggest-maps.yandex.ru/v1/suggest"
+    params: Dict[str, int | Optional[str]] = {
         "apikey": configuration.yandex_api.TOKEN_FOR_GEOSUGGEST,
         "text": text,
         "lang": "ru",
@@ -99,11 +99,16 @@ async def get_similar_locations(
 
 
 # noinspection PyTypedDict
+@no_type_check
 @yandex_api_router.get("/get_coords_for_ceratin_location/")
 async def get_coords_for_ceratin_location(location: AddressPart) -> GeoJson:
     url: str = "https://geocode-maps.yandex.ru/1.x"
-    params: Dict[str, int | str] = {"apikey": configuration.yandex_api.TOKEN_FOR_GEOCODER, "lang": "ru_RU", "rspn": 1, "format": "json",
-                                    "bbox": "19.642090,41.185017~180.0,81.857361", "results": 1,
+    params: Dict[str, int | Optional[str]] = {"apikey": configuration.yandex_api.TOKEN_FOR_GEOCODER,
+                                    "lang": "ru_RU",
+                                    "rspn": 1,
+                                    "format": "json",
+                                    "bbox": "19.642090,41.185017~180.0,81.857361",
+                                    "results": 1,
                                     "geocode": location["full_name"]}
 
     async with aiohttp.ClientSession() as session:
@@ -138,6 +143,7 @@ async def get_coords_for_ceratin_location(location: AddressPart) -> GeoJson:
 
 
 #@main_app.get("blabla")
+@no_type_check
 async def get_suggestions(text: str, longitude: Optional[float] = None, latitude: Optional[float] = None) -> List[AddressPart]:
     """
     Возвращает подсказки пользоавтелю при вводе адреса
@@ -150,6 +156,7 @@ async def get_suggestions(text: str, longitude: Optional[float] = None, latitude
 
 ### !!! Catch-и будем прописывать на более высоком уровне
 # Данная функция будет использоваться при верификации новго реста
+@no_type_check
 @yandex_api_router.get('/verificte_new_restaurant_adress/')
 async def verificte_new_restaurant_adress(
         city: str,
