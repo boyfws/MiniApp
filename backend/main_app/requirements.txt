@@ -8,3 +8,5 @@ aiohttp~=3.10.10
 python-dotenv~=1.0.1
 PyJWT~=2.3.0
 bcrypt
+mypy
+pytest

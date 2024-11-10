@@ -28,20 +28,8 @@ jobs:
         ls
         pwd
         pip install -r requirements.txt
-
-    - name: Install mypy
-      run: |
-        pip install mypy
-
-    - name: Install pytest
-      run: |
-        pip install pytest
-
-    - name: Run mypy for backend 
-      run: |
-        cd backend/main_app/
+        ls
         mypy --strict main.py
-
 
     - name: Run test for backend
       run: |
