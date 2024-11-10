@@ -191,7 +191,7 @@ CREATE TABLE address (
            ON DELETE RESTRICT
            ON UPDATE RESTRICT
            NOT NULL,
-            -- Улица может быть пустым но тогда он ссылается на пустую строку (Пользоавтелю для поиска достаточно города)
+            -- Улица может быть пустой но тогда она ссылается на пустую строку (Пользоавтелю для поиска достаточно города)
     house SMALLINT,
 
     location GEOGRAPHY(POINT, 4326) --lon lat
@@ -269,16 +269,14 @@ DECLARE
     empty_address RECORD;
     full_address RECORD;
 BEGIN
-    -- Начинаем транзакцию
-    START TRANSACTION;
-        -- Находим все адреса с пустым district и непустым street
+    -- Находим все адреса с пустым district и непустым street
     FOR empty_address IN (SELECT * FROM address WHERE 
                             district = (
-                                       SELECT id FROM district WHERE name = ''
+                                       SELECT id FROM district WHERE name = '' -- Обязательно должны существовать эти элемент
                                        )
                             AND 
                             street != (
-                                      SELECT id FROM street WHERE name = ''
+                                      SELECT id FROM street WHERE name = '' -- Обязательно должны существовать эти элементы 
                                       ) 
                             -- Значения точно уникальны (исходя из условий в street, district)
                         ) 
@@ -312,14 +310,6 @@ BEGIN
 
 
     END LOOP;
-
-    -- Фиксируем транзакцию
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        -- Откатываем транзакцию в случае ошибки
-        ROLLBACK;
-        RAISE EXCEPTION 'Произошла ошибка в процедуре update_empty_districts';
 END;
 $$ LANGUAGE plpgsql;
 
@@ -474,3 +464,18 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO reader;
 -- Для будущих таблиц, чтобы права на чтение автоматически предоставлялись
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
 GRANT SELECT ON TABLES TO reader;
+
+
+
+-- Insertions
+---!!!! City всегда непустой 
+INSERT INTO district (name) VALUES ('');
+INSERT INTO street (name) VALUES ('');
+
+INSERT INTO categories (name) VALUES 
+('Бургеры'),
+('Суши'),
+('Пицца'),
+('Паста'),
+('Десерты');
+-- !!! Добавим допом чуть больше 

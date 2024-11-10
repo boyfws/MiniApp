@@ -23,7 +23,6 @@ INSERT INTO city (name) VALUES
 
 
 INSERT INTO district (name) VALUES
-(''),
 ('Московский'),
 ('Санкт-Петербургский'),
 ('Новосибирский'),
@@ -32,7 +31,6 @@ INSERT INTO district (name) VALUES
 
 INSERT INTO street (name) VALUES
 ('Полежаевская'),
-('Ленина'),
 ('Спортивная'),
 ('Мира'),
 ('Пушкина');
