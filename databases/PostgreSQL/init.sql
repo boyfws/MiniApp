@@ -251,7 +251,7 @@ CREATE TABLE fav_rest_for_user (
 
     rest_id INTEGER 
             REFERENCES restaurants(id)
-            ON DELETE RESTRICT
+            ON DELETE CASCADE
             ON UPDATE RESTRICT
             NOT NULL,
     PRIMARY KEY (user_id, rest_id)
@@ -264,6 +264,7 @@ CREATE INDEX idx_fav_rest_for_user_user_id ON fav_rest_for_user USING HASH (user
 -- Procedures 
 
 CREATE OR REPLACE PROCEDURE update_empty_districts(distance_threshold FLOAT)
+SECURITY INVOKER
 AS $$
 DECLARE
     empty_address RECORD;
@@ -294,7 +295,13 @@ BEGIN
                                 AND 
                                 street = empty_address.street
                                 AND 
-                                house = empty_address.house
+                                (house = empty_address.house 
+                                OR (
+                                    house IS NULL 
+                                    AND 
+                                    empty_address.house IS NULL
+                                    )
+                                )
                             ) 
         LOOP
                 -- Обновляем ссылки в таблице user_address
@@ -420,46 +427,116 @@ EXECUTE FUNCTION update_location();
 
 
 -- Users
-CREATE USER backend WITH PASSWORD '${BACKEND_PASSWORD}';
-CREATE USER clearing_trigger WITH PASSWORD '${CLEARING_TRIGGER_PASSWORD}';
-CREATE USER logger WITH PASSWORD '${LOGGER_PASSWORD}';
-CREATE USER reader WITH PASSWORD '${READER_PASSWORD}';
+CREATE USER backend WITH 
+    PASSWORD '${BACKEND_PASSWORD}'
+    CONNECTION LIMIT 1;
+CREATE USER clearing_trigger WITH 
+    PASSWORD '${CLEARING_TRIGGER_PASSWORD}'
+    CONNECTION LIMIT 1;
+CREATE USER logger WITH 
+    PASSWORD '${LOGGER_PASSWORD}'
+    CONNECTION LIMIT 1;
+CREATE USER reader WITH 
+    PASSWORD '${READER_PASSWORD}'
+    CONNECTION LIMIT 10;
 
 
 
 -- Roots
  -- backend
--- Разрешение на подключение и использоавние 
 GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO backend;
--- Сначала отзываем все права потом даем права на работу с данными, но не даем менять структуру
-REVOKE ALL ON SCHEMA public FROM backend;
 GRANT USAGE ON SCHEMA public TO backend;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO backend;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO backend;
+
+GRANT 
+    SELECT 
+ON 
+    public.categories
+TO backend;
+
+GRANT INSERT, DELETE, SELECT ON 
+    public.fav_rest_for_user, 
+    public.fav_cat_for_user,
+    public.addresses_for_user 
+TO backend;
+
+GRANT 
+    SELECT, 
+    INSERT 
+ON 
+    public.address,
+    public.district, 
+    public.street, 
+    public.city
+TO backend;
+
+GRANT 
+    INSERT, 
+    DELETE, 
+    UPDATE, 
+    SELECT 
+ON 
+    public.restaurants 
+TO backend;
+
+GRANT 
+    SELECT,
+    INSERT,
+    UPDATE
+ON 
+    public.users
+TO backend;
+
+
 
  --clearing_trigger
 -- Даем права на подключение и процедуру
 GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO clearing_trigger;
+GRANT USAGE ON SCHEMA public TO backend;
+
 GRANT EXECUTE ON PROCEDURE update_empty_districts(FLOAT) TO clearing_trigger;
 -- Даем права на обновление и удаление для выполнение процедуры
-GRANT SELECT, UPDATE, DELETE ON address TO clearing_trigger;
-GRANT SELECT, UPDATE ON addresses_for_user TO clearing_trigger;
-GRANT SELECT ON district TO clearing_trigger;
-GRANT SELECT ON street TO clearing_trigger;
+GRANT 
+    SELECT, 
+    UPDATE, 
+    DELETE 
+ON 
+    public.address 
+TO clearing_trigger;
+
+GRANT 
+    SELECT, 
+    UPDATE 
+ON 
+    public.addresses_for_user 
+TO clearing_trigger;
+
+GRANT 
+    SELECT 
+ON 
+    public.district,
+    public.street 
+TO clearing_trigger;
+
+
 
  --logger
 GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO logger;
--- Даем права для записей логов и выборки данных для удобства записи 
-GRANT INSERT ON user_activity_logs TO logger;
-GRANT SELECT ON users TO logger;
-GRANT SELECT ON log_actions TO logger;
-GRANT SELECT ON categories TO logger;
-GRANT SELECT ON restaurants TO logger;
+GRANT USAGE ON SCHEMA public TO backend;
+
+GRANT INSERT ON public.user_activity_logs TO logger;
+GRANT SELECT ON 
+    public.users,
+    public.log_actions, 
+    public.categories,
+    public.restaurants  
+TO logger;
+
+
 
  --reader
 GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO reader;
--- Предоставление прав на чтение всех таблиц в базе данных
 GRANT USAGE ON SCHEMA public TO reader;
+
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO reader;
 -- Для будущих таблиц, чтобы права на чтение автоматически предоставлялись
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
