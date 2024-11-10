@@ -19,23 +19,19 @@ jobs:
       with:
         python-version: "3.12"
 
-    - name: Install dependencies
+    - name: Install dependencies & run mypy
       run: |
         cd backend/main_app/
-        pwd
         python3 -m venv venv
         source venv/bin/activate
-        ls
-        pwd
         pip install -r requirements.txt
-        ls
         mypy --strict main.py
 
-    - name: Run test for backend
+    - name: Run test for backend/main_app/
       run: |
         cd backend/main_app/
         source venv/bin/activate
-        pytest -v backend/main_app/
+        pytest -v
 
 
     
