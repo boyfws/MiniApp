@@ -33,7 +33,9 @@ jobs:
 
     - name: Run test for backend
       run: |
-        pytest backend/main_app/
+        cd backend/main_app/
+        ls
+        pytest -v backend/main_app/
 
 
     
