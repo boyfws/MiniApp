@@ -3,9 +3,9 @@ name: Tests for backend
 on:
   push:
     branches:
-      - master
+      - "master"
     paths: 
-      - backend/**
+      - "backend/main_app/**"
 
 jobs:
   mypy:
@@ -17,16 +17,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: "3.12"
 
     - name: Install dependencies
       run: |
-        cd backend
-        cd main_app
-        python3 -m venv venv
-        source venv/bin/activate
-        pip install --upgrade pip
-        pip install -r requirements.txt
+        pwd
+        python -m pip install --upgrade pip setuptools
+        pip install -r backend/main_app/requirements.txt
 
     - name: Install mypy
       run: |
@@ -38,12 +35,12 @@ jobs:
 
     - name: Run mypy for backend 
       run: |
-        mypy --strict backend/main_app/
+        mypy --strict main.py
 
 
     - name: Run test for backend
       run: |
-        pytest
+        pytest backend/main_app/
 
 
     
