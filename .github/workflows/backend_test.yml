@@ -34,7 +34,7 @@ jobs:
     - name: Run test for backend
       run: |
         cd backend/main_app/
-        ls
+        source venv/bin/activate
         pytest -v backend/main_app/
 
 
