@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete
 from src.models.dto.address_for_user import AddressForUserRequest, AddressForUserResult, AddressForUserDTO
-from src.models.orm.address.addresses_for_user import AddressesForUser
+from src.models.orm.schemas import AddressesForUser
 from src.repository.interface import TablesRepositoryInterface
 
 

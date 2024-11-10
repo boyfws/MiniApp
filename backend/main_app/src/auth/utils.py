@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Any
 
 import bcrypt
 import jwt
@@ -7,7 +8,7 @@ from src.config import configuration as settings
 
 
 def encode_jwt(
-    payload: dict,
+    payload: dict[str, Any],
     private_key: str = settings.auth_jwt.private_key_path.read_text(),
     algorithm: str = settings.auth_jwt.algorithm,
     expire_minutes: int = settings.auth_jwt.access_token_expire_minutes,
@@ -32,10 +33,10 @@ def encode_jwt(
 
 
 def decode_jwt(
-    token: str | bytes,
+    token: str,
     public_key: str = settings.auth_jwt.public_key_path.read_text(),
     algorithm: str = settings.auth_jwt.algorithm,
-) -> dict:
+) -> dict[str, Any]:
     decoded = jwt.decode(
         token,
         public_key,

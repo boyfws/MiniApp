@@ -5,14 +5,14 @@ from src.models.dto.restaurant import (RestaurantRequestUsingGeoPoint, Restauran
                                                 RestaurantResult, RestaurantRequestUsingOwner,
                                                 RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
                                                 RestaurantRequestFullModel)
-from src.models.orm.restaurant.restaurant import Restaurant
+from src.models.orm.schemas import Restaurant
 
 from src.repository.interface import TablesRepositoryInterface
 
 
 class RestaurantRepo(TablesRepositoryInterface):
-    def __init__(self, model: Restaurant):
-        self.model: Restaurant = model
+    def __init__(self):
+        self.model: Restaurant = Restaurant()
 
     async def create(
             self,
@@ -20,7 +20,7 @@ class RestaurantRepo(TablesRepositoryInterface):
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
         await session.scalars(
-            insert(self.model.__tablename__)
+            insert(self.model)
             .values(**model.dict())
         )
         return ...
@@ -31,7 +31,7 @@ class RestaurantRepo(TablesRepositoryInterface):
             model: RestaurantRequestUsingID
     ) -> RestaurantResult:
         await session.scalars(
-            delete(self.model.__tablename__)
+            delete(self.model)
             .where(self.model.id == model.rest_id)
         )
         return ...
@@ -42,7 +42,7 @@ class RestaurantRepo(TablesRepositoryInterface):
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
         await session.scalars(
-            update(self.model.__tablename__)
+            update(self.model)
             # TODO: сделать норм модель ресторана
         )
         return ...

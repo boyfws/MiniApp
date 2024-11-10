@@ -5,9 +5,10 @@ from src.repository.category.favourite_categories import FavouriteCategoryRepo
 from src.service.interface import ServiceInterface
 
 
-class FavouriteCategoriesService(ServiceInterface):
-    def __init__(self, repo: FavouriteCategoryRepo):
-        self.repo = repo
+class FavouriteCategoriesService:
+    def __init__(self, repo: FavouriteCategoryRepo) -> None:
+        self.repo: FavouriteCategoryRepo = repo
+
     async def delete(self, model: FavouriteCategoryRequest) -> FavouriteCategoryResponse:
         async with get_session() as session:
             return await self.repo.delete(session, model)

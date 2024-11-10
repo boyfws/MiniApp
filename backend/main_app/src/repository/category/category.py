@@ -1,5 +1,5 @@
 from src.models.dto.category import CategoryRequest, CategoryDTO, CategoryResult, CategoryRequestUpdate
-from src.models.orm.category.category import Category
+from src.models.orm.schemas import Category
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update
 from src.repository.interface import TablesRepositoryInterface
@@ -7,7 +7,7 @@ from src.repository.interface import TablesRepositoryInterface
 
 class CategoryRepo(TablesRepositoryInterface):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.model: Category = Category()
 
     async def delete(

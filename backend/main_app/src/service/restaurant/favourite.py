@@ -4,7 +4,7 @@ from src.models.dto.favourites import (AllFavouriteRestaurantsRequest, Favourite
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
 from src.service.interface import ServiceInterface
 
-class FavouriteRestaurantService(ServiceInterface):
+class FavouriteRestaurantService:
     def __init__(self, repo: FavouriteRestaurantRepo):
         self.repo = repo
     async def delete(self, model: FavouriteRestaurantRequest) -> FavouriteRestaurantResponse:

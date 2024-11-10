@@ -1,4 +1,6 @@
+import asyncio
 from contextlib import asynccontextmanager
+from typing import AsyncContextManager, AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine as _create_async_engine
@@ -22,7 +24,7 @@ AsyncSessionLocal = async_sessionmaker(
 
 
 @asynccontextmanager
-async def get_session():
+async def get_session() -> AsyncGenerator[AsyncSessionLocal]:
     async with AsyncSessionLocal() as session:
         try:
             # Выполняю транзакцию

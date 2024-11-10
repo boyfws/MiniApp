@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar
-from src.repository.interface import TablesRepositoryInterface
 
-AbstractModel = TypeVar('AbstractModel')
+from pydantic import BaseModel
+
+from src.repository.interface import TablesRepositoryInterface
 
 class ServiceInterface(ABC):
 
@@ -16,20 +16,20 @@ class ServiceInterface(ABC):
     @abstractmethod
     async def get(
             self,
-            model: AbstractModel
-    ) -> AbstractModel:
+            model: BaseModel
+    ) -> BaseModel:
         ...
 
     @abstractmethod
     async def update(
             self,
-            model: AbstractModel
-    ) -> AbstractModel:
+            model: BaseModel
+    ) -> BaseModel:
         ...
 
     @abstractmethod
     async def delete(
             self,
-            model: AbstractModel
-    ) -> AbstractModel:
+            model: BaseModel
+    ) -> BaseModel:
         ...

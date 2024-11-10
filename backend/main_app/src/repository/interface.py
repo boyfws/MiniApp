@@ -1,7 +1,8 @@
 from abc import abstractmethod, ABC
 from typing import TypeVar
 
-AbstractModel = TypeVar('AbstractModel')
+from pydantic import BaseModel
+
 AbstractAsyncSession = TypeVar('AbstractAsyncSession')
 
 
@@ -13,22 +14,22 @@ class TablesRepositoryInterface(ABC):
     async def get(
             self,
             session: AbstractAsyncSession,
-            model: AbstractModel
-    ) -> AbstractModel:
+            model: BaseModel
+    ) -> BaseModel:
         ...
 
     @abstractmethod
     async def update(
             self,
             session: AbstractAsyncSession,
-            model: AbstractModel
-    ) -> AbstractModel:
+            model: BaseModel
+    ) -> BaseModel:
         ...
 
     @abstractmethod
     async def delete(
             self,
             session: AbstractAsyncSession,
-            model: AbstractModel
-    ) -> AbstractModel:
+            model: BaseModel
+    ) -> BaseModel:
         ...

@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.repository.interface import TablesRepositoryInterface
 from src.models.dto.favourites import (FavouriteRestaurantRequest, FavouriteRestaurantResponse,
                                                 FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
-from src.models.orm.restaurant.favourite import FavouriteRestaurant
+from src.models.orm.schemas import FavRestForUser
 
 
-class FavouriteRestaurantRepo(TablesRepositoryInterface):
+class FavouriteRestaurantRepo:
 
-    def __init__(self):
-        self.model: FavouriteRestaurant = FavouriteRestaurant()
+    def __init__(self) -> None:
+        self.model: FavRestForUser = FavRestForUser()
 
     async def delete(
             self,
@@ -17,7 +17,7 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             model: FavouriteRestaurantRequest
     ) -> FavouriteRestaurantResponse:
         await session.scalars(
-            delete(self.model.__tablename__)
+            delete(self.model)
             .where(self.model.rest_id == model.rest_id)
             .where(self.model.user_id == model.user_id)
         )
@@ -29,7 +29,7 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             model: FavouriteRestaurantRequest
     ) -> FavouriteRestaurantResponse:
         await session.scalars(
-            insert(self.model.__tablename__)
+            insert(self.model)
             .values(**model.dict())
         )
         return ...
@@ -52,7 +52,7 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             model: AllFavouriteRestaurantsRequest
     ) -> FavouriteRestaurantResponse:
         await session.scalars(
-            delete(self.model.__tablename__)
+            delete(self.model)
             .where(self.model.user_id == model.user_id)
         )
         return ...
@@ -63,7 +63,7 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             model: AllFavouriteRestaurantsRequest
     ) -> FavouriteRestaurantDTO:
         await session.scalars(
-            select(self.model.__tablename__)
+            select(self.model)
             .where(self.model.user_id == model.user_id)
         )
         return ...

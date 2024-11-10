@@ -110,7 +110,7 @@ async def get_coords_for_ceratin_location(location: AddressPart) -> GeoJson:
         async with session.get(url, params=params) as response:
             responded_data = await response.json()
             if response.status != 200:
-                raise HTTPException(status_code=response.status, detail=response.message)
+                raise HTTPException(status_code=response.status, detail="something went wrong")
 
             responded_point_data = responded_data['response']["GeoObjectCollection"]["featureMember"][0]['GeoObject']
             responded_point_adress = responded_point_data["metaDataProperty"]["GeocoderMetaData"]["Address"][
@@ -138,7 +138,7 @@ async def get_coords_for_ceratin_location(location: AddressPart) -> GeoJson:
 
 
 #@main_app.get("blabla")
-async def get_suggestions(text: str, longitude: float = None, latitude: float = None) -> List[AddressPart]:
+async def get_suggestions(text: str, longitude: Optional[float] = None, latitude: Optional[float] = None) -> List[AddressPart]:
     """
     Возвращает подсказки пользоавтелю при вводе адреса
     """

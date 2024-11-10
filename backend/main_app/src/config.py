@@ -24,21 +24,13 @@ class AuthJWTConfig:
 
 @dataclass
 class YandexAPIConfig:
-    TOKEN_FOR_GEOSUGGEST: str = os.getenv("TOKEN_FOR_GEOSUGGEST")
-    TOKEN_FOR_GEOCODER: str = os.getenv("TOKEN_FOR_GEOCODER")
+    TOKEN_FOR_GEOSUGGEST: Optional[str] = os.getenv("TOKEN_FOR_GEOSUGGEST")
+    TOKEN_FOR_GEOCODER: Optional[str] = os.getenv("TOKEN_FOR_GEOCODER")
 
 @dataclass
 class NGINXConfig:
-    APP_PREFIX: str = os.getenv("APP_NGINX_PREFIX")
+    APP_PREFIX: Optional[str] = os.getenv("APP_NGINX_PREFIX")
 
-
-@dataclass
-class MongoDBConfig:
-    host: str = os.getenv("MONGODB_HOST")
-    port: str = os.getenv("MONGODB_PORT")
-    database: str = os.getenv("MONGODB_DATABASE")
-    publications_collection: str = os.getenv("PUBLICATION_COLLECTION")
-    url: str = f"mongodb://{host}:{port}"
 
 @dataclass
 class DatabaseConfig:

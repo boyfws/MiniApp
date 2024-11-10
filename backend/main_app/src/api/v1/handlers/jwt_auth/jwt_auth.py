@@ -39,7 +39,7 @@ jwt_router = APIRouter(
 @jwt_router.post("/login/", response_model=TokenInfo)
 async def auth_user_issue_jwt(
     user: UserRequest = Depends(validate_auth_user),
-):
+) -> TokenInfo:
     access_token = create_access_token(user)
     refresh_token = create_refresh_token(user)
     return TokenInfo(
@@ -58,7 +58,7 @@ async def auth_refresh_jwt(
     user: UserRequest = Depends(get_current_auth_user_for_refresh),
     # user: UserRequest = Depends(get_auth_user_from_token_of_type(REFRESH_TOKEN_TYPE)),
     # user: UserRequest = Depends(UserGetterFromToken(REFRESH_TOKEN_TYPE)),
-):
+) -> TokenInfo:
     access_token = create_access_token(user)
     return TokenInfo(
         access_token=access_token,
