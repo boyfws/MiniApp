@@ -1,16 +1,19 @@
 from sqlalchemy import (Integer, String, SmallInteger, BigInteger,
     Boolean, JSON, ARRAY, ForeignKey, Index, CheckConstraint, Numeric, MetaData
 )
-from sqlalchemy.orm import declarative_base, relationship, mapped_column, Mapped, as_declarative
+from sqlalchemy.orm import declarative_base, relationship, mapped_column, Mapped, as_declarative, DeclarativeBase
 from geoalchemy2.types import Geometry
 
 metadata = MetaData()
 
 
-@as_declarative(metadata=metadata)
-class Base:
-    """Abstract model with declarative base functionality."""
+# @as_declarative(metadata=metadata)
+# class Base:
+#     """Abstract model with declarative base functionality."""
 
+class Base(DeclarativeBase):
+    """Abstract model with declarative base functionality."""
+    pass
 
 class LogAction(Base):
     __tablename__ = 'log_actions'
@@ -22,7 +25,7 @@ class LogAction(Base):
 class User(Base):
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     owner: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
