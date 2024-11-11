@@ -1,39 +1,25 @@
-from src.models.dto.category import CategoryRequest, CategoryDTO, CategoryResult, CategoryRequestUpdate
+from src.models.dto.category import CategoryRequestByName, CategoryDTO, CategoryResult
 from src.models.orm.schemas import Category
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert, delete, update
-from src.repository.interface import TablesRepositoryInterface
+from sqlalchemy import select, insert
 
 
 class CategoryRepo:
 
-    def __init__(self) -> None:
-        self.model: Category = Category()
-
-    async def delete(
-            self,
-            session: AsyncSession,
-            model: CategoryRequest
-    ) -> CategoryResult:
-        return CategoryResult()
-
-    async def update(
-            self,
-            session: AsyncSession,
-            model: CategoryRequestUpdate
-    ) -> CategoryResult:
-        return CategoryResult()
-
     async def get(
             self,
             session: AsyncSession,
-            model: CategoryRequest
+            model: CategoryRequestByName
     ) -> CategoryDTO:
-        return CategoryDTO()
+        stmt = select(Category.id, Category.name).where(Category.name == model.name)
+        cat = await session.execute(stmt)
+        return CategoryDTO.model_validate(cat, from_attributes=True)
 
     async def create(
             self,
             session: AsyncSession,
-            model: CategoryRequest
+            model: CategoryDTO
     ) -> CategoryResult:
-        return CategoryResult()
+        stmt = insert(Category).values(**model.dict()).returning(Category.id)
+        cat_id = await session.execute(stmt)
+        return CategoryResult.model_validate(cat_id, from_attributes=True)
