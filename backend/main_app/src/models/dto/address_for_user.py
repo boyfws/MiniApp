@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 
-
-class AddressForUserRequest(BaseModel):
-    ...
-
 class AddressForUserDTO(BaseModel):
-    ...
+    user_id: int
+    address_id: int
 
-class AddressForUserResult(BaseModel):
+class AllAddressesForUser(BaseModel):
+    user_id: int
+
+class AddressesResponse(BaseModel):
     ...

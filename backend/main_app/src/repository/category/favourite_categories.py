@@ -1,16 +1,10 @@
 from sqlalchemy import select, insert, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeBase
-
-from src.repository.interface import TablesRepositoryInterface
 from src.models.dto.favourites import (FavouriteCategoryResponse, FavouriteCategoryDTO, AllFavouriteCategoriesRequest)
 from src.models.orm.schemas import FavCatForUser
 
 
 class FavouriteCategoryRepo:
-
-    def __init__(self) -> None:
-        self.model: FavCatForUser = FavCatForUser()
 
     async def delete(
             self,
