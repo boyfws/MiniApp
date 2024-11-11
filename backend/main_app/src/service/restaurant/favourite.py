@@ -1,28 +1,22 @@
 from src.database.sql_session import get_session
-from src.models.dto.favourites import (AllFavouriteRestaurantsRequest, FavouriteRestaurantDTO,
-                                                FavouriteRestaurantResponse, FavouriteRestaurantRequest)
+from src.models.dto.favourites import (AllFavouriteRestaurantsRequest, FavouriteRestaurantDTO, FavouriteRestaurantResponse)
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
-from src.service.interface import ServiceInterface
 
 class FavouriteRestaurantService:
     def __init__(self, repo: FavouriteRestaurantRepo):
         self.repo = repo
-    async def delete(self, model: FavouriteRestaurantRequest) -> FavouriteRestaurantResponse:
+    async def delete(self, model: FavouriteRestaurantDTO) -> FavouriteRestaurantResponse:
         async with get_session() as session:
             return await self.repo.delete(session, model)
 
-    async def update(self, model: FavouriteRestaurantRequest) -> FavouriteRestaurantResponse:
+    async def create(self, model: FavouriteRestaurantDTO) -> FavouriteRestaurantResponse:
         async with get_session() as session:
-            return await self.repo.update(session, model)
-
-    async def get(self, model: FavouriteRestaurantRequest) -> FavouriteRestaurantDTO:
-        async with get_session() as session:
-            return await self.repo.get(session, model)
+            return await self.repo.create(session, model)
 
     async def get_all_user_fav_restaurants(
             self,
             model: AllFavouriteRestaurantsRequest
-    ) -> FavouriteRestaurantDTO:
+    ) -> list[FavouriteRestaurantResponse]:
         async with get_session() as session:
             return await self.repo.get_all_user_fav_restaurants(session, model)
 

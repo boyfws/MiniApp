@@ -1,8 +1,6 @@
 from sqlalchemy import select, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.repository.interface import TablesRepositoryInterface
-from src.models.dto.favourites import (FavouriteRestaurantRequest, FavouriteRestaurantResponse,
-                                                FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
+from src.models.dto.favourites import (FavouriteRestaurantResponse, FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
 from src.models.orm.schemas import FavRestForUser
 
 
@@ -14,34 +12,41 @@ class FavouriteRestaurantRepo:
     async def delete(
             self,
             session: AsyncSession,
-            model: FavouriteRestaurantRequest
+            model: FavouriteRestaurantDTO
     ) -> FavouriteRestaurantResponse:
-        return FavouriteRestaurantResponse()
+        stmt = (
+            delete(FavRestForUser)
+            .where(FavRestForUser.user_id == model.user_id)
+            .where(FavRestForUser.rest_id == model.rest_id)
+        )
+        await session.execute(stmt)
+        return FavouriteRestaurantResponse(rest_id=model.rest_id)
 
-    async def update(
+    async def create(
             self,
             session: AsyncSession,
-            model: FavouriteRestaurantRequest
+            model: FavouriteRestaurantDTO
     ) -> FavouriteRestaurantResponse:
-        return FavouriteRestaurantResponse()
+        stmt = insert(FavRestForUser).values(**model.dict()).returning(FavRestForUser.rest_id)
+        response = await session.execute(stmt)
+        return FavouriteRestaurantResponse.model_validate(response, from_attributes=True)
 
-    async def get(
+    async def get_all_user_fav_restaurants(
             self,
             session: AsyncSession,
-            model: FavouriteRestaurantRequest
-    ) -> FavouriteRestaurantDTO:
-        return FavouriteRestaurantDTO()
+            model: AllFavouriteRestaurantsRequest
+    ) -> list[FavouriteRestaurantResponse]:
+        stmt = select(FavRestForUser.rest_id).where(FavRestForUser.user_id == model.user_id)
+        fav_restaurants = await session.execute(stmt)
+        return [
+            FavouriteRestaurantResponse.model_validate(rest, from_attributes=True) for rest in fav_restaurants.all()
+        ]
 
     async def drop_all_user_fav_restaurants(
             self,
             session: AsyncSession,
             model: AllFavouriteRestaurantsRequest
     ) -> FavouriteRestaurantResponse:
-        return FavouriteRestaurantResponse()
-
-    async def get_all_user_fav_restaurants(
-            self,
-            session: AsyncSession,
-            model: AllFavouriteRestaurantsRequest
-    ) -> FavouriteRestaurantDTO:
-        return FavouriteRestaurantDTO()
+        stmt = select(FavRestForUser).where(FavRestForUser.user_id == model.user_id)
+        await session.execute(stmt)
+        return FavouriteRestaurantResponse(rest_id=model.user_id)  # TODO: переделать здесь на другое возвращаемое значение
