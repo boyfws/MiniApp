@@ -31,6 +31,18 @@ class YandexAPIConfig:
 class NGINXConfig:
     APP_PREFIX: Optional[str] = os.getenv("APP_NGINX_PREFIX")
 
+@dataclass
+class MongoDBConfig:
+    host: Optional[str] = os.getenv("MONGODB_HOST")
+    port: Optional[str] = os.getenv("MONGODB_PORT")
+    database: Optional[str] = os.getenv("DATABASE")
+    url: str = f"mongodb://{host}:{port}"
+
+@dataclass
+class S3Config:
+    access_key: Optional[str] = os.getenv("S3_ACCESS_KEY")
+    secret_key: Optional[str] = os.getenv("S3_SECRET_KEY")
+    bucket_name: Optional[str] = os.getenv("S3_BACKET_NAME")
 
 @dataclass
 class DatabaseConfig:
@@ -77,6 +89,8 @@ class Configuration:
     yandex_api = YandexAPIConfig()
     db = DatabaseConfig()
     app = AppConfig()
+    mongo_db = MongoDBConfig()
+    s3 = S3Config()
     auth_jwt: AuthJWTConfig = AuthJWTConfig()
 
 
