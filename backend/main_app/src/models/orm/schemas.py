@@ -50,7 +50,7 @@ class Category(Base):
 class Restaurant(Base):
     __tablename__ = 'restaurants'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     owner_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('users.id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     main_photo: Mapped[str] = mapped_column(String(1000), nullable=False)

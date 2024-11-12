@@ -1,4 +1,8 @@
+from typing import Optional
+
+from geoalchemy2 import Geometry
 from pydantic import BaseModel
+from sqlalchemy import JSON
 
 
 class RestaurantRequestUsingGeoPoint(BaseModel):
@@ -8,13 +12,34 @@ class RestaurantRequestUsingGeoPointAndName(BaseModel):
     ...
 
 class RestaurantRequestUsingOwner(BaseModel):
-    ...
+    owner_id: int
 
 class RestaurantRequestUsingID(BaseModel):
-    ...
+    rest_id: int
 
 class RestaurantRequestFullModel(BaseModel):
-    ...
+    id: Optional[int]
+    owner_id: int
+    name: str
+    main_photo: str
+    photos: list[str]
+    ext_serv_link_1: str
+    ext_serv_link_2: str
+    ext_serv_link_3: str
+    ext_serv_rank_1: float
+    ext_serv_rank_2: float
+    ext_serv_rank_3: float
+    ext_serv_reviews_1: int
+    ext_serv_reviews_2: int
+    ext_serv_reviews_3: int
+    tg_link: str
+    inst_link: str
+    vk_link: str
+    orig_phone: str
+    wapp_phone: str
+    location: int #Geometry(geometry_type='POINT', srid=4326)
+    address: int #JSON
+    categories: list[int]
 
 class RestaurantResponse(BaseModel):
     ...
