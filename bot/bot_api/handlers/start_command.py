@@ -3,10 +3,10 @@ from venv import logger
 from telegram import Update, Message
 from telegram.ext import CallbackContext, CommandHandler
 
-from bot.buttons.menu_button_miniapp import menu_bottom_miniapp
+from bot.bot_api.buttons.menu_button_miniapp import menu_bottom_miniapp
 
-from bot.keyboards.start_keyboard import start_keyboard
-from bot.bot_utils.logger import start_logger
+from bot.bot_api.keyboards.start_keyboard import start_keyboard
+from bot.bot_api.bot_utils.logger import start_logger
 
 response_text = "Привет дружок"
 
