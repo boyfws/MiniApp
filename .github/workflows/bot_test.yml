@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: '3.10'
 
     - name: Install dependencies
       run: |
@@ -32,7 +32,7 @@ jobs:
       run: |
         pip install pytest
 
-    - name: Run mypy for bot 
+    - name: Run mypy for bot
       run: |
         mypy --strict bot
       continue-on-error: true
@@ -40,7 +40,7 @@ jobs:
 
     - name: Run test for bot 
       run: |
-        pytest bot
+        pytest bot/tests
       continue-on-error: true
 
 
