@@ -5,13 +5,10 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 
 -- Tables
-CREATE TABLE log_actions (
-    id SMALLSERIAL 
-       PRIMARY KEY,
-
-    description VARCHAR(255) 
-                UNIQUE
-                NOT NULL
+CREATE TABLE owners (
+    id BIGINT 
+    PRIMARY KEY
+    -- Выносим как отдельную сущность так как может понадобиться доп инфа специфичная для владельца в будущем 
 );
 
 
@@ -44,7 +41,7 @@ CREATE TABLE restaurants (
     id SERIAL 
        PRIMARY KEY,
     owner_id BIGINT 
-            REFERENCES users(id)
+            REFERENCES owners(id)
             ON DELETE RESTRICT -- Доп защита, так как удалние пользоавтелей не предусмотрено
             ON UPDATE RESTRICT
             NOT NULL,
@@ -92,39 +89,6 @@ CREATE INDEX idx_location_search On restaurants USING SPGiST (location);
 
 
 
-CREATE TABLE user_activity_logs (
-    id BIGSERIAL 
-       PRIMARY KEY,
-
-    user_id BIGINT 
-            REFERENCES users(id)
-            ON DELETE RESTRICT -- Доп защита, так как удалние пользоавтелей не предусмотрено 
-            ON UPDATE RESTRICT
-            NOT NULL,
-
-    log_time BIGINT 
-             NOT NULL, -- UNIX timestamp GMT+0
-
-    action_id SMALLINT 
-              REFERENCES log_actions(id) 
-              ON DELETE RESTRICT  -- Доп защита, так как удалние действий - рекдая операция, меняющая систему и необходимо вручную очистить логи
-              ON UPDATE RESTRICT
-              NOT NULL,
-
-    cat_link SMALLINT 
-             REFERENCES categories(id)
-             ON DELETE RESTRICT -- Доп защита, так как удалние категорий - рекдая операция, меняющая систему и необходимо вручную очистить логи
-             ON UPDATE RESTRICT,
-
-    restaurant_link INTEGER 
-                    REFERENCES restaurants(id) 
-                    ON DELETE CASCADE
-                    ON UPDATE RESTRICT
-);
-
-
-
-
 CREATE TABLE city (
     id SERIAL 
        PRIMARY KEY,
@@ -133,74 +97,45 @@ CREATE TABLE city (
          NOT NULL
 );
 
-CREATE INDEX idx_city_name ON city USING HASH (name);
-
-
 
 
 CREATE TABLE district (
-    id SERIAL 
+    id BIGSERIAL 
        PRIMARY KEY,
-    name VARCHAR(255)
-         UNIQUE
-         NOT NULL
+    city_id INTEGER 
+            REFERENCES city(id)
+            NOT NULL,
+    name VARCHAR(255),
+    CONSTRAINT district_city_name_unique_comb UNIQUE (city_id, name)
 );
-
-CREATE INDEX idx_district_name ON district USING HASH (name);
-
 
 
 CREATE TABLE street (
-    id SERIAL  
+    id BIGSERIAL  
        PRIMARY KEY,
+    district_id BIGINT
+                REFERENCES district(id)
+                ON UPDATE CASCADE,
     name VARCHAR(255)
-         UNIQUE
-         NOT NULL
+    -- Ограничение не накалдывается, так как если район undefined может
+    -- возникинуть ситуация при которой, есть две динаковые улица    
 );
 
-CREATE INDEX idx_street_name ON street USING HASH (name);
+CREATE INDEX idx_street_name ON street(name);
 
 
 
-
--- !!! IMPORTANT NOTE: Тут может возникнуть ситуация что при пустом district 
--- при одинаковых city street и house будут разные location. Это необходимо учитывать 
--- при добавлении ссылки в таблицу addresses_for_user. Ппри нахождении нескольких id 
--- с одинаковыми парметрами city, street, house и пустым district необходимо сверить еще и локацию.
--- Для быстрого поиска и вставки id в таблицу addresses_for_user строится индекс на наборе  
--- (city, district, street, house)
 CREATE TABLE address (
     id BIGSERIAL 
        PRIMARY KEY,
-
-    city INTEGER
-         REFERENCES city(id)
-         ON DELETE RESTRICT
-         ON UPDATE RESTRICT
-         NOT NULL,
-
-    district INTEGER                              
-             REFERENCES district(id) 
-             ON DELETE RESTRICT
-             ON UPDATE RESTRICT
-             NOT NULL,
-             -- Район может быть пустым но тогда он ссылается на пустую строку (API модет возрашать пустой район)
-
-    street INTEGER 
-           REFERENCES street(id)
-           ON DELETE RESTRICT
-           ON UPDATE RESTRICT
-           NOT NULL,
-            -- Улица может быть пустой но тогда она ссылается на пустую строку (Пользоавтелю для поиска достаточно города)
+    street_id BIGINT 
+              REFERENCES street(id)
+              NOT NULL,
     house SMALLINT,
 
     location GEOGRAPHY(POINT, 4326) --lon lat
              NOT NULL 
 );
-
--- B-tree index 
-CREATE INDEX idx_address_composite ON address (city, district, street, house);
-
 
 
 CREATE TABLE addresses_for_user (
@@ -258,68 +193,6 @@ CREATE TABLE fav_rest_for_user (
 );
 
 CREATE INDEX idx_fav_rest_for_user_user_id ON fav_rest_for_user USING HASH (user_id);
-
-
-
--- Procedures 
-
-CREATE OR REPLACE PROCEDURE update_empty_districts(distance_threshold FLOAT)
-SECURITY INVOKER
-AS $$
-DECLARE
-    empty_address RECORD;
-    full_address RECORD;
-BEGIN
-    -- Находим все адреса с пустым district и непустым street
-    FOR empty_address IN (SELECT * FROM address WHERE 
-                            district = (
-                                       SELECT id FROM district WHERE name = '' -- Обязательно должны существовать эти элемент
-                                       )
-                            AND 
-                            street != (
-                                      SELECT id FROM street WHERE name = '' -- Обязательно должны существовать эти элементы 
-                                      ) 
-                            -- Значения точно уникальны (исходя из условий в street, district)
-                        ) 
-    LOOP
-            -- Находим соответствующий адрес с заполненным district
-        FOR full_address IN (SELECT * FROM address WHERE 
-                                district != (
-                                            SELECT id FROM district WHERE name = ''
-                                            )
-                                -- Значение точно уникально
-                                AND 
-                                ST_Distance(empty_address.location, location) <= distance_threshold
-                                AND 
-                                city = empty_address.city
-                                AND 
-                                street = empty_address.street
-                                AND 
-                                (house = empty_address.house 
-                                OR (
-                                    house IS NULL 
-                                    AND 
-                                    empty_address.house IS NULL
-                                    )
-                                )
-                            ) 
-        LOOP
-                -- Обновляем ссылки в таблице user_address
-            UPDATE addresses_for_user
-            SET address_id = full_address.id
-            WHERE address_id = empty_address.id;
-
-             -- Удаляем старый адрес с пустым district
-            DELETE FROM address
-            WHERE id = empty_address.id;
-
-        END LOOP;
-
-
-    END LOOP;
-END;
-$$ LANGUAGE plpgsql;
-
 
 
 
@@ -430,12 +303,6 @@ EXECUTE FUNCTION update_location();
 CREATE USER backend WITH 
     PASSWORD '${BACKEND_PASSWORD}'
     CONNECTION LIMIT 1;
-CREATE USER clearing_trigger WITH 
-    PASSWORD '${CLEARING_TRIGGER_PASSWORD}'
-    CONNECTION LIMIT 1;
-CREATE USER logger WITH 
-    PASSWORD '${LOGGER_PASSWORD}'
-    CONNECTION LIMIT 1;
 CREATE USER reader WITH 
     PASSWORD '${READER_PASSWORD}'
     CONNECTION LIMIT 10;
@@ -487,52 +354,6 @@ ON
 TO backend;
 
 
-
- --clearing_trigger
--- Даем права на подключение и процедуру
-GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO clearing_trigger;
-GRANT USAGE ON SCHEMA public TO backend;
-
-GRANT EXECUTE ON PROCEDURE update_empty_districts(FLOAT) TO clearing_trigger;
--- Даем права на обновление и удаление для выполнение процедуры
-GRANT 
-    SELECT, 
-    UPDATE, 
-    DELETE 
-ON 
-    public.address 
-TO clearing_trigger;
-
-GRANT 
-    SELECT, 
-    UPDATE 
-ON 
-    public.addresses_for_user 
-TO clearing_trigger;
-
-GRANT 
-    SELECT 
-ON 
-    public.district,
-    public.street 
-TO clearing_trigger;
-
-
-
- --logger
-GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO logger;
-GRANT USAGE ON SCHEMA public TO backend;
-
-GRANT INSERT ON public.user_activity_logs TO logger;
-GRANT SELECT ON 
-    public.users,
-    public.log_actions, 
-    public.categories,
-    public.restaurants  
-TO logger;
-
-
-
  --reader
 GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO reader;
 GRANT USAGE ON SCHEMA public TO reader;
@@ -545,10 +366,6 @@ GRANT SELECT ON TABLES TO reader;
 
 
 -- Insertions
----!!!! City всегда непустой 
-INSERT INTO district (name) VALUES ('');
-INSERT INTO street (name) VALUES ('');
-
 INSERT INTO categories (name) VALUES 
 ('Бургеры'),
 ('Суши'),
