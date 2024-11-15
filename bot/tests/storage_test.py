@@ -30,19 +30,19 @@ def event_loop():
         loop.close()
 
 
-async def cleanup_redis(loop):
+async def cleanup_redis(loop) -> None:
     global redis
     if redis:
         await redis.flushall()  # Чистим всю бд
         await redis.close()
 
 
-def test_wrong_database():
+def test_wrong_database() -> None:
     with pytest.raises(ValueError) as e:
         Storage(10)
 
 
-def test_normal_database():
+def test_normal_database() -> None:
     Storage(redis)
 
 
@@ -54,7 +54,7 @@ def test_normal_database():
                          )
                          )
 @pytest.mark.asyncio
-async def test_non_str_key(key):
+async def test_non_str_key(key) -> None:
     db = Storage(redis)
     with pytest.raises(ValueError) as e:
         await db.add_dict(key, 20)
@@ -64,7 +64,7 @@ async def test_non_str_key(key):
 
 
 @pytest.mark.asyncio
-async def test_non_int_lifetime():
+async def test_non_int_lifetime() -> None:
     db = Storage(redis)
     lifetime = 100.1
     with pytest.raises(ValueError) as e:
@@ -73,7 +73,7 @@ async def test_non_int_lifetime():
 
 
 @pytest.mark.asyncio
-async def test_same_dict_creation():
+async def test_same_dict_creation() -> None:
     db = Storage(redis)
     await db.add_dict("Papa", 10)
     with pytest.raises(ValueError) as e:
@@ -82,7 +82,7 @@ async def test_same_dict_creation():
 
 
 @pytest.mark.asyncio
-async def test_del_dict():
+async def test_del_dict() -> None:
     db = Storage(redis)
     await db.add_dict("Mama", 10)
     count = await db.del_dict("Mama")
@@ -91,7 +91,7 @@ async def test_del_dict():
 
 
 @pytest.mark.asyncio
-async def test_to_add_value_without_init():
+async def test_to_add_value_without_init() -> None:
     with pytest.raises(ValueError) as e:
         await Storage(redis).add_values_to_dict("papa", {"dada": 1})
 
@@ -99,7 +99,7 @@ async def test_to_add_value_without_init():
 
 
 @pytest.mark.asynco
-async def test_all_available_data_types():
+async def test_all_available_data_types() -> None:
     data = {"int": 1,
             "float": 1.21,
             "str": "abaoba",
@@ -121,7 +121,7 @@ async def test_all_available_data_types():
         ({1: "dsa", "dad": 3})
 ))
 @pytest.mark.asynco
-async def test_wrong_data_type(data):
+async def test_wrong_data_type(data) -> None:
     db = Storage(redis)
     await db.add_dict("dada_aaa", 1000)
     with pytest.raises(ValueError) as e:
@@ -131,7 +131,7 @@ async def test_wrong_data_type(data):
 
 
 @pytest.mark.asynco
-async def test_ndarray():
+async def test_ndarray() -> None:
     db = Storage(redis)
     data = [[212, 121], "esda"]
     await db.add_dict("dada_aaa", 1000)
@@ -142,7 +142,7 @@ async def test_ndarray():
 
 
 @pytest.mark.asynco
-async def test_lifetime_arg():
+async def test_lifetime_arg() -> None:
     db = Storage(redis)
     key = "adadadada"
     data = {"lifetime": "dada"}
@@ -153,7 +153,7 @@ async def test_lifetime_arg():
 
 
 @pytest.mark.asynco
-async def test_autodelete():
+async def test_autodelete() -> None:
     db = Storage(redis)
     key = "dada_aaa"
     data = {"dada": "dada"}
@@ -166,7 +166,7 @@ async def test_autodelete():
 
 
 @pytest.mark.asynco
-async def test_refresh_time_for_autodelete():
+async def test_refresh_time_for_autodelete() -> None:
     db = Storage(redis)
     key = "key_one_more"
     data1 = {"dada": "dada"}
@@ -184,7 +184,7 @@ async def test_refresh_time_for_autodelete():
 
 
 @pytest.mark.asynco
-async def test_delete_inside_dict():
+async def test_delete_inside_dict() -> None:
     data = {"int": 1,
             "float": 1.21,
             "str": "abaoba",
@@ -206,7 +206,7 @@ async def test_delete_inside_dict():
 
 
 @pytest.mark.asynco
-async def test_get_values_from_empty_dict():
+async def test_get_values_from_empty_dict() -> None:
     db = Storage(redis)
     with pytest.raises(ValueError) as e:
         await db.get_values_from_dict("dadadada", ["1", "2", "3"])
@@ -214,7 +214,7 @@ async def test_get_values_from_empty_dict():
 
 
 @pytest.mark.asynco
-async def test_get_values_from_empty_keys():
+async def test_get_values_from_empty_keys() -> None:
     data = {"int": 1,
             "float": 1.21,
             "str": "abaoba",
