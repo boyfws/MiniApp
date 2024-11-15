@@ -1,10 +1,21 @@
 from dataclasses import dataclass
 
 
+def get_text_for_rest_mes(name: str,
+                          city: str,
+                          street: str,
+                          house: str) -> str:
+    return \
+        f"""
+    Вы находитесь на странице управления рестораном {name} по адресу\nг.{city} ул.{street} дом.{house}\nОпции: 
+        """
+
+
 @dataclass(frozen=True)
 class TextForMessages:
     start: str = "Привет медвед"
     rest_management: str = "Привет, ты перешел на страницу для управления ресторанами"
+    get_text_for_rest_mes: callable = get_text_for_rest_mes
 
 
-TEXT = TextForMessages()
+TEXT_FOR_MESSAGES = TextForMessages()

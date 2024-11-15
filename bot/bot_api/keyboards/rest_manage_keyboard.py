@@ -1,4 +1,3 @@
-from bot.bot_api.buttons.back_from_rest_manage import back_from_rest_main
 from bot.bot_api.buttons.create_new_rest import create_new_rest
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from typing import List, Tuple, Union
@@ -23,5 +22,5 @@ def get_rest_man_keyboard(rest_data: List[
         for el in rest_data
     ]
     return InlineKeyboardMarkup(
-        [[back_from_rest_main]] + rest_buttons + [[create_new_rest]]
+         rest_buttons + [[create_new_rest]]
     )
