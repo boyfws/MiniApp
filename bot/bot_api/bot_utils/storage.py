@@ -135,7 +135,7 @@ class Storage:
         del return_dict["lifetime"]
         return return_dict
 
-    async def del_values_from_dict(self, key: str, data_to_del: List[str]) -> None:
+    async def del_values_from_dict(self, key: str, data_to_del: List[str]) -> int:
         """
         Удаляет ключи в словаре доступном по key
         :param key:
