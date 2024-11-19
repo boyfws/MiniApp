@@ -7,3 +7,4 @@ logging.basicConfig(
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 start_logger = logging.getLogger("start_command")
+error_handler_logger = logging.getLogger("error_handler")

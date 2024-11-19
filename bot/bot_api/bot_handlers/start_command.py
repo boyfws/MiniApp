@@ -1,7 +1,7 @@
 from telegram import Update
-from telegram.ext import ContextTypes, CommandHandler, filters
+from telegram.ext import ContextTypes, CommandHandler
 
-from bot.bot_api.buttons.menu_button_miniapp import menu_bottom_miniapp
+from bot.bot_api.keyboards.buttons import menu_bottom_miniapp
 
 from bot.bot_api.bot_utils.logger import start_logger
 from bot.bot_api.callback_handlers.send_start_message import send_start_message

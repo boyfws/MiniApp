@@ -1,6 +1,6 @@
 from telegram import Bot
 
-from bot.bot_api.keyboards.start_keyboard import start_keyboard
+from bot.bot_api.keyboards.keyboards import start_keyboard
 from bot.bot_api.config.message_text import TEXT_FOR_MESSAGES
 
 

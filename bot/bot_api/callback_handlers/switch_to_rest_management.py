@@ -2,10 +2,10 @@ from telegram import CallbackQuery, Bot
 
 from bot.bot_api.config.callback_names import CallbackNames
 
-from bot.bot_api.keyboards.back_to_message import back_to_this_message_keyboard
+from bot.bot_api.keyboards.keyboards import back_to_this_message_keyboard
 
 from bot.bot_api.config.message_text import TEXT_FOR_MESSAGES
-from bot.bot_api.keyboards.rest_manage_keyboard import get_rest_man_keyboard
+from bot.bot_api.keyboards.keyboards import get_rest_man_keyboard
 
 from bot.bot_api.external_api.get_user_rest import get_user_rest
 
