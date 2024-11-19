@@ -49,6 +49,7 @@ class DatabaseConfig:
     """Database connection variables."""
 
     name: Optional[str] = os.getenv('POSTGRES_DATABASE')
+    test_name: Optional[str] = os.getenv("TEST_DATABASE")
     user: Optional[str] = os.getenv('POSTGRES_USER')
     password: Optional[str] = os.getenv('POSTGRES_PASSWORD', None)
     port: int = int(os.getenv('POSTGRES_PORT', 5432))
@@ -56,6 +57,18 @@ class DatabaseConfig:
 
     driver: str = 'asyncpg'
     database_system: str = 'postgresql'
+
+    def build_testdb_connection_str(self) -> str:
+        """Подключение к тестовой базе"""
+
+        return URL.create(
+            drivername=f'{self.database_system}+{self.driver}',
+            username=self.user,
+            database=self.test_name,
+            password=self.password,
+            port=self.port,
+            host=self.host,
+        ).render_as_string(hide_password=False)
 
     def build_connection_str(self) -> str:
         """This function build a connection string."""

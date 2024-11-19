@@ -8,23 +8,19 @@ class AddressesForUserService:
         self.repo = AddressForUserRepo()
 
     async def delete(self, model: AddressForUserDTO) -> AddressesResponse:
-        async with get_session() as session:
-            return await self.repo.delete(session, model)
+        return await self.repo.delete(model)
 
     async def create(self, model: AddressForUserDTO) -> AddressesResponse:
-        async with get_session() as session:
-            return await self.repo.create(session, model)
+        return await self.repo.create(model)
 
     async def get_all_user_fav_restaurants(
             self,
             model: AllAddressesForUser
     ) -> list[AddressesResponse]:
-        async with get_session() as session:
-            return await self.repo.get_all_user_addresses(session, model)
+        return await self.repo.get_all_user_addresses(model)
 
     async def drop_all_user_fav_restaurants(
             self,
             model: AllAddressesForUser
     ) -> AddressesResponse:
-        async with get_session() as session:
-            return await self.repo.drop_all_user_addresses(session, model)
+        return await self.repo.drop_all_user_addresses(model)

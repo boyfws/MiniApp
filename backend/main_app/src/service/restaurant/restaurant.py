@@ -1,7 +1,5 @@
-from src.database.sql_session import get_session
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
-    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPoint, RestaurantResponse, \
-    RestaurantRequestUsingGeoPointAndName
+    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPoint, RestaurantRequestUsingGeoPointAndName
 from src.repository.restaurant.restaurant import RestaurantRepo
 
 
@@ -12,47 +10,40 @@ class RestaurantService:
             self,
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
-        async with get_session() as session:
-            return await self.repo.create(session, model)
+        return await self.repo.create(model)
 
     async def delete(
             self,
             model: RestaurantRequestUsingID
     ) -> RestaurantResult:
-        async with get_session() as session:
-            return await self.repo.delete(session, model)
+        return await self.repo.delete(model)
 
     async def update(
             self,
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
-        async with get_session() as session:
-            return await self.repo.update(session, model)
+        return await self.repo.update(model)
 
     async def get(
             self,
             model: RestaurantRequestUsingID
     ) -> RestaurantRequestFullModel:
-        async with get_session() as session:
-            return await self.repo.get(session, model)
+        return await self.repo.get(model)
 
     async def get_by_owner(
             self,
             model: RestaurantRequestUsingOwner
     ) -> list[RestaurantRequestFullModel]:
-        async with get_session() as session:
-            return await self.repo.get_by_owner(session, model)
+        return await self.repo.get_by_owner(model)
 
     async def get_by_geo(
             self,
             model: RestaurantRequestUsingGeoPoint
     ) -> list[RestaurantRequestFullModel]:
-        async with get_session() as session:
-            return await self.repo.get_by_geo(session, model)
+        return await self.repo.get_by_geo(model)
 
     async def get_by_geo_and_name(
             self,
             model: RestaurantRequestUsingGeoPointAndName
     ) -> list[RestaurantRequestFullModel]:
-        async with get_session() as session:
-            return await self.repo.get_by_geo_and_name(session, model)
+        return await self.repo.get_by_geo_and_name(model)
