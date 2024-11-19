@@ -8,6 +8,7 @@ class NamesForCallback:
     start: str = "START"
     block: str = "BLOCK"
     show_rest_info: str = "SRI"
+    stop_rest_adding: str = "SRA"
 
 
 # Кнопки связанные с ресторанами передаются в формате callback:id

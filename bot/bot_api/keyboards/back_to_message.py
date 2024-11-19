@@ -1,4 +1,4 @@
-from bot.bot_api.buttons_text import TEXT_FOR_BUTTONS
+from bot.bot_api.config.buttons_text import TEXT_FOR_BUTTONS
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 

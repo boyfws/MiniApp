@@ -1,10 +1,10 @@
 from telegram import Update
-from telegram.ext import ContextTypes, CommandHandler
+from telegram.ext import ContextTypes, CommandHandler, filters
 
 from bot.bot_api.buttons.menu_button_miniapp import menu_bottom_miniapp
 
 from bot.bot_api.bot_utils.logger import start_logger
-from bot.bot_api.callback_hadlers.send_start_message import send_start_message
+from bot.bot_api.callback_handlers.send_start_message import send_start_message
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -14,7 +14,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     if update.effective_chat is None or update.message is None or update.message.from_user is None:
         return None
-    
+
     chat_id = update.effective_chat.id
     bot = context.bot
 

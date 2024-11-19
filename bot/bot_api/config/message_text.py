@@ -17,6 +17,7 @@ class TextForMessages:
     start: str = "Привет медвед"
     rest_management: str = "Привет, ты перешел на страницу для управления ресторанами"
     get_text_for_rest_mes: Callable[[str, str, str, str], str] = get_text_for_rest_mes
+    start_init_rest: str = "Вы начали создание ресторана, пока вы находитесь в процессе добавления свойств ресторана прочие кнопки станут некликабельными"
 
 
 TEXT_FOR_MESSAGES = TextForMessages()

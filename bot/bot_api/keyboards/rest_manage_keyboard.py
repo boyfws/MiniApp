@@ -2,11 +2,11 @@ from bot.bot_api.buttons.create_new_rest import create_new_rest
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from typing import List, Tuple
 
-from bot.bot_api.bot_config import MAX_INLINE_BUTTON_LEN
+from bot.bot_api.config.bot_config import MAX_INLINE_BUTTON_LEN
 
 from bot.bot_api.bot_utils.truncate_text import truncate_text
 
-from bot.bot_api.callback_names import CallbackNames
+from bot.bot_api.config.callback_names import CallbackNames
 
 
 def get_rest_man_keyboard(rest_data: List[

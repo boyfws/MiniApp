@@ -2,14 +2,13 @@ from telegram.ext import CallbackQueryHandler, ContextTypes
 from telegram import Update, CallbackQuery, Message
 from typing import cast
 
-from bot.bot_api.callback_names import CallbackNames
+from bot.bot_api.config.callback_names import CallbackNames
 
-from bot.bot_api.buttons_text import TEXT_FOR_BUTTONS
+from bot.bot_api.config.buttons_text import TEXT_FOR_BUTTONS
 
-from bot.bot_api.callback_hadlers.switch_to_rest_management import switch_to_rest_management
-from bot.bot_api.callback_hadlers.create_new_rest import create_new_rest
-from bot.bot_api.callback_hadlers.send_start_message import send_start_message
-from bot.bot_api.callback_hadlers.show_rest_info import show_rest_info
+from bot.bot_api.callback_handlers.switch_to_rest_management import switch_to_rest_management
+from bot.bot_api.callback_handlers.send_start_message import send_start_message
+from bot.bot_api.callback_handlers.show_rest_info import show_rest_info
 
 
 async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -31,9 +30,10 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     chat_id = update.effective_chat.id
     bot = context.bot
+    user_id = update.effective_user.id
     await query.answer()
 
-    message = cast(Message, query.message) # Мы не удаляем сообщение, а оно не удалено, так как кнопка была нажата
+    message = cast(Message, query.message)  # Мы не удаляем сообщение, а оно не удалено, так как кнопка была нажата
 
     if message.reply_markup is None:
         return None
@@ -41,21 +41,18 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     first_button_text = message.reply_markup.inline_keyboard[0][0].text
     flag = first_button_text != TEXT_FOR_BUTTONS.back_to_message
 
-    if query.data is None: # Доп чек
+    if query.data is None:  # Доп чек
         return None
 
     match query.data:
         case CallbackNames.switch_to_rest_management:
-            await switch_to_rest_management(flag=flag, query=query, chat_id=chat_id, bot=bot)
-
-        case CallbackNames.create_new_rest:
-            await create_new_rest(flag=flag, query=query, chat_id=chat_id, bot=bot)
+            await switch_to_rest_management(flag=flag, query=query, chat_id=chat_id, bot=bot, user_id=user_id)
 
         case CallbackNames.start:
             await send_start_message(chat_id=chat_id, bot=bot)
 
     if ":" in query.data:
-        # Чекаем колбэки с данными
+        # Чекаем колбэки с доп данными
         try:
             callback_name, arg = query.data.split(":")
         except ValueError:
@@ -69,4 +66,4 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         await query.edit_message_reply_markup(reply_markup=None)
 
 
-callback_query = CallbackQueryHandler(process_callback)
+callback_query = CallbackQueryHandler(process_callback, block=False)

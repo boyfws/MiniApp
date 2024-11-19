@@ -8,6 +8,7 @@ class TextForButtons:
     menu_button: str = "Что-то"
     create_new_rest: str = "Добавить новый ресторан"
     back_to_message: str = "Вернуться сюда"
+    stop_rest_adding: str = "Отменить и удалить все"
 
 
 TEXT_FOR_BUTTONS = TextForButtons()

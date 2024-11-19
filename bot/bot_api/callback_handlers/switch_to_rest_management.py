@@ -1,17 +1,18 @@
 from telegram import CallbackQuery, Bot
 
-from bot.bot_api.callback_names import CallbackNames
+from bot.bot_api.config.callback_names import CallbackNames
 
 from bot.bot_api.keyboards.back_to_message import back_to_this_message_keyboard
 
-from bot.bot_api.message_text import TEXT_FOR_MESSAGES
+from bot.bot_api.config.message_text import TEXT_FOR_MESSAGES
 from bot.bot_api.keyboards.rest_manage_keyboard import get_rest_man_keyboard
 
+from bot.bot_api.external_api.get_user_rest import get_user_rest
 
-async def switch_to_rest_management(flag: bool, query: CallbackQuery, chat_id: int, bot: Bot) -> None:
-    # Запрашиваем данные
-    example_data = [("Уебар", 1), ("ДЛИИИИИИИИИИИИИИИИИИИИИИННННАЯ ХУИТА", 2), ("sdada", 0)]
-    rest_manage_keyboard = get_rest_man_keyboard(example_data)
+
+async def switch_to_rest_management(flag: bool, query: CallbackQuery, chat_id: int, bot: Bot, user_id: int) -> None:
+    rest_for_user = await get_user_rest(user_id=user_id)
+    rest_manage_keyboard = get_rest_man_keyboard(rest_for_user)
     await bot.send_message(chat_id=chat_id,
                            text=TEXT_FOR_MESSAGES.rest_management,
                            reply_markup=rest_manage_keyboard)
