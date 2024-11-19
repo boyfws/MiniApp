@@ -20,12 +20,30 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
     sleep 2
   done
 
+  echo "Создание тестовой базы данных..."
+  gosu postgres psql -U "$POSTGRES_USER" -c "CREATE DATABASE \"${TEST_DB_NAME}\";"
+
+
+  if [ -f /roles.sql ]; then
+    echo "Создаются пользоавтели"
+    envsubst < /roles.sql > /tmp/processed_roles.sql
+    chown postgres:postgres /tmp/processed_roles.sql # Отдаем права на выполнение
+    gosu postgres psql -U "$POSTGRES_USER" -f /tmp/processed_roles.sql
+  fi
+
+
   # Замена переменных и выполнение init.sql
   if [ -f /init.sql ]; then
     echo "Выполняется /init.sql..."
     envsubst < /init.sql > /tmp/processed_init.sql
     chown postgres:postgres /tmp/processed_init.sql
     gosu postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /tmp/processed_init.sql
+  fi
+
+
+  if [ -f /init.sql ]; then
+    echo "Выполняется /init.sql для тестовой базы данных..."
+    gosu postgres psql -U "$POSTGRES_USER" -d "$TEST_DB" -f /tmp/processed_init.sql
   fi
 
   # Остановка сервера

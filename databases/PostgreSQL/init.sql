@@ -299,19 +299,11 @@ EXECUTE FUNCTION update_location();
 
 
 
--- Users
-CREATE USER backend WITH 
-    PASSWORD '${BACKEND_PASSWORD}'
-    CONNECTION LIMIT 1;
-CREATE USER reader WITH 
-    PASSWORD '${READER_PASSWORD}'
-    CONNECTION LIMIT 10;
-
+-- Пользоавтели уже созданы до этого 
 
 
 -- Roots
  -- backend
-GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO backend;
 GRANT USAGE ON SCHEMA public TO backend;
 
 GRANT 
@@ -354,8 +346,16 @@ ON
 TO backend;
 
 
+-- Если мы находимся в тестовой базе, даем доступ бэку на последоавтельности для удобства тестов 
+DO $$
+BEGIN
+    IF current_database() = '${TEST_DB_NAME}' THEN
+        GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO backend;
+    END IF;
+END $$;
+
+
  --reader
-GRANT CONNECT ON DATABASE "${POSTGRES_DB}" TO reader;
 GRANT USAGE ON SCHEMA public TO reader;
 
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO reader;
