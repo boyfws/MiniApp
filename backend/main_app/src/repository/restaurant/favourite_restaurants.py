@@ -1,4 +1,9 @@
+from contextlib import _AsyncGeneratorContextManager
+from typing import Callable, AsyncGenerator
+
 from sqlalchemy import select, insert, delete
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.database.sql_session import get_session
 from src.models.dto.favourites import (FavouriteRestaurantResponse, FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
 from src.models.orm.schemas import FavRestForUser
@@ -6,8 +11,11 @@ from src.models.orm.schemas import FavRestForUser
 
 class FavouriteRestaurantRepo:
 
-    def __init__(self) -> None:
-        self.model: FavRestForUser = FavRestForUser()
+    def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]] = get_session):
+        """
+        :session_getter Нужно передать коннектор к базе данных
+        """
+        self.session_getter = session_getter
 
     async def delete(
             self,

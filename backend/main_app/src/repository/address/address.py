@@ -1,27 +1,25 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import insert, delete
-
-from src.database.sql_session import get_session
 from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
 from src.models.orm.schemas import Address, City, District, Street
+from src.repository.interface import TablesRepositoryInterface
 
 
-class AddressRepo:
+class AddressRepo(TablesRepositoryInterface):
 
-    @staticmethod
     async def delete(
+            self,
             model: AddressRequest
     ) -> AddressResult:
-        async with get_session() as session:
+        async with self.session_getter() as session:
             stmt = delete(Address).where(Address.id == model.id)
             await session.execute(stmt)
             return AddressResult(id=model.id)
 
-    @staticmethod
     async def add_address(
+            self,
             model: AddressDTO
     ) -> AddressResult:
-        async with get_session() as session:
+        async with self.session_getter() as session:
             city_stmt = insert(City).values(name=model.city).returning(City.id)
             city_id = await session.execute(city_stmt)
 

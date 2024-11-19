@@ -1,3 +1,6 @@
+from contextlib import _AsyncGeneratorContextManager
+from typing import Callable, AsyncGenerator
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update
 
@@ -9,6 +12,12 @@ from src.models.dto.restaurant import (RestaurantRequestUsingGeoPoint, Restauran
 from src.models.orm.schemas import Restaurant
 
 class RestaurantRepo:
+
+    def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]] = get_session):
+        """
+        :session_getter Нужно передать коннектор к базе данных
+        """
+        self.session_getter = session_getter
 
     async def create(
             self,

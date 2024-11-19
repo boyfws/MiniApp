@@ -12,7 +12,7 @@ from src.api.v1.handlers.jwt_auth.helpers import (
     REFRESH_TOKEN_TYPE,
 )
 from src.auth import utils as auth_utils
-from src.models.dto.user import UserRequest, UserGetByUsername
+from src.models.dto.user import UserRequest, UserGetByUserid
 from src.service import get_user_service
 
 oauth2_scheme = OAuth2PasswordBearer(
@@ -51,7 +51,7 @@ def validate_token_type(
 async def get_user_by_token_sub(payload: dict[str, str]) -> UserRequest:
     username: str | None = payload.get("sub")
     service = get_user_service()
-    if user := await service.get_by_username(UserGetByUsername.model_validate(username, from_attributes=True)):
+    if user := await service.get_by_userid(UserGetByUserid.model_validate(username, from_attributes=True)):
         return user
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -95,6 +95,6 @@ async def validate_auth_user(
         detail="invalid username",
     )
     service = get_user_service()
-    if not (user := await service.get_by_username(UserGetByUsername.model_validate(username, from_attributes=True))):
+    if not (user := await service.get_by_userid(UserGetByUserid.model_validate(username, from_attributes=True))):
         return user
     raise un_authed_exc
