@@ -26,9 +26,6 @@ class User(Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
-    owner: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-
     # Relationships
     activities = relationship("UserActivityLog", back_populates="user")
     fav_categories = relationship("FavCatForUser", back_populates="user")
@@ -44,7 +41,7 @@ class Category(Base):
     name: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
 
     # Relationships
-    restaurants = relationship("Restaurant", secondary='restaurants_categories', back_populates="categories")
+    # restaurants = relationship("Restaurant", secondary='restaurants_categories', back_populates="categories")
 
 
 class Restaurant(Base):
