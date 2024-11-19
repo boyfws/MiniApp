@@ -9,6 +9,10 @@ from bot.bot_api.config.buttons_text import TEXT_FOR_BUTTONS
 from bot.bot_api.callback_handlers.switch_to_rest_management import switch_to_rest_management
 from bot.bot_api.callback_handlers.send_start_message import send_start_message
 from bot.bot_api.callback_handlers.show_rest_info import show_rest_info
+from bot.bot_api.callback_handlers.show_that_buttons_are_unav_while_add_rest import \
+    show_that_buttons_are_unav_while_add_rest as buttons_are_unav
+
+from bot.bot_api.bot_utils.logger import user_activity_logger, injection_notifier_logger
 
 
 async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -16,6 +20,7 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     Отвечает за нажатие всех кнопок кроме кнопок ресторанов
     """
     query = cast(CallbackQuery, update.callback_query)
+    await query.answer()
 
     if update.effective_chat is None:
         return None
@@ -31,7 +36,6 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     chat_id = update.effective_chat.id
     bot = context.bot
     user_id = update.effective_user.id
-    await query.answer()
 
     message = cast(Message, query.message)  # Мы не удаляем сообщение, а оно не удалено, так как кнопка была нажата
 
@@ -44,26 +48,51 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if query.data is None:  # Доп чек
         return None
 
+    if context.user_data['in_conversation']:
+        await buttons_are_unav(bot=bot, chat_id=chat_id)
+        return None
+
     match query.data:
         case CallbackNames.switch_to_rest_management:
             await switch_to_rest_management(flag=flag, query=query, chat_id=chat_id, bot=bot, user_id=user_id)
 
+            if flag:
+                user_activity_logger.info(f"Пользователь {user_id} перешел на страницу управления ресторанами")
+            else:
+                user_activity_logger.info(f"Пользователь {user_id} вернулся на старицу управления ресторанами")
+
         case CallbackNames.start:
             await send_start_message(chat_id=chat_id, bot=bot)
+
+            user_activity_logger.info(f"Пользователь вернулся на главную страницу")
 
     if ":" in query.data:
         # Чекаем колбэки с доп данными
         try:
             callback_name, arg = query.data.split(":")
         except ValueError:
+            injection_notifier_logger.warning(
+                f"От пользователя {user_id} поступил callback с двумя символами ':': {query.data}")
             return None
 
         match callback_name:
             case CallbackNames.show_rest_info:
-                await show_rest_info(query=query, flag=flag, bot=bot, chat_id=chat_id)
+                try:
+                    rest_id = int(arg)
+                except ValueError:
+                    injection_notifier_logger.warning(
+                        f"От пользователя {user_id} поступил callback с нечисловым id ресторана: {arg}")
+                    return None
 
+                await show_rest_info(query=query, flag=flag, bot=bot, chat_id=chat_id, rest_id=rest_id)
+
+                if flag:
+                    user_activity_logger.info(f"Пользователь {user_id} перешел на страницу ресторана {arg}")
+                else:
+                    user_activity_logger.info(f"Пользователь {user_id} вернулся на страницу ресторана")
     if not flag:
-        await query.edit_message_reply_markup(reply_markup=None)
+        await context.bot.delete_message(chat_id=chat_id, message_id=query.message.message_id)
 
 
-callback_query = CallbackQueryHandler(process_callback, block=False)
+callback_query = CallbackQueryHandler(process_callback, block=False, pattern=r'^[^_]+$')
+# Проверяем, что в строке нет _, чтобы не перехватывать чужие колбэки 

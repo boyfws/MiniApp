@@ -2,6 +2,7 @@ from bot.bot_api.keyboards.buttons import create_new_rest
 from bot.bot_api.keyboards.buttons import link_to_miniapp
 from bot.bot_api.keyboards.buttons import switch_to_rest_management
 from bot.bot_api.keyboards.buttons import stop_adding_rest
+from bot.bot_api.keyboards.buttons import switch_from_inheritance
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from typing import List, Tuple
@@ -55,3 +56,15 @@ stop_adding_rest_keyb = InlineKeyboardMarkup([
         stop_adding_rest
     ]
 ])
+
+
+def inheritance_keyboard(rest_data: List[
+    Tuple[str, int]
+]) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(text=truncate_text(el[0], MAX_INLINE_BUTTON_LEN),
+                                  callback_data=f"{CallbackNames.adding_rest_conv_mark}_{CallbackNames.inheritance_property_of_rest}:{el[1]}")]
+            for el in rest_data
+        ] + [[stop_adding_rest], [switch_from_inheritance]]
+    )

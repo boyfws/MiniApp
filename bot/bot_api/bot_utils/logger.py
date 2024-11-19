@@ -6,5 +6,6 @@ logging.basicConfig(
 # set higher logging level for httpx to avoid all GET and POST requests being logged
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
-start_logger = logging.getLogger("start_command")
 error_handler_logger = logging.getLogger("error_handler")
+user_activity_logger = logging.getLogger("user_act")
+injection_notifier_logger = logging.getLogger("injection_notifier")

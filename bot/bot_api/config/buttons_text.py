@@ -9,6 +9,7 @@ class TextForButtons:
     create_new_rest: str = "Добавить новый ресторан"
     back_to_message: str = "Вернуться сюда"
     stop_rest_adding: str = "Отменить и удалить все"
+    switch_from_inheritance: str = "Продолжить"
 
 
 TEXT_FOR_BUTTONS = TextForButtons()

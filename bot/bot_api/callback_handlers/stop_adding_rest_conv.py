@@ -3,4 +3,4 @@ from telegram.ext import ConversationHandler
 
 
 async def stop_adding_rest_conv() -> int:
-    return ConversationHandler.END
+    pass

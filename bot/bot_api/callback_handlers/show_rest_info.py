@@ -6,7 +6,7 @@ from bot.bot_api.config.callback_names import CallbackNames
 from bot.bot_api.keyboards.keyboards import back_to_this_message_keyboard
 
 
-async def show_rest_info(flag: bool, query: CallbackQuery, bot: Bot, chat_id: int) -> None:
+async def show_rest_info(flag: bool, query: CallbackQuery, bot: Bot, chat_id: int, rest_id: int) -> None:
     # Выполняются запросы к БД
 
     text = TEXT_FOR_MESSAGES.get_text_for_rest_mes("Eboba", "Москва", "Патриарши пруды", "8")

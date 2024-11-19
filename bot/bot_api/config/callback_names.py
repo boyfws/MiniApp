@@ -9,11 +9,14 @@ class NamesForCallback:
     block: str = "BLOCK"
     show_rest_info: str = "SRI"
     stop_rest_adding: str = "SRA"
+    adding_rest_conv_mark: str = "ARCV"
+    inheritance_property_of_rest: str = "IPOR"
+    switch_from_inheritance: str = "SFI"
 
 
-# Кнопки связанные с ресторанами передаются в формате callback:id
-# Блокирующие действия передаются в формате callback:BLOCK
 
-# Блокирующие действия - действия при обнаружении которых мы не даем нажимать другие кнопки
-
+"""
+Колбэки передаются в формате {conv_mark + _}{callback}:{extra_args}
+conv_mark позволяет отделить нажатия кнопок в рамках одного conversation от других, conv_mark - опциональный аргумент
+"""
 CallbackNames = NamesForCallback()
