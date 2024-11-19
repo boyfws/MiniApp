@@ -43,7 +43,7 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
 
   if [ -f /init.sql ]; then
     echo "Выполняется /init.sql для тестовой базы данных..."
-    gosu postgres psql -U "$POSTGRES_USER" -d "$TEST_DB" -f /tmp/processed_init.sql
+    gosu postgres psql -U "$POSTGRES_USER" -d "$TEST_DB_NAME" -f /tmp/processed_init.sql
   fi
 
   # Остановка сервера
