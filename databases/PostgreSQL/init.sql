@@ -15,10 +15,7 @@ CREATE TABLE owners (
 
 CREATE TABLE users (
     id BIGINT 
-       PRIMARY KEY,
-    owner BOOLEAN
-    NOT NULL
-    DEFAULT FALSE
+       PRIMARY KEY
 );
 
 
@@ -154,8 +151,6 @@ CREATE TABLE addresses_for_user (
     PRIMARY KEY (user_id, address_id)
 );
 
-CREATE INDEX idx_addresses_for_user_address_id ON addresses_for_user USING HASH (user_id);
-
 
 
 CREATE TABLE fav_cat_for_user (
@@ -173,8 +168,6 @@ CREATE TABLE fav_cat_for_user (
     PRIMARY KEY (user_id, cat_id)
 );
 
-CREATE INDEX idx_fav_cat_for_user_user_id ON fav_cat_for_user USING HASH (user_id);
-
 
 
 CREATE TABLE fav_rest_for_user (
@@ -191,8 +184,6 @@ CREATE TABLE fav_rest_for_user (
             NOT NULL,
     PRIMARY KEY (user_id, rest_id)
 );
-
-CREATE INDEX idx_fav_rest_for_user_user_id ON fav_rest_for_user USING HASH (user_id);
 
 
 
