@@ -1,3 +1,5 @@
+from typing import no_type_check
+
 from sqlalchemy import insert, delete
 from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
 from src.models.orm.schemas import Address, City, District, Street
@@ -15,6 +17,7 @@ class AddressRepo(TablesRepositoryInterface):
             await session.execute(stmt)
             return AddressResult(id=model.id)
 
+    @no_type_check
     async def add_address(
             self,
             model: AddressDTO
