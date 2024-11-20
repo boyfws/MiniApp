@@ -20,6 +20,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./PostgreSQL/init.sql:/init.sql
       - ./PostgreSQL/roles.sql:/roles.sql
+      - ./PostgreSQL/roots.sql:/roots.sql
 
 volumes:
   postgres_data: # Креатим том для хранения базы данных

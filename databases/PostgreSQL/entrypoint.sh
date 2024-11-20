@@ -38,12 +38,19 @@ if [ ! -s "$PGDATA/PG_VERSION" ]; then
     envsubst < /init.sql > /tmp/processed_init.sql
     chown postgres:postgres /tmp/processed_init.sql
     gosu postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /tmp/processed_init.sql
+
+    echo "Выполняется /init.sql для тестовой базы данных..."
+    gosu postgres psql -U "$POSTGRES_USER" -d "$TEST_DB_NAME" -f /tmp/processed_init.sql
   fi
 
 
-  if [ -f /init.sql ]; then
-    echo "Выполняется /init.sql для тестовой базы данных..."
-    gosu postgres psql -U "$POSTGRES_USER" -d "$TEST_DB_NAME" -f /tmp/processed_init.sql
+  if [ -f /roots.sql ]; then
+    echo "Выдаются права для работы для основной базой данных"
+    envsubst < /roots.sql > /tmp/processed_roots.sql
+    chown postgres:postgres /tmp/processed_roots.sql
+    gosu postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /tmp/processed_roots.sql
+    echo "Выдаются права для работы для тестовой базой данных"
+    gosu postgres psql -U "$POSTGRES_USER" -d "$TEST_DB_NAME" -f /tmp/processed_roots.sql
   fi
 
   # Остановка сервера
