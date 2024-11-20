@@ -5,16 +5,20 @@ import pytest_asyncio
 from bot.bot_api.bot_utils.storage import Storage
 import asyncio
 import time
+from dotenv import load_dotenv
+from pathlib import Path
 
+
+load_dotenv(dotenv_path=Path.cwd().parent.parent / "databases" / ".env")
 ### Моки добавлю позже!!!!!
 
-redis_host = os.getenv('REDIS_HOST', 'localhost')
-redis_port = int(os.getenv('REDIS_PORT', 6379))
-redis_password = os.getenv('REDIS_PASSWORD', None)
+redis_host = 'localhost'
+redis_port = 6379
+redis_password = os.getenv('REDIS_FOR_BOT_PASSWORD')
+
 # Формирование URL для подключения
-redis_url = f"redis://{redis_host}:{redis_port}"
-if redis_password:
-    redis_url += f"?password={redis_password}"
+redis_url = f"redis://:{redis_password}@{redis_host}:{redis_port}/0"
+
 redis = aioredis.from_url(redis_url, decode_responses=False)
 
 
@@ -198,7 +202,7 @@ async def test_delete_inside_dict() -> None:
     await db.add_dict(key, 10 ** 5)
     await db.add_values_to_dict(key, data)
     await db.del_values_from_dict(key, to_del)
-    for  el in to_del:
+    for el in to_del:
         del data[el]
 
     same_dict = await db.get_dict(key)
@@ -227,7 +231,6 @@ async def test_get_values_from_empty_keys() -> None:
     await db.add_dict(key, 10 ** 5)
     await db.add_values_to_dict(key, data)
     one_more_dict = await db.get_values_from_dict(key, to_get)
-    print(one_more_dict)
     assert one_more_dict == {key: data[key] for key in data if key in to_get}
 
 

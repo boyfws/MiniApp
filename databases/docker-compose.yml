@@ -10,8 +10,6 @@ services:
       POSTGRES_PASSWORD: ${ADMIN_PASSWORD}
       POSTGRES_DB: ${DBNAME}
       BACKEND_PASSWORD: ${BACKEND_PASSWORD} 
-      CLEARING_TRIGGER_PASSWORD: ${CLEARING_TRIGGER_PASSWORD}
-      LOGGER_PASSWORD: ${LOGGER_PASSWORD}
       READER_PASSWORD: ${READER_PASSWORD}
       TEST_DB_NAME: ${TEST_DB_NAME}
     ports:
@@ -22,5 +20,22 @@ services:
       - ./PostgreSQL/roles.sql:/roles.sql
       - ./PostgreSQL/roots.sql:/roots.sql
 
+  redis:
+    container_name: redis_for_bot
+    build:
+      context: ./Redis
+      dockerfile: Dockerfile
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_for_bot_data:/data
+      - ./Redis/redis.conf:/redis.conf
+    environment:
+      REDIS_FOR_BOT_PASSWORD: ${REDIS_FOR_BOT_PASSWORD}
+    command: ["sh", "-c", "envsubst < /redis.conf > /tmp/processed_redis.conf && redis-server /tmp/processed_redis.conf"]
+
+
+
 volumes:
-  postgres_data: # Креатим том для хранения базы данных
+  postgres_data:
+  redis_for_bot_data:
