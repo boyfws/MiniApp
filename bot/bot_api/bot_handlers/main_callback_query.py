@@ -12,7 +12,7 @@ from bot.bot_api.callback_handlers.show_rest_info import show_rest_info
 from bot.bot_api.callback_handlers.show_that_buttons_are_unav_while_add_rest import \
     show_that_buttons_are_unav_while_add_rest as buttons_are_unav
 
-from bot.bot_api.bot_utils.logger import user_activity_logger, injection_notifier_logger
+from bot.bot_api.bot_utils.logger import injection_notifier_logger
 
 
 async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -56,15 +56,8 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         case CallbackNames.switch_to_rest_management:
             await switch_to_rest_management(flag=flag, query=query, chat_id=chat_id, bot=bot, user_id=user_id)
 
-            if flag:
-                user_activity_logger.info(f"Пользователь {user_id} перешел на страницу управления ресторанами")
-            else:
-                user_activity_logger.info(f"Пользователь {user_id} вернулся на старицу управления ресторанами")
-
         case CallbackNames.start:
-            await send_start_message(chat_id=chat_id, bot=bot)
-
-            user_activity_logger.info(f"Пользователь вернулся на главную страницу")
+            await send_start_message(chat_id=chat_id, bot=bot, log=True)
 
     if ":" in query.data:
         # Чекаем колбэки с доп данными
@@ -84,15 +77,16 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                         f"От пользователя {user_id} поступил callback с нечисловым id ресторана: {arg}")
                     return None
 
-                await show_rest_info(query=query, flag=flag, bot=bot, chat_id=chat_id, rest_id=rest_id)
+                await show_rest_info(query=query,
+                                     flag=flag,
+                                     bot=bot,
+                                     chat_id=chat_id,
+                                     rest_id=rest_id,
+                                     user_id=user_id)
 
-                if flag:
-                    user_activity_logger.info(f"Пользователь {user_id} перешел на страницу ресторана {arg}")
-                else:
-                    user_activity_logger.info(f"Пользователь {user_id} вернулся на страницу ресторана")
     if not flag:
         await context.bot.delete_message(chat_id=chat_id, message_id=query.message.message_id)
 
 
 callback_query = CallbackQueryHandler(process_callback, block=False, pattern=r'^[^_]+$')
-# Проверяем, что в строке нет _, чтобы не перехватывать чужие колбэки 
+# Проверяем, что в строке нет _, чтобы не перехватывать чужие колбэки
