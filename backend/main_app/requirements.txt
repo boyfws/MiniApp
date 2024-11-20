@@ -12,3 +12,5 @@ mypy
 pytest
 aiobotocore
 botocore
+pytest-asyncio
+sqlalchemy[asyncio]

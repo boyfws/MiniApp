@@ -4,7 +4,8 @@ class AddressDTO(BaseModel):
     city: str
     district: str
     street: str
-    house: str
+    house: int
+    location: str
 
 class AddressRequest(BaseModel):
     id: int

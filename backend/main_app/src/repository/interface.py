@@ -18,4 +18,4 @@ class TablesRepositoryInterface(ABC):
         """
         :session_getter Нужно передать коннектор к базе данных
         """
-        self.session_getter = session_getter
+        self.session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]] = session_getter

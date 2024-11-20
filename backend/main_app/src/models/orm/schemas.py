@@ -109,6 +109,7 @@ class District(Base):
     __tablename__ = 'district'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    city_id: Mapped[int] = mapped_column(Integer, nullable=True)
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
 
 
@@ -116,23 +117,18 @@ class Street(Base):
     __tablename__ = 'street'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    district_id: Mapped[int] = mapped_column(Integer, nullable=True)
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
 
 
 class Address(Base):
     __tablename__ = 'address'
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    city: Mapped[int] = mapped_column(Integer, ForeignKey('city.id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
-    district: Mapped[int] = mapped_column(Integer, ForeignKey('district.id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
-    street: Mapped[int] = mapped_column(Integer, ForeignKey('street.id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    street_id: Mapped[int] = mapped_column(Integer, nullable=False)
     house: Mapped[int] = mapped_column(SmallInteger)
     location: Mapped[Geometry] = mapped_column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
 
-    # Relationships
-    city_rel = relationship("City")
-    district_rel = relationship("District")
-    street_rel = relationship("Street")
 
 
 class AddressesForUser(Base):
@@ -176,7 +172,7 @@ Index('idx_gin_name_search', Restaurant.name)
 Index('idx_city_name', City.name)
 Index('idx_district_name', District.name)
 Index('idx_street_name', Street.name)
-Index('idx_address_composite', Address.city, Address.district, Address.street, Address.house)
+Index('idx_address_composite', Address.street_id, Address.house)
 Index('idx_addresses_for_user_address_id', AddressesForUser.user_id)
 Index('idx_fav_cat_for_user_user_id', FavCatForUser.user_id)
 Index('idx_fav_rest_for_user_user_id', FavRestForUser.user_id)
