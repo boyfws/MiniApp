@@ -15,8 +15,8 @@ link_to_miniapp: InlineKeyboardButton = InlineKeyboardButton(TEXT_FOR_BUTTONS.li
 menu_bottom_miniapp: MenuButtonWebApp = MenuButtonWebApp(text=TEXT_FOR_BUTTONS.menu_button,
                                                          web_app=web_app_info)
 
-stop_adding_rest = InlineKeyboardButton(text=TEXT_FOR_BUTTONS.stop_rest_adding,
-                                        callback_data=f"{CallbackNames.adding_rest_conv_mark}_{CallbackNames.stop_rest_adding}")
+stop_rest_conv_button = InlineKeyboardButton(text=TEXT_FOR_BUTTONS.stop_rest_adding,
+                                             callback_data=f"{CallbackNames.adding_rest_conv_mark}_{CallbackNames.stop_rest_adding}")
 
 switch_to_rest_management: InlineKeyboardButton = InlineKeyboardButton(text=TEXT_FOR_BUTTONS.switch_to_rest_management,
                                                                        callback_data=CallbackNames.switch_to_rest_management)

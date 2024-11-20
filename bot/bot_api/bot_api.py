@@ -4,7 +4,7 @@ from bot.bot_api.config.bot_config import TOKEN
 
 from bot.bot_api.bot_handlers.start_command import start_command
 from bot.bot_api.bot_handlers.main_callback_query import callback_query
-from bot.bot_api.bot_handlers.conversation_handler import add_rest_conv
+from bot.bot_api.bot_handlers.add_rest_conv_handler import add_rest_conv_handler
 from bot.bot_api.bot_utils.error_hadler import error_handler
 
 
@@ -13,7 +13,7 @@ def main() -> None:
 
     bot1.add_handler(start_command)
     bot1.add_handler(callback_query)
-    bot1.add_handler(add_rest_conv)
+    bot1.add_handler(add_rest_conv_handler)
 
     bot1.add_error_handler(error_handler)
 

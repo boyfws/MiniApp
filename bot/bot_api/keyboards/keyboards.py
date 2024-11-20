@@ -1,7 +1,7 @@
 from bot.bot_api.keyboards.buttons import create_new_rest
 from bot.bot_api.keyboards.buttons import link_to_miniapp
 from bot.bot_api.keyboards.buttons import switch_to_rest_management
-from bot.bot_api.keyboards.buttons import stop_adding_rest
+from bot.bot_api.keyboards.buttons import stop_rest_conv_button
 from bot.bot_api.keyboards.buttons import switch_from_inheritance
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
@@ -15,7 +15,7 @@ from bot.bot_api.config.callback_names import CallbackNames
 from bot.bot_api.config.buttons_text import TEXT_FOR_BUTTONS
 
 
-def get_rest_man_keyboard(rest_data: List[
+def get_rest_management_keyboard(rest_data: List[
     Tuple[str, int]
 ]) -> InlineKeyboardMarkup:
     """
@@ -51,14 +51,14 @@ start_keyboard: InlineKeyboardMarkup = InlineKeyboardMarkup([
     [switch_to_rest_management]
 ])
 
-stop_adding_rest_keyb = InlineKeyboardMarkup([
+stop_rest_add_conv_keyb = InlineKeyboardMarkup([
     [
-        stop_adding_rest
+        stop_rest_conv_button
     ]
 ])
 
 
-def inheritance_keyboard(rest_data: List[
+def rest_for_inheritance_keyboard(rest_data: List[
     Tuple[str, int]
 ]) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
@@ -66,5 +66,19 @@ def inheritance_keyboard(rest_data: List[
             [InlineKeyboardButton(text=truncate_text(el[0], MAX_INLINE_BUTTON_LEN),
                                   callback_data=f"{CallbackNames.adding_rest_conv_mark}_{CallbackNames.inheritance_property_of_rest}:{el[1]}")]
             for el in rest_data
-        ] + [[stop_adding_rest], [switch_from_inheritance]]
+        ] + [[stop_rest_conv_button], [switch_from_inheritance]]
     )
+
+
+def inheritance_properties_keyboard(
+        rest_id: int,
+        properties: Tuple[str, ...]
+) -> InlineKeyboardMarkup:
+    rest_prop = [
+        [
+            InlineKeyboardButton(text=getattr(TEXT_FOR_BUTTONS, el),
+                                 callback_data=f"{CallbackNames.adding_rest_conv_mark}_{getattr(CallbackNames, el)}:{rest_id}")
+        ]
+        for el in properties
+    ]
+    return InlineKeyboardMarkup(rest_prop)
