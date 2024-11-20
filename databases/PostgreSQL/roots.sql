@@ -47,10 +47,15 @@ TO backend;
 
 -- Если мы находимся в тестовой базе, даем доступ бэку на последоавтельности для удобства тестов 
 DO $$
+DECLARE
+    TEST_DB_NAME TEXT := '${TEST_DB_NAME}';
 BEGIN
-    IF current_database() = '${TEST_DB_NAME}' THEN
+    IF current_database() = TEST_DB_NAME THEN
         GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO backend;
         GRANT TRUNCATE ON ALL TABLES IN SCHEMA public TO backend;
+        RAISE NOTICE 'Выданы доп права пользователю backend';
+    ELSE 
+        RAISE NOTICE 'Доп права пользователю backend не были выданы';
     END IF;
 END $$;
 
