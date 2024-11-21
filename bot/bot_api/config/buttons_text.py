@@ -26,5 +26,3 @@ class TextForButtons:
     menu: str = "Меню"
     categories: str = "Категории"
 
-
-TEXT_FOR_BUTTONS = TextForButtons()

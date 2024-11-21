@@ -1,5 +1,5 @@
-from bot.bot_api.bot_utils.storage import Storage
-from bot.bot_api.config.bot_config import redis_url
+from .storage import Storage
+from bot_api.config import redis_url
 import redis.asyncio as aioredis
 
 

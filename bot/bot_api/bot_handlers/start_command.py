@@ -1,10 +1,11 @@
 from telegram import Update
 from telegram.ext import ContextTypes, CommandHandler, ConversationHandler
 
-from bot.bot_api.keyboards.buttons import menu_bottom_miniapp
+from bot_api.keyboards import menu_bottom_miniapp
 
-from bot.bot_api.bot_utils.logger import user_activity_logger
-from bot.bot_api.callback_handlers.send_start_message import send_start_message
+from bot_api.bot_utils import user_activity_logger
+
+from bot_api.callback_handlers import send_start_message
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | None:

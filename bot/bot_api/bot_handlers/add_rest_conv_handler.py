@@ -1,10 +1,11 @@
 from telegram.ext import MessageHandler, ConversationHandler, ContextTypes
+
 from telegram import Update
 
-from bot.bot_api.config.state_names_for_rest_add_conv import *
+from bot_api.config import *
 
-from bot.bot_api.bot_handlers.start_command import start_command
-from bot.bot_api.bot_handlers.add_rest_conv_callback_query import add_rest_conv_callback_query as callback_query
+from bot_api.bot_handlers import (start_command,
+                                  add_rest_conv_callback_query as callback_query)
 
 
 add_rest_conv_handler = ConversationHandler(

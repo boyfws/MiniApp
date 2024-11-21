@@ -1,7 +1,6 @@
-from bot.bot_api.config.message_text import TEXT_FOR_MESSAGES
-from telegram.ext import ConversationHandler
+from bot_api.config import TextForMessages
 
-from bot.bot_api.bot_utils.logger import user_activity_logger
+from bot_api.bot_utils import user_activity_logger
 
 
 async def stop_rest_add_conv(user_id: int) -> None:

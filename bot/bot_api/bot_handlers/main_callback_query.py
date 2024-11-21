@@ -2,17 +2,14 @@ from telegram.ext import CallbackQueryHandler, ContextTypes
 from telegram import Update, CallbackQuery, Message
 from typing import cast
 
-from bot.bot_api.config.callback_names import CallbackNames
+from bot_api.config import NamesForCallback, TextForButtons
 
-from bot.bot_api.config.buttons_text import TEXT_FOR_BUTTONS
+from bot_api.bot_utils import injection_notifier_logger
 
-from bot.bot_api.callback_handlers.switch_to_rest_management import switch_to_rest_management
-from bot.bot_api.callback_handlers.send_start_message import send_start_message
-from bot.bot_api.callback_handlers.show_rest_info import show_rest_info
-from bot.bot_api.callback_handlers.show_that_buttons_are_unav_while_add_rest import \
-    show_that_buttons_are_unav_while_add_rest as buttons_are_unav
-
-from bot.bot_api.bot_utils.logger import injection_notifier_logger
+from bot_api.callback_handlers import (switch_to_rest_management,
+                                       send_start_message,
+                                       handle_rest_click_on_rest_manage_message,
+                                       show_that_buttons_are_unav_while_add_rest as buttons_are_unav)
 
 
 async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -24,14 +21,6 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     if update.effective_chat is None:
         return None
-    """
-    The chat that this update was sent in, no matter what kind of update this is. 
-    If no chat is associated with this update, this gives None. This is the case, if inline_query, 
-    chosen_inline_result, callback_query from inline messages, shipping_query, pre_checkout_query, poll, poll_answer, 
-    business_connection, or purchased_paid_media is present.
-    
-    Changed in version 21.1: This property now also considers business_message, edited_business_message, and deleted_business_messages.
-    """
 
     chat_id = update.effective_chat.id
     bot = context.bot
@@ -43,7 +32,7 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return None
 
     first_button_text = message.reply_markup.inline_keyboard[0][0].text
-    flag = first_button_text != TEXT_FOR_BUTTONS.back_to_message
+    flag = first_button_text != TextForButtons.back_to_message
 
     if query.data is None:  # Доп чек
         return None
@@ -53,10 +42,10 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return None
 
     match query.data:
-        case CallbackNames.switch_to_rest_management:
+        case NamesForCallback.switch_to_rest_management:
             await switch_to_rest_management(flag=flag, query=query, chat_id=chat_id, bot=bot, user_id=user_id)
 
-        case CallbackNames.start:
+        case NamesForCallback.start:
             await send_start_message(chat_id=chat_id, bot=bot, log=True)
 
     if ":" in query.data:
@@ -69,7 +58,7 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             return None
 
         match callback_name:
-            case CallbackNames.show_rest_info:
+            case NamesForCallback.show_rest_info:
                 try:
                     rest_id = int(arg)
                 except ValueError:
@@ -77,12 +66,12 @@ async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                         f"От пользователя {user_id} поступил callback с нечисловым id ресторана: {arg}")
                     return None
 
-                await show_rest_info(query=query,
-                                     flag=flag,
-                                     bot=bot,
-                                     chat_id=chat_id,
-                                     rest_id=rest_id,
-                                     user_id=user_id)
+                await handle_rest_click_on_rest_manage_message(query=query,
+                                                               flag=flag,
+                                                               bot=bot,
+                                                               chat_id=chat_id,
+                                                               rest_id=rest_id,
+                                                               user_id=user_id)
 
     if not flag:
         await context.bot.delete_message(chat_id=chat_id, message_id=query.message.message_id)

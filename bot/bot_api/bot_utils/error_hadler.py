@@ -1,4 +1,4 @@
-from bot.bot_api.bot_utils.logger import error_handler_logger
+from .logger import error_handler_logger
 import telegram
 from telegram import Update
 from telegram.ext import ContextTypes

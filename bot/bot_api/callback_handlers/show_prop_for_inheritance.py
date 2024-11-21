@@ -1,14 +1,14 @@
-from bot.bot_api.external_api.check_user_roots import check_user_roots
-from bot.bot_api.external_api.get_rest_properties import get_rest_properties
-from bot.bot_api.external_api.get_rest_name import get_rest_name
+from bot_api.external_api import (check_user_roots,
+                                  get_rest_properties,
+                                  get_rest_name)
 
-from bot.bot_api.config.message_text import TEXT_FOR_MESSAGES
-from bot.bot_api.config.callback_names import CallbackNames
+from bot_api.config import (TextForMessages,
+                            NamesForCallback)
 
-from bot.bot_api.bot_utils.logger import injection_notifier_logger
+from bot_api.bot_utils import injection_notifier_logger
 
-from bot.bot_api.keyboards.keyboards import inheritance_properties_keyboard
-from bot.bot_api.keyboards.keyboards import back_to_this_message_keyboard
+from bot_api.keyboards import (inheritance_properties_keyboard,
+                               back_to_this_message_keyboard)
 
 from telegram import Bot, CallbackQuery
 
@@ -27,7 +27,7 @@ async def show_prop_for_inheritance(rest_id: int,
     rest_name = await get_rest_name(rest_id=rest_id)
     properties = await get_rest_properties(rest_id=rest_id)
     await bot.send_message(chat_id=chat_id,
-                           text=TEXT_FOR_MESSAGES.get_text_for_rest_mes_inheritance(rest_name),
+                           text=TextForMessages.get_text_for_rest_mes_inheritance(rest_name),
                            reply_markup=inheritance_properties_keyboard(
                                rest_id=rest_id,
                                properties=properties)
@@ -36,7 +36,7 @@ async def show_prop_for_inheritance(rest_id: int,
     if flag:
         await query.edit_message_reply_markup(reply_markup=
         back_to_this_message_keyboard(
-            f"{CallbackNames.adding_rest_conv_mark}_{CallbackNames.create_new_rest}"
+            f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.create_new_rest}"
         )
         )
 

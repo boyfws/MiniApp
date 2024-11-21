@@ -1,11 +1,12 @@
 from telegram.ext import ApplicationBuilder
 
-from bot.bot_api.config.bot_config import TOKEN
+from config import TOKEN
 
-from bot.bot_api.bot_handlers.start_command import start_command
-from bot.bot_api.bot_handlers.main_callback_query import callback_query
-from bot.bot_api.bot_handlers.add_rest_conv_handler import add_rest_conv_handler
-from bot.bot_api.bot_utils.error_hadler import error_handler
+from bot_handlers import (start_command,
+                          callback_query,
+                          add_rest_conv_handler)
+
+from bot_utils import error_handler
 
 
 def main() -> None:

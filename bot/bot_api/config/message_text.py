@@ -23,4 +23,3 @@ class TextForMessages:
     notif_that_buttons_are_unclickable_while_adding_rest = "Прежде чем использовать интерфейс закончите добавление ресторана"
 
 
-TEXT_FOR_MESSAGES = TextForMessages()

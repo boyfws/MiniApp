@@ -4,7 +4,7 @@ from typing import cast
 import os
 from pathlib import Path
 
-load_dotenv(dotenv_path=Path.cwd().parent / ".env")
+load_dotenv()
 
 MAX_INLINE_BUTTON_LEN = 15
 

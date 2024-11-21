@@ -1,14 +1,13 @@
-from bot.bot_api.keyboards.buttons import *
-
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from typing import List, Tuple
 
-from bot.bot_api.bot_utils.truncate_text import truncate_text
+from .buttons import *
 
-from bot.bot_api.config.callback_names import CallbackNames
-from bot.bot_api.config.buttons_text import TEXT_FOR_BUTTONS
-from bot.bot_api.config.bot_config import MAX_INLINE_BUTTON_LEN
+from bot_api.bot_utils import truncate_text
 
+from bot_api.config import (NamesForCallback,
+                            TextForButtons,
+                            MAX_INLINE_BUTTON_LEN)
 
 
 def get_rest_management_keyboard(rest_data: List[
@@ -21,7 +20,7 @@ def get_rest_management_keyboard(rest_data: List[
     rest_buttons = [
         [
             InlineKeyboardButton(text=truncate_text(el[0], MAX_INLINE_BUTTON_LEN),
-                                 callback_data=f"{CallbackNames.show_rest_info}:{el[1]}")
+                                 callback_data=f"{NamesForCallback.show_rest_info}:{el[1]}")
         ]
         for el in rest_data
     ]
@@ -35,7 +34,7 @@ def back_to_this_message_keyboard(callback_data: str) -> InlineKeyboardMarkup:
         [
 
             [
-                InlineKeyboardButton(text=TEXT_FOR_BUTTONS.back_to_message,
+                InlineKeyboardButton(text=TextForButtons.back_to_message,
                                      callback_data=callback_data)
             ]
         ]
@@ -60,7 +59,7 @@ def rest_for_inheritance_keyboard(rest_data: List[
     return InlineKeyboardMarkup(
         [
             [InlineKeyboardButton(text=truncate_text(el[0], MAX_INLINE_BUTTON_LEN),
-                                  callback_data=f"{CallbackNames.adding_rest_conv_mark}_{CallbackNames.inheritance_property_of_rest}:{el[1]}")]
+                                  callback_data=f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.inheritance_property_of_rest}:{el[1]}")]
             for el in rest_data
         ] + [[stop_rest_conv_button], [switch_from_inheritance]]
     )
@@ -72,8 +71,8 @@ def inheritance_properties_keyboard(
 ) -> InlineKeyboardMarkup:
     rest_prop = [
         [
-            InlineKeyboardButton(text=getattr(TEXT_FOR_BUTTONS, el),
-                                 callback_data=f"{CallbackNames.adding_rest_conv_mark}_{getattr(CallbackNames, el)}:{rest_id}")
+            InlineKeyboardButton(text=getattr(TextForButtons, el),
+                                 callback_data=f"{NamesForCallback.adding_rest_conv_mark}_{getattr(NamesForCallback, el)}:{rest_id}")
         ]
         for el in properties
     ]

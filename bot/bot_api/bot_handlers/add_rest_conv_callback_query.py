@@ -1,17 +1,14 @@
 from telegram.ext import ContextTypes, CallbackQueryHandler, ConversationHandler
 from telegram import Update, Bot, CallbackQuery
 
-from bot.bot_api.config.callback_names import CallbackNames
-from bot.bot_api.config.state_names_for_rest_add_conv import *
+from bot_api.config import *
 
-from bot.bot_api.bot_utils.logger import injection_notifier_logger
+from bot_api.bot_utils import injection_notifier_logger
 
-from bot.bot_api.callback_handlers.create_new_rest import create_new_rest
-from bot.bot_api.callback_handlers.stop_rest_add_conv import stop_rest_add_conv
-from bot.bot_api.callback_handlers.show_prop_for_inheritance import show_prop_for_inheritance
-from bot.bot_api.callback_handlers.switch_from_inheritance import switch_from_inheritance
-
-from bot.bot_api.config.buttons_text import TEXT_FOR_BUTTONS
+from bot_api.callback_handlers import (create_new_rest,
+                                       stop_rest_add_conv,
+                                       show_prop_for_inheritance,
+                                       switch_from_inheritance)
 
 
 async def delete_message(flag: bool,
@@ -31,7 +28,7 @@ async def process_callbacks_for_rest_add(update: Update, context: ContextTypes.D
     bot = context.bot
 
     first_button_text = query.message.reply_markup.inline_keyboard[0][0].text
-    flag = first_button_text != TEXT_FOR_BUTTONS.back_to_message
+    flag = first_button_text != TextForButtons.back_to_message
 
     try:
         callback = query.data.split("_")[1]
@@ -40,11 +37,11 @@ async def process_callbacks_for_rest_add(update: Update, context: ContextTypes.D
         return None
 
     match callback:
-        case CallbackNames.switch_from_inheritance:
+        case NamesForCallback.switch_from_inheritance:
             await switch_from_inheritance(user_id=user_id)
             return NAME
 
-        case CallbackNames.create_new_rest:
+        case NamesForCallback.create_new_rest:
             await create_new_rest(query=query,
                                   chat_id=chat_id,
                                   bot=bot,
@@ -57,7 +54,7 @@ async def process_callbacks_for_rest_add(update: Update, context: ContextTypes.D
             else:
                 return None
 
-        case CallbackNames.stop_rest_adding:
+        case NamesForCallback.stop_rest_adding:
 
             if context.user_data['in_conversation']:
                 await stop_rest_add_conv(user_id=user_id)
@@ -74,7 +71,7 @@ async def process_callbacks_for_rest_add(update: Update, context: ContextTypes.D
             return None
 
         match clear_callback:
-            case CallbackNames.inheritance_property_of_rest:
+            case NamesForCallback.inheritance_property_of_rest:
                 try:
                     rest_id = int(arguments)
                 except ValueError:
@@ -93,5 +90,5 @@ async def process_callbacks_for_rest_add(update: Update, context: ContextTypes.D
 
 
 add_rest_conv_callback_query = CallbackQueryHandler(process_callbacks_for_rest_add,
-                                                    pattern=rf'^{CallbackNames.adding_rest_conv_mark}_[\w:,]*$')
+                                                    pattern=rf'^{NamesForCallback.adding_rest_conv_mark}_[\w:,]*$')
 # Ловим только колбэки связанные с данным conversation

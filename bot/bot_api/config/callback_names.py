@@ -37,6 +37,5 @@ class NamesForCallback:
 Колбэки передаются в формате {conv_mark + _}{callback}:{extra_arg},{extra_arg}
 conv_mark позволяет отделить нажатия кнопок в рамках одного conversation от других, conv_mark - опциональный аргумент
 """
-CallbackNames = NamesForCallback()
 
 
