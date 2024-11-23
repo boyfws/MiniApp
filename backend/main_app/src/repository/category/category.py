@@ -1,4 +1,4 @@
-from src.models.dto.category import CategoryRequestByName, CategoryDTO, CategoryResult
+from src.models.dto.category import CategoryDTO, CategoryResult
 from src.models.orm.schemas import Category
 from sqlalchemy import select, insert
 
@@ -9,18 +9,18 @@ class CategoryRepo(TablesRepositoryInterface):
 
     async def get(
             self,
-            model: CategoryRequestByName
-    ) -> CategoryDTO:
+            model: CategoryDTO
+    ) -> CategoryResult:
         async with self.session_getter() as session:
-            stmt = select(Category.id, Category.name).where(Category.name == model.name)
+            stmt = select(Category.id).where(Category.name == model.name)
             cat = await session.execute(stmt)
-            return CategoryDTO.model_validate(cat, from_attributes=True)
+            return CategoryResult(cat_id=int(cat.first()[0]))
 
     async def create(
             self,
             model: CategoryDTO
     ) -> CategoryResult:
         async with self.session_getter() as session:
-            stmt = insert(Category).values(**model.dict()).returning(Category.id)
+            stmt = insert(Category).values(name=model.name).returning(Category.id)
             cat_id = await session.execute(stmt)
-            return CategoryResult.model_validate(cat_id, from_attributes=True)
+            return CategoryResult(cat_id=int(cat_id.first()[0]))
