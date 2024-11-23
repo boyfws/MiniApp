@@ -8,4 +8,4 @@ class AllAddressesForUser(BaseModel):
     user_id: int
 
 class AddressesResponse(BaseModel):
-    ...
+    status: int

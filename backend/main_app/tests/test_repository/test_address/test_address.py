@@ -5,9 +5,9 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
 from src.models.dto.address import AddressDTO, AddressRequest, AddressResult
 from src.repository.address.address import AddressRepo
-from tests.conftest import get_session_test, cleanup, event_loop
+from tests.conftest import get_session_test, cleanup
 
-@pytest.mark.usefixtures("cleanup", "event_loop")
+
 class TestAddressRepo:
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
