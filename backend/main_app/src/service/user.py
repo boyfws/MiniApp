@@ -1,4 +1,4 @@
-from src.models.dto.user import UserRequest, UserResult, UserGetByUserid
+from src.models.dto.user import UserRequest, UserResult
 from src.repository.user import UserRepo
 
 
@@ -12,16 +12,3 @@ class UserService:
             model: UserRequest
     ) -> UserResult:
         return await self.repo.create_user(model)
-
-    async def get_by_userid(
-            self,
-            model: UserGetByUserid
-    ) -> UserRequest:
-        return await self.repo.get_by_username(model)
-
-
-if __name__ == "__main__":
-    import asyncio
-    service = UserService(UserRepo())
-    # asyncio.run(service.get_by_userid(UserGetByUserid(userid=1)))
-    asyncio.run(service.create_user(UserRequest(id=465342)))

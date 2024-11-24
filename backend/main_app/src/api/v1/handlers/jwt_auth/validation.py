@@ -12,7 +12,7 @@ from src.api.v1.handlers.jwt_auth.helpers import (
     REFRESH_TOKEN_TYPE,
 )
 from src.auth import utils as auth_utils
-from src.models.dto.user import UserRequest, UserGetByUserid
+from src.models.dto.user import UserRequest
 from src.service import get_user_service
 
 oauth2_scheme = OAuth2PasswordBearer(
@@ -48,11 +48,12 @@ def validate_token_type(
     )
 
 
-async def get_user_by_token_sub(payload: dict[str, str]) -> UserRequest:
+async def get_user_by_token_sub(payload: dict[str, str]) -> ...:
     username: str | None = payload.get("sub")
     service = get_user_service()
-    if user := await service.get_by_userid(UserGetByUserid.model_validate(username, from_attributes=True)):
-        return user
+    # if user := await service.get_by_userid(UserGetByUserid.model_validate(username, from_attributes=True)):
+    #     return user
+    if ...: return ...
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="token invalid (user not found)",
@@ -89,12 +90,13 @@ get_current_auth_user_for_refresh = UserGetterFromToken(REFRESH_TOKEN_TYPE)
 
 async def validate_auth_user(
     username: str = Form()
-) -> UserRequest:
+) -> ...:
     un_authed_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="invalid username",
     )
     service = get_user_service()
-    if not (user := await service.get_by_userid(UserGetByUserid.model_validate(username, from_attributes=True))):
-        return user
+    # if not (user := await service.get_by_userid(UserGetByUserid.model_validate(username, from_attributes=True))):
+    #     return user
+    if ...: ...
     raise un_authed_exc

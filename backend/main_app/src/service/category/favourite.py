@@ -20,5 +20,5 @@ class FavouriteCategoriesService:
     async def drop_all_user_fav_categories(
             self,
             model: AllFavouriteCategoriesRequest
-    ) -> FavouriteCategoryResponse:
+    ) -> AllFavouriteCategoriesRequest:
         return await self.repo.drop_all_user_fav_categories(model)

@@ -19,7 +19,7 @@ async def get_all_user_fav_categories(
 async def drop_all_user_fav_categories(
         model: AllFavouriteCategoriesRequest,
         service: FavouriteCategoriesService = Depends(get_fav_category_service)
-) -> FavouriteCategoryResponse:
+) -> AllFavouriteCategoriesRequest:
     return await service.drop_all_user_fav_categories(model=model)
 
 @fav_category_router.post("/add_fav_category/")

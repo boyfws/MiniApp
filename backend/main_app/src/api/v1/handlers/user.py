@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from src.models.dto.user import UserRequest, UserResult, UserGetByUserid
+from src.models.dto.user import UserRequest, UserResult
 from src.service import get_user_service, UserService
 
 user_router = APIRouter(
@@ -14,10 +14,3 @@ async def create_user(
         service: UserService = Depends(get_user_service)
 ) -> UserResult:
     return await service.create_user(model)
-
-@user_router.get("/get_by_username/")
-async def get_by_username(
-        model: UserGetByUserid,
-        service: UserService = Depends(get_user_service)
-) -> UserRequest:
-    return await service.get_by_userid(model)

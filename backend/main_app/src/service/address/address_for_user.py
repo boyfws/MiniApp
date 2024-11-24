@@ -16,7 +16,7 @@ class AddressesForUserService:
     async def get_all_user_fav_restaurants(
             self,
             model: AllAddressesForUser
-    ) -> list[AddressesResponse]:
+    ) -> list[AddressForUserDTO]:
         return await self.repo.get_all_user_addresses(model)
 
     async def drop_all_user_fav_restaurants(

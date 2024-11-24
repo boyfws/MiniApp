@@ -1,4 +1,6 @@
-from sqlalchemy import select, insert, delete
+from typing import Optional
+
+from sqlalchemy import select, insert, delete, Row
 from src.models.dto.favourites import (FavouriteCategoryResponse, FavouriteCategoryDTO, AllFavouriteCategoriesRequest)
 from src.models.orm.schemas import FavCatForUser
 from src.repository.interface import TablesRepositoryInterface
@@ -26,7 +28,10 @@ class FavouriteCategoryRepo(TablesRepositoryInterface):
         async with self.session_getter() as session:
             stmt = insert(FavCatForUser).values(**model.dict()).returning(FavCatForUser.cat_id)
             response = await session.execute(stmt)
-            return FavouriteCategoryResponse(cat_id=int(response.first()[0]))
+            row: Optional[Row[tuple[int]]] = response.first()
+            if row is None:
+                raise ValueError("No category ID returned from the database")
+            return FavouriteCategoryResponse(cat_id=int(row[0]))
 
     async def get_all_user_fav_categories(
             self,

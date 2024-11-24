@@ -12,7 +12,7 @@ addresses_for_user_router = APIRouter(
 async def get_all_addresses(
         model: AllAddressesForUser,
         service: AddressesForUserService = Depends(get_address_for_user_service)
-) -> list[AddressesResponse]:
+) -> list[AddressForUserDTO]:
     return await service.get_all_user_fav_restaurants(model=model)
 
 @addresses_for_user_router.delete("/drop_all_addresses/")

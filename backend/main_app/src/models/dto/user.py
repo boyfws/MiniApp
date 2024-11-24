@@ -1,8 +1,5 @@
 from pydantic import BaseModel
 
-class UserGetByUserid(BaseModel):
-    userid: int
-
 class UserRequest(BaseModel):
     id: int
 
