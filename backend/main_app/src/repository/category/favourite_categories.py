@@ -26,7 +26,7 @@ class FavouriteCategoryRepo(TablesRepositoryInterface):
         async with self.session_getter() as session:
             stmt = insert(FavCatForUser).values(**model.dict()).returning(FavCatForUser.cat_id)
             response = await session.execute(stmt)
-            return FavouriteCategoryResponse.model_validate(response, from_attributes=True)
+            return FavouriteCategoryResponse(cat_id=int(response.first()[0]))
 
     async def get_all_user_fav_categories(
             self,
@@ -42,8 +42,8 @@ class FavouriteCategoryRepo(TablesRepositoryInterface):
     async def drop_all_user_fav_categories(
             self,
             model: AllFavouriteCategoriesRequest
-    ) -> FavouriteCategoryResponse:
+    ) -> AllFavouriteCategoriesRequest:
         async with self.session_getter() as session:
             stmt = select(FavCatForUser).where(FavCatForUser.user_id == model.user_id)
             await session.execute(stmt)
-            return FavouriteCategoryResponse(cat_id=model.user_id) # TODO: переделать здесь на другое возвращаемое значение
+            return model
