@@ -8,12 +8,10 @@ from tests.sql_connector import get_session_test
 
 @pytest.fixture(scope="session", autouse=True)
 def event_loop() -> Generator[asyncio.AbstractEventLoop, Any, None]:
-    print("\n\n\n\n\n Открылся event loop \n\n\n\n\n")
     policy = asyncio.get_event_loop_policy()
     loop = policy.new_event_loop()
     yield loop
     loop.close()
-    print('\n\n\n\n\n\n Закрылся event loop \n\n\n\n\n\n\n')
 
 @pytest.fixture(scope='module', autouse=True)
 async def cleanup():

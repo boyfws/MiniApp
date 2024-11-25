@@ -1,20 +1,39 @@
-from pydantic import BaseModel
+from typing import Callable, Optional
 
-from src.database.mongo_db import AsyncMongoDB
+from src.database.mongo_db import AsyncMongoDB, get_db
+from src.models.dto.menu import MenuDTO
 from src.models.dto.restaurant import RestaurantRequestUsingID
 
-class MenuDTO(BaseModel):
-    ...
 
 class MenuRepository:
-    async def get_menu_by_rest_id(self, session: AsyncMongoDB, model: RestaurantRequestUsingID) -> MenuDTO:
-        ...
+    def __init__(self, session_getter=get_db):
+        """Вставьте сюда функцию, которая выдает сессию работы с базой данных"""
+        self.session_getter=session_getter
 
-    async def update_menu_by_rest_id(self, session: AsyncMongoDB, model: MenuDTO) -> int:
-        ...
+    async def get_menu_by_rest_id(self, model: RestaurantRequestUsingID) -> Optional[MenuDTO]:
+        async with self.session_getter() as session:
+            menu_data = await session.menu.find_one({'restaurant_id': model.rest_id})
+            if not menu_data:
+                return None
+            del menu_data["_id"]
+            return MenuDTO(**menu_data)
 
-    async def delete_menu_by_rest_id(self, session: AsyncMongoDB, model: RestaurantRequestUsingID) -> None:
-        ...
+    async def update_menu_by_rest_id(self, model: MenuDTO) -> int:
+        async with self.session_getter() as session:
+            menu = model.model_dump(by_alias=True)
+            await session.menu.update_one(
+                {'restaurant_id': menu['restaurant_id']},
+                {
+                    '$set': {
+                        'categories': menu['categories'],
+                        "restaurant_description": menu['restaurant_description']
+                    }
+                },
+                upsert=True  # Если ресторан не найден, создаем новый
+            )
+            return model.restaurant_id
 
-    async def create_menu(self, session: AsyncMongoDB, model: MenuDTO) -> None:
-        ...
+    async def delete_menu_by_rest_id(self, model: RestaurantRequestUsingID) -> bool:
+        async with self.session_getter() as session:
+            result = await session.menu.delete_one({'restaurant_id': model.rest_id})
+            return result.deleted_count > 0

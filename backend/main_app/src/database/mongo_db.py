@@ -1,15 +1,16 @@
 from contextlib import asynccontextmanager
+from typing import Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient
-
-from src.config import MongoDBConfig
+from src.config import configuration
 
 
 class AsyncMongoDB:
-    client = AsyncIOMotorClient(MongoDBConfig.url)
-    database = client[MongoDBConfig.database]
+    client = AsyncIOMotorClient(configuration.mongo_db.url)
+    database = client[configuration.mongo_db.database]
 
-    def __init__(self):
+    def __init__(self, collection_name: Optional[str] = configuration.mongo_db.menu_collection):
+        self.menu = self.database[collection_name]
         # Сессия БД. будет создаваться каждый раз в конструкции
         # async with AsyncSession as session ...
         self.session = None
