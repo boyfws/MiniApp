@@ -34,8 +34,17 @@ services:
       REDIS_FOR_BOT_PASSWORD: ${REDIS_FOR_BOT_PASSWORD}
     command: ["sh", "-c", "envsubst < /redis.conf > /tmp/processed_redis.conf && redis-server /tmp/processed_redis.conf"]
 
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+
 
 
 volumes:
   postgres_data:
   redis_for_bot_data:
+  mongodb_data:

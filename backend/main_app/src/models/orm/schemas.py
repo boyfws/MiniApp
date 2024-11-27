@@ -1,6 +1,7 @@
 from sqlalchemy import (Integer, String, SmallInteger, BigInteger,
     Boolean, JSON, ARRAY, ForeignKey, Index, CheckConstraint, Numeric, MetaData
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base, relationship, mapped_column, Mapped, as_declarative, DeclarativeBase
 from geoalchemy2.types import Geometry
 
@@ -31,7 +32,12 @@ class User(Base):
     fav_categories = relationship("FavCatForUser", back_populates="user")
     fav_restaurants = relationship("FavRestForUser", back_populates="user")
     addresses = relationship("AddressesForUser", back_populates="user")
-    restaurants = relationship("Restaurant", back_populates="owner")
+
+class Owner(Base):
+    __tablename__ = 'owners'
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+
+    restaurants = relationship("Restaurant", back_populates='owner')
 
 
 class Category(Base):
@@ -48,7 +54,7 @@ class Restaurant(Base):
     __tablename__ = 'restaurants'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    owner_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('users.id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
+    owner_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('owners.id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     main_photo: Mapped[str] = mapped_column(String(1000), nullable=False)
     photos: Mapped[list[str]] = mapped_column(ARRAY(String(1000)), nullable=False)
@@ -66,8 +72,8 @@ class Restaurant(Base):
     vk_link: Mapped[str] = mapped_column(String(1000))
     orig_phone: Mapped[str] = mapped_column(String(11))
     wapp_phone: Mapped[str] = mapped_column(String(11))
-    location: Mapped[Geometry] = mapped_column(Geometry(geometry_type='POINT', srid=4326))
-    address: Mapped[JSON] = mapped_column(JSON, nullable=False)
+    location: Mapped[Geometry] = mapped_column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
+    address: Mapped[dict] = mapped_column(JSONB, nullable=False)
     categories: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger), nullable=False)
 
     __table_args__ = (
@@ -76,7 +82,7 @@ class Restaurant(Base):
         CheckConstraint("LEFT(wapp_phone, 1) = '7'")
     )
 
-    owner = relationship("User", back_populates="restaurants")
+    owner = relationship("Owner", back_populates="restaurants")
     activities = relationship("UserActivityLog", back_populates="restaurant")
 
 

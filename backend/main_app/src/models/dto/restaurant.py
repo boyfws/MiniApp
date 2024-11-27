@@ -1,15 +1,14 @@
-from typing import Optional
-
-from geoalchemy2 import Geometry
-from pydantic import BaseModel
-from sqlalchemy import JSON
+from typing import Optional, List, Tuple
+from pydantic import BaseModel, Field, field_validator
 
 
-class RestaurantRequestUsingGeoPoint(BaseModel):
-    ...
+class Point(BaseModel):
+    lon: float
+    lat: float
 
 class RestaurantRequestUsingGeoPointAndName(BaseModel):
-    ...
+    point: Point
+    name_pattern: str
 
 class RestaurantRequestUsingOwner(BaseModel):
     owner_id: int
@@ -18,34 +17,40 @@ class RestaurantRequestUsingID(BaseModel):
     rest_id: int
 
 class RestaurantRequestFullModel(BaseModel):
-    id: Optional[int]
-    owner_id: int
-    name: str
-    main_photo: str
-    photos: list[str]
-    ext_serv_link_1: str
-    ext_serv_link_2: str
-    ext_serv_link_3: str
-    ext_serv_rank_1: float
-    ext_serv_rank_2: float
-    ext_serv_rank_3: float
-    ext_serv_reviews_1: int
-    ext_serv_reviews_2: int
-    ext_serv_reviews_3: int
-    tg_link: str
-    inst_link: str
-    vk_link: str
-    orig_phone: str
-    wapp_phone: str
-    location: int #Geometry(geometry_type='POINT', srid=4326)
-    address: int #JSON
-    categories: list[int]
+    owner_id: int = Field(..., ge=1)  # Assuming owner ID is always greater than 0
+    name: str = Field(..., min_length=1, max_length=100)
+    main_photo: str = Field(..., min_length=1, max_length=1000)
+    photos: List[str] = Field(..., min_items=3, max_items=8)
+    ext_serv_link_1: Optional[str] = Field(None, max_length=1000)
+    ext_serv_link_2: Optional[str] = Field(None, max_length=1000)
+    ext_serv_link_3: Optional[str] = Field(None, max_length=1000)
+    ext_serv_rank_1: Optional[float] = Field(None, ge=0, le=10)  # Assuming a reasonable range
+    ext_serv_rank_2: Optional[float] = Field(None, ge=0, le=10)  # Assuming a reasonable range
+    ext_serv_rank_3: Optional[float] = Field(None, ge=0, le=10)  # Assuming a reasonable range
+    ext_serv_reviews_1: Optional[int] = Field(None, ge=0)
+    ext_serv_reviews_2: Optional[int] = Field(None, ge=0)
+    ext_serv_reviews_3: Optional[int] = Field(None, ge=0)
+    tg_link: Optional[str] = Field(None, max_length=1000)
+    inst_link: Optional[str] = Field(None, max_length=1000)
+    vk_link: Optional[str] = Field(None, max_length=1000)
+    orig_phone: str = Field(..., min_length=11, max_length=11)
+    wapp_phone: str = Field(..., min_length=11, max_length=11)
+    location: str
+    address: dict = Field(...)  # Using dict instead of JSON, more straightforward
+    categories: List[int] = Field(..., min_items=1)  # Assuming at least one category
 
 class RestaurantResponse(BaseModel):
     ...
 
 class RestaurantResult(BaseModel):
-    ...
+    rest_id: int
+
+
+class RestaurantGeoSearch(BaseModel):
+    id: int
+    name: str
+    main_photo: str
+    distance: float
 
 # Summary:
 # Для ресторана:
