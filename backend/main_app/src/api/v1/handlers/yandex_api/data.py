@@ -19,9 +19,9 @@ class Geometry(TypedDict):
 
 # Определение типа для свойств
 class Properties(TypedDict):
-    street: str
-    house: str
-    district: str
+    street: Optional[str]
+    house: Optional[str]
+    district: Optional[str]
     city: str
 
 
@@ -166,8 +166,8 @@ async def verificte_new_restaurant_adress(
     """
     Функция возвращет GeoJson для нового адреса нвого ресторана
     """
-    formated_adress = f"Город {city}, {street}, дом {house}"
-    arg = await get_similar_locations(formated_adress, 1, longitude, latitude)
+    formated_address = f"Город {city}, {street}, дом {house}"
+    arg = await get_similar_locations(formated_address, 1, longitude, latitude)
 
     if len(arg) == 0:
         raise LocationNotFoundError("Не найдена походящая локация")
