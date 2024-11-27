@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
-    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPoint, RestaurantRequestUsingGeoPointAndName
+    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, Point, \
+    RestaurantGeoSearch
 from src.service.restaurant import get_restaurant_service, RestaurantService
 
 restaurant_router = APIRouter(
@@ -25,17 +26,11 @@ async def delete_restaurant(
 
 @restaurant_router.patch("/update_restaurant/")
 async def update_restaurant(
+        rest_id: int,
         model: RestaurantRequestFullModel,
         service: RestaurantService = Depends(get_restaurant_service)
-) -> RestaurantResult:
-    return await service.update(model)
-
-@restaurant_router.get("/get_by_id/")
-async def get_restaurant_by_id(
-        model: RestaurantRequestUsingID,
-        service: RestaurantService = Depends(get_restaurant_service)
-) -> RestaurantRequestFullModel:
-    return await service.get(model)
+):
+    await service.update(rest_id, model)
 
 @restaurant_router.get("/get_by_owner/")
 async def get_restaurant_by_owner(
@@ -46,14 +41,14 @@ async def get_restaurant_by_owner(
 
 @restaurant_router.get("/get_by_geo/")
 async def get_restaurant_by_geo(
-        model: RestaurantRequestUsingGeoPoint,
+        model: Point,
         service: RestaurantService = Depends(get_restaurant_service)
-) -> list[RestaurantRequestFullModel]:
+) -> list[RestaurantGeoSearch]:
     return await service.get_by_geo(model)
 
 @restaurant_router.get("/get_by_geo_and_name/")
 async def get_restaurant_by_geo_and_name(
         model: RestaurantRequestUsingGeoPointAndName,
         service: RestaurantService = Depends(get_restaurant_service)
-) -> list[RestaurantRequestFullModel]:
+) -> list[RestaurantGeoSearch]:
     return await service.get_by_geo_and_name(model)

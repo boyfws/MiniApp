@@ -1,5 +1,6 @@
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
-    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPoint, RestaurantRequestUsingGeoPointAndName
+    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, \
+    RestaurantGeoSearch, Point
 from src.repository.restaurant.restaurant import RestaurantRepo
 
 
@@ -20,9 +21,10 @@ class RestaurantService:
 
     async def update(
             self,
+            rest_id: int,
             model: RestaurantRequestFullModel
-    ) -> RestaurantResult:
-        return await self.repo.update(model)
+    ) -> None:
+        await self.repo.update(rest_id=rest_id, model=model)
 
     async def get(
             self,
@@ -38,12 +40,12 @@ class RestaurantService:
 
     async def get_by_geo(
             self,
-            model: RestaurantRequestUsingGeoPoint
-    ) -> list[RestaurantRequestFullModel]:
+            model: Point
+    ) -> list[RestaurantGeoSearch]:
         return await self.repo.get_by_geo(model)
 
     async def get_by_geo_and_name(
             self,
             model: RestaurantRequestUsingGeoPointAndName
-    ) -> list[RestaurantRequestFullModel]:
+    ) -> list[RestaurantGeoSearch]:
         return await self.repo.get_by_geo_and_name(model)
