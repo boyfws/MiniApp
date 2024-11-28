@@ -1,6 +1,6 @@
 from typing import Optional
 
-from asyncpg import Record
+from asyncpg import Record # type: ignore
 from sqlalchemy import select, insert, delete, update, Row, text
 from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,

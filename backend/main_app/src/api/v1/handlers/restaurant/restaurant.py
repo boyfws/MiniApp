@@ -29,7 +29,7 @@ async def update_restaurant(
         rest_id: int,
         model: RestaurantRequestFullModel,
         service: RestaurantService = Depends(get_restaurant_service)
-):
+) -> None:
     await service.update(rest_id, model)
 
 @restaurant_router.get("/get_by_owner/")

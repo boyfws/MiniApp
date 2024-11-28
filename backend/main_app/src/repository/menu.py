@@ -1,3 +1,5 @@
+from collections.abc import AsyncGenerator
+from contextlib import _AsyncGeneratorContextManager
 from typing import Callable, Optional
 
 from src.database.mongo_db import AsyncMongoDB, get_db
@@ -6,7 +8,7 @@ from src.models.dto.restaurant import RestaurantRequestUsingID
 
 
 class MenuRepository:
-    def __init__(self, session_getter=get_db):
+    def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncMongoDB]] = get_db):
         """Вставьте сюда функцию, которая выдает сессию работы с базой данных"""
         self.session_getter=session_getter
 
@@ -15,8 +17,8 @@ class MenuRepository:
             menu_data = await session.menu.find_one({'restaurant_id': model.rest_id})
             if not menu_data:
                 return None
-            del menu_data["_id"]
-            return MenuDTO(**menu_data)
+            menu_data_without_id = {key: value for key, value in menu_data.items() if key != "_id"}
+            return MenuDTO(**menu_data_without_id)
 
     async def update_menu_by_rest_id(self, model: MenuDTO) -> int:
         async with self.session_getter() as session:

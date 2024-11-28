@@ -1,3 +1,8 @@
+from contextlib import _AsyncGeneratorContextManager
+from typing import Callable
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.database.sql_session import get_session
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, \
@@ -6,7 +11,7 @@ from src.repository.restaurant.restaurant import RestaurantRepo
 
 
 class RestaurantService:
-    def __init__(self, session_getter=get_session) -> None:
+    def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]] = get_session) -> None:
         self.repo = RestaurantRepo(session_getter=session_getter)
 
     async def create(

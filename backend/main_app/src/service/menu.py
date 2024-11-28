@@ -1,13 +1,16 @@
-from typing import Optional
+from contextlib import _AsyncGeneratorContextManager
+from typing import Optional, Callable
 
-from src.database.mongo_db import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.database.mongo_db import get_db, AsyncMongoDB
 from src.models.dto.menu import MenuDTO
 from src.models.dto.restaurant import RestaurantRequestUsingID
 from src.repository.menu import MenuRepository
 
 
 class MenuService:
-    def __init__(self, session_getter=get_db):
+    def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncMongoDB]] = get_db) -> None:
         self.repo = MenuRepository(session_getter)
 
     async def get_menu_by_rest_id(self, model: RestaurantRequestUsingID) -> Optional[MenuDTO]:

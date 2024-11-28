@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Any
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -20,7 +20,7 @@ class RestaurantRequestFullModel(BaseModel):
     owner_id: int = Field(..., ge=1)  # Assuming owner ID is always greater than 0
     name: str = Field(..., min_length=1, max_length=100)
     main_photo: str = Field(..., min_length=1, max_length=1000)
-    photos: List[str] = Field(..., min_items=3, max_items=8)
+    photos: List[str]
     ext_serv_link_1: Optional[str] = Field(None, max_length=1000)
     ext_serv_link_2: Optional[str] = Field(None, max_length=1000)
     ext_serv_link_3: Optional[str] = Field(None, max_length=1000)
@@ -36,8 +36,8 @@ class RestaurantRequestFullModel(BaseModel):
     orig_phone: str = Field(..., min_length=11, max_length=11)
     wapp_phone: str = Field(..., min_length=11, max_length=11)
     location: str
-    address: dict = Field(...)  # Using dict instead of JSON, more straightforward
-    categories: List[int] = Field(..., min_items=1)  # Assuming at least one category
+    address: dict[str, Any] = Field(...)  # Using dict instead of JSON, more straightforward
+    categories: List[int]  # Assuming at least one category
 
 class RestaurantResponse(BaseModel):
     ...

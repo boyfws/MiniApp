@@ -25,15 +25,13 @@ def create_jwt(
     )
 
 class UserRequestMock:
-    name: str
-    is_owner: bool
+    id: int
 
 def create_access_token(user: UserRequestMock) -> str:
     jwt_payload = {
         # subject
-        "sub": user.name,
-        "username": user.name,
-        "is_owner": user.is_owner
+        "sub": user.id,
+        "username": user.id,
     }
     return create_jwt(
         token_type=ACCESS_TOKEN_TYPE,
@@ -44,7 +42,7 @@ def create_access_token(user: UserRequestMock) -> str:
 
 def create_refresh_token(user: UserRequestMock) -> str:
     jwt_payload = {
-        "sub": user.name,
+        "sub": user.id,
     }
     return create_jwt(
         token_type=REFRESH_TOKEN_TYPE,

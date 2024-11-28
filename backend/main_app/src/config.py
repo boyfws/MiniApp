@@ -35,9 +35,9 @@ class NGINXConfig:
 class MongoDBConfig:
     host: Optional[str] = os.getenv("MONGODB_HOST")
     port: Optional[str] = os.getenv("MONGODB_PORT")
-    database: Optional[str] = os.getenv("MONGO_DATABASE")
-    menu_collection: Optional[str] = os.getenv("MENU_COLLECTION")
-    test_menu_collection: Optional[str] = os.getenv("TEST_MENU_COLLECTION")
+    database: str = os.getenv("MONGO_DATABASE", 'db')
+    menu_collection: str = os.getenv("MENU_COLLECTION", 'collection')
+    test_menu_collection: str = os.getenv("TEST_MENU_COLLECTION", 'test')
     url: str = f"mongodb://{host}:{port}"
 
 @dataclass

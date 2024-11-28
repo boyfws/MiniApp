@@ -1,3 +1,5 @@
+from typing import Any
+
 from sqlalchemy import (Integer, String, SmallInteger, BigInteger,
     Boolean, JSON, ARRAY, ForeignKey, Index, CheckConstraint, Numeric, MetaData
 )
@@ -73,7 +75,7 @@ class Restaurant(Base):
     orig_phone: Mapped[str] = mapped_column(String(11))
     wapp_phone: Mapped[str] = mapped_column(String(11))
     location: Mapped[Geometry] = mapped_column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
-    address: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    address: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
     categories: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger), nullable=False)
 
     __table_args__ = (
