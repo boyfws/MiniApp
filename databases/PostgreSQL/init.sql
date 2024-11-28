@@ -86,12 +86,24 @@ CREATE INDEX idx_location_search On restaurants USING SPGiST (location);
 
 
 
-CREATE TABLE city (
+CREATE TABLE region (
     id SERIAL 
        PRIMARY KEY,
     name VARCHAR(255)
          UNIQUE
-         NOT NULL
+);
+
+
+
+CREATE TABLE city (
+    id SERIAL 
+       PRIMARY KEY,
+    region_id INTEGER
+              NOT NULL
+              REFERENCES region(id),
+    name VARCHAR(255)
+         NOT NULL,
+    CONSTRAINT city_name_region_unique_comb UNIQUE (name, region_id)
 );
 
 
@@ -103,7 +115,7 @@ CREATE TABLE district (
             REFERENCES city(id)
             NOT NULL,
     name VARCHAR(255),
-    CONSTRAINT district_city_name_unique_comb UNIQUE (city_id, name)
+    CONSTRAINT district_name_city_unique_comb UNIQUE (name, city_id)
 );
 
 
@@ -115,10 +127,10 @@ CREATE TABLE street (
                 ON UPDATE CASCADE,
     name VARCHAR(255)
     -- Ограничение не накалдывается, так как если район undefined может
-    -- возникинуть ситуация при которой, есть две динаковые улица    
+    -- возникинуть ситуация при которой, есть две динаковые улицы    
 );
 
-CREATE INDEX idx_street_name ON street(name);
+CREATE INDEX idx_street_name_and_district ON street(name, district_id);
 
 
 

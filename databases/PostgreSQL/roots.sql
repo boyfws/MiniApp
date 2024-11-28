@@ -22,6 +22,7 @@ GRANT
     INSERT 
 ON 
     public.address,
+    public.region,
     public.district, 
     public.street, 
     public.city
