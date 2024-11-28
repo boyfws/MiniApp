@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from sqlalchemy.engine import URL
 
 
@@ -99,14 +99,16 @@ class AppConfig:
 class Configuration:
     """All in one configuration's class."""
 
-    debug = bool(os.getenv('DEBUG'))
-    logging_level = int(os.getenv('LOGGING_LEVEL', logging.INFO))
-    yandex_api = YandexAPIConfig()
-    db = DatabaseConfig()
-    app = AppConfig()
-    mongo_db = MongoDBConfig()
-    s3 = S3Config()
-    auth_jwt: AuthJWTConfig = AuthJWTConfig()
+    debug: bool = bool(os.getenv('DEBUG'))
+    logging_level: int = int(os.getenv('LOGGING_LEVEL', logging.INFO))
+    yandex_api: YandexAPIConfig = field(default_factory=YandexAPIConfig)
+    db: DatabaseConfig = field(default_factory=DatabaseConfig)
+    app: AppConfig = field(default_factory=AppConfig)
+    mongo_db: MongoDBConfig = field(default_factory=MongoDBConfig)
+    s3: S3Config = field(default_factory=S3Config)
+    auth_jwt: AuthJWTConfig = field(default_factory=AuthJWTConfig)
+
+configuration = Configuration()
 
 
 configuration = Configuration()
