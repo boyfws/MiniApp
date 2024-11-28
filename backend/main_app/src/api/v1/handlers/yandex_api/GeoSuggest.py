@@ -15,7 +15,6 @@ class AddressPart(AddressProperties):
     full_name: str
 
 
-
 class GeoSuggest:
     def __init__(self, session: aiohttp.ClientSession) -> None:
         self.session: aiohttp.ClientSession = session
@@ -53,24 +52,24 @@ class GeoSuggest:
             if response.status != 200:
                 return []
 
-        data = await response.json()
+            data = await response.json()
 
-        if "results" not in data:
-            return []
-        try:
-            return [
-                {
-                    "full_name": el["address"]["formatted_address"]
-                } |
-                {
-                    self.conv_dict_for_sim_loc[el2["kind"][0]]: el2["name"]
-                    for el2 in el["address"]["component"][::-1]
-                    # Разворачиваем список компонентов,
-                    # так как могут вернуться два компонента с одинаковым kind тот,
-                    # что выше - более приоритетный по name
-                    if el2["kind"][0] in self.conv_dict_for_sim_loc
-                }
-                for el in data["results"]
-            ]
-        except KeyError:
-            return []
+            if "results" not in data:
+                return []
+            try:
+                return [
+                    {
+                        "full_name": el["address"]["formatted_address"]
+                    } |
+                    {
+                        self.conv_dict_for_sim_loc[el2["kind"][0]]: el2["name"]
+                        for el2 in el["address"]["component"][::-1]
+                        # Разворачиваем список компонентов,
+                        # так как могут вернуться два компонента с одинаковым kind тот,
+                        # что выше - более приоритетный по name
+                        if el2["kind"][0] in self.conv_dict_for_sim_loc
+                    }
+                    for el in data["results"]
+                ]
+            except KeyError:
+                return []

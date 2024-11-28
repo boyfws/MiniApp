@@ -1,7 +1,7 @@
 import os
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from dotenv import load_dotenv
 from dataclasses import dataclass, field
@@ -35,7 +35,7 @@ class NGINXConfig:
 @dataclass
 class MongoDBConfig:
     host: Optional[str] = os.getenv("MONGODB_HOST")
-    port: int = os.getenv("MONGODB_PORT", 1)
+    port: Union[str, int] = os.getenv("MONGODB_PORT", 1)
     database: str = os.getenv("MONGO_DATABASE", 'db')
     menu_collection: str = os.getenv("MENU_COLLECTION", 'collection')
     test_menu_collection: str = os.getenv("TEST_MENU_COLLECTION", 'test')

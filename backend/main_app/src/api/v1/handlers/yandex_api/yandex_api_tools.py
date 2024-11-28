@@ -3,7 +3,13 @@ from typing import Optional, List
 from .GeoSuggest import GeoSuggest
 from .GeoCode import GeoCode
 from .yandex_api_session import yandex_api_session
-from .router import yandex_api_router
+from fastapi import APIRouter
+
+
+yandex_api_router = APIRouter(
+    prefix="/YandexApi",
+    tags=["YandexApi"]
+)
 
 
 class LocationNotFoundError(ValueError):
@@ -11,8 +17,6 @@ class LocationNotFoundError(ValueError):
 
 
 NUM_of_SUGGESTIONS = 10
-
-
 
 geocoder = GeoCode(yandex_api_session)
 geosuggest = GeoSuggest(yandex_api_session)
@@ -29,6 +33,7 @@ async def get_suggestions(text: str, longitude: Optional[float] = None, latitude
                                                   latitude=latitude)
 
 
+#@yandex_api_router.get("/test/")
 async def verificate_new_restaurant_address(
         city: str,
         street: str,
@@ -46,7 +51,7 @@ async def verificate_new_restaurant_address(
     if len(location1) == 0:
         raise LocationNotFoundError("Не найдена походящая локация")
 
-    ret_address_1 = await geocoder.get_coords_for_geosuggest_address(location1)
+    ret_address_1 = await geocoder.get_coords_for_geosuggest_address(location1[0])
 
     if ret_address_1 is not None:
         return ret_address_1
