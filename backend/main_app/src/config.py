@@ -14,7 +14,8 @@ BASE_DIR = Path(__file__).parent.parent
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
-@dataclass
+
+@dataclass(frozen=True)
 class AuthJWTConfig:
     private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
     public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
