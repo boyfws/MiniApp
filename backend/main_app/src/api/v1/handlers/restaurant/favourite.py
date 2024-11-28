@@ -19,7 +19,7 @@ async def get_all_user_fav_restaurants(
 async def drop_all_user_fav_restaurants(
         model: AllFavouriteRestaurantsRequest,
         service: FavouriteRestaurantService = Depends(get_fav_restaurant_service)
-) -> FavouriteRestaurantResponse:
+) -> AllFavouriteRestaurantsRequest:
     return await service.drop_all_user_fav_restaurants(model=model)
 
 @fav_restaurant_router.post("/add_fav_restaurant/")

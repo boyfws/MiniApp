@@ -1,3 +1,4 @@
+from src.database.sql_session import get_session
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, \
     RestaurantGeoSearch, Point
@@ -5,8 +6,9 @@ from src.repository.restaurant.restaurant import RestaurantRepo
 
 
 class RestaurantService:
-    def __init__(self) -> None:
-        self.repo = RestaurantRepo()
+    def __init__(self, session_getter=get_session) -> None:
+        self.repo = RestaurantRepo(session_getter=session_getter)
+
     async def create(
             self,
             model: RestaurantRequestFullModel

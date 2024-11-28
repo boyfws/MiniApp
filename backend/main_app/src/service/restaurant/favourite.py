@@ -19,5 +19,5 @@ class FavouriteRestaurantService:
     async def drop_all_user_fav_restaurants(
             self,
             model: AllFavouriteRestaurantsRequest
-    ) -> FavouriteRestaurantResponse:
+    ) -> AllFavouriteRestaurantsRequest:
         return await self.repo.drop_all_user_fav_restaurants(model)
