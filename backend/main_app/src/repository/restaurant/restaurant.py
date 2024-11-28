@@ -1,16 +1,12 @@
-from contextlib import _AsyncGeneratorContextManager
-from typing import Callable, AsyncGenerator, Optional, Any
+from typing import Optional
 
 from asyncpg import Record
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update, Row, text
-
-from src.database.sql_session import get_session
-from src.models.dto.restaurant import (RestaurantResponse,
-                                       RestaurantResult, RestaurantRequestUsingOwner,
+from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
                                        RestaurantRequestFullModel, RestaurantGeoSearch, Point)
 from src.models.orm.schemas import Restaurant
+from src.repository.interface import TablesRepositoryInterface
 
 names = ['owner_id', 'name', 'main_photo', 'photos',
          'ext_serv_link_1', 'ext_serv_link_2', 'ext_serv_link_3',
@@ -19,13 +15,7 @@ names = ['owner_id', 'name', 'main_photo', 'photos',
          'tg_link', 'inst_link', 'vk_link', 'orig_phone', 'wapp_phone',
          'location', 'address', 'categories']
 
-class RestaurantRepo:
-
-    def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]] = get_session):
-        """
-        :session_getter Нужно передать коннектор к базе данных
-        """
-        self.session_getter = session_getter
+class RestaurantRepo(TablesRepositoryInterface):
 
     async def create(
             self,

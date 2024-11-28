@@ -1,27 +1,18 @@
-from contextlib import _AsyncGeneratorContextManager
-from typing import Callable, AsyncGenerator
+from typing import Optional
 
-from sqlalchemy import select, insert, delete
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from src.database.sql_session import get_session
+from sqlalchemy import select, insert, delete, Row
 from src.models.dto.favourites import (FavouriteRestaurantResponse, FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
 from src.models.orm.schemas import FavRestForUser
+from src.repository.interface import TablesRepositoryInterface
 
 
-class FavouriteRestaurantRepo:
-
-    def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]] = get_session):
-        """
-        :session_getter Нужно передать коннектор к базе данных
-        """
-        self.session_getter = session_getter
+class FavouriteRestaurantRepo(TablesRepositoryInterface):
 
     async def delete(
             self,
             model: FavouriteRestaurantDTO
     ) -> FavouriteRestaurantResponse:
-        async with get_session() as session:
+        async with self.session_getter() as session:
             stmt = (
                 delete(FavRestForUser)
                 .where(FavRestForUser.user_id == model.user_id)
@@ -34,16 +25,19 @@ class FavouriteRestaurantRepo:
             self,
             model: FavouriteRestaurantDTO
     ) -> FavouriteRestaurantResponse:
-        async with get_session() as session:
+        async with self.session_getter() as session:
             stmt = insert(FavRestForUser).values(**model.dict()).returning(FavRestForUser.rest_id)
             response = await session.execute(stmt)
-            return FavouriteRestaurantResponse.model_validate(response, from_attributes=True)
+            row: Optional[Row[tuple[int]]] = response.first()
+            if row is None:
+                raise ValueError("No restaurant ID returned from the database")
+            return FavouriteRestaurantResponse(rest_id=int(row[0]))
 
     async def get_all_user_fav_restaurants(
             self,
             model: AllFavouriteRestaurantsRequest
     ) -> list[FavouriteRestaurantResponse]:
-        async with get_session() as session:
+        async with self.session_getter() as session:
             stmt = select(FavRestForUser.rest_id).where(FavRestForUser.user_id == model.user_id)
             fav_restaurants = await session.execute(stmt)
             return [
@@ -53,8 +47,8 @@ class FavouriteRestaurantRepo:
     async def drop_all_user_fav_restaurants(
             self,
             model: AllFavouriteRestaurantsRequest
-    ) -> FavouriteRestaurantResponse:
-        async with get_session() as session:
+    ) -> AllFavouriteRestaurantsRequest:
+        async with self.session_getter() as session:
             stmt = select(FavRestForUser).where(FavRestForUser.user_id == model.user_id)
             await session.execute(stmt)
-            return FavouriteRestaurantResponse(rest_id=model.user_id)  # TODO: переделать здесь на другое возвращаемое значение
+            return model
