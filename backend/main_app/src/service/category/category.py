@@ -9,6 +9,3 @@ class CategoryService:
 
     async def get(self, model: CategoryDTO) -> CategoryResult:
         return await self.repo.get(model)
-
-    async def create(self, model: CategoryDTO) -> CategoryResult:
-        return await self.repo.create(model)

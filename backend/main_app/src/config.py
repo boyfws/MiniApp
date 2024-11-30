@@ -90,8 +90,8 @@ class DatabaseConfig:
 class AppConfig:
     """Bot configuration."""
 
-    title = "ad-olimp.org publications"
-    description = "Сервис для работы с публикациями в ленту"
+    title = "MiniApp python hse"
+    description = "Наше приложение"
     version = "1.0"
     root_path = NGINXConfig.APP_PREFIX
 
@@ -108,8 +108,5 @@ class Configuration:
     mongo_db: MongoDBConfig = field(default_factory=MongoDBConfig)
     s3: S3Config = field(default_factory=S3Config)
     auth_jwt: AuthJWTConfig = field(default_factory=AuthJWTConfig)
-
-configuration = Configuration()
-
 
 configuration = Configuration()

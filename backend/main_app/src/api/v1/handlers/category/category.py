@@ -8,14 +8,6 @@ category_router = APIRouter(
     tags=["Category"]
 )
 
-
-@category_router.post("/add_category/")
-async def add_category(
-        model: CategoryDTO,
-        service: CategoryService = Depends(get_category_service)
-) -> CategoryResult:
-    return await service.create(model)
-
 @category_router.get("/get_category_id/")
 async def get_category_id(
         model: CategoryDTO,

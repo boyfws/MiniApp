@@ -21,14 +21,3 @@ class CategoryRepo(TablesRepositoryInterface):
                 raise ValueError("No category ID returned from the database")
             return CategoryResult(cat_id=int(row[0]))
 
-    async def create(
-            self,
-            model: CategoryDTO
-    ) -> CategoryResult:
-        async with self.session_getter() as session:
-            stmt = insert(Category).values(name=model.name).returning(Category.id)
-            cat_id = await session.execute(stmt)
-            row: Optional[Row[tuple[int]]] = cat_id.first()
-            if row is None:
-                raise ValueError("No category ID returned from the database")
-            return CategoryResult(cat_id=int(row[0]))
