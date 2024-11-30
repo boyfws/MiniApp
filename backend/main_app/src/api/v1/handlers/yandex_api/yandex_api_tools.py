@@ -5,6 +5,8 @@ from .GeoCode import GeoCode
 from .yandex_api_session import yandex_api_session
 from fastapi import APIRouter
 
+geosuggest: GeoSuggest
+geocoder: GeoCode
 
 yandex_api_router = APIRouter(
     prefix="/YandexApi",
@@ -18,8 +20,15 @@ class LocationNotFoundError(ValueError):
 
 NUM_of_SUGGESTIONS = 10
 
-geocoder = GeoCode(yandex_api_session)
-geosuggest = GeoSuggest(yandex_api_session)
+
+#geocoder, geosuggest = None, None
+
+
+async def prepare_classes_for_yandex_api():
+    global geosuggest, geocoder
+    geocoder = GeoCode(yandex_api_session.session)
+    geosuggest = GeoSuggest(yandex_api_session.session)
+
 
 
 @yandex_api_router.get("/get_rest_suggestion/")
