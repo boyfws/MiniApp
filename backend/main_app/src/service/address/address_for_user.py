@@ -4,8 +4,8 @@ from src.repository.address.address_for_user import AddressForUserRepo
 
 
 class AddressesForUserService:
-    def __init__(self) -> None:
-        self.repo = AddressForUserRepo()
+    def __init__(self, session_getter=get_session) -> None:
+        self.repo = AddressForUserRepo(session_getter)
 
     async def delete(self, model: AddressForUserDTO) -> AddressesResponse:
         return await self.repo.delete(model)

@@ -4,31 +4,14 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 from src.models.dto.address import AddressDTO, AddressRequest
 from src.repository.address.address import AddressRepo
 from tests.conftest import get_session_test
-
+from tests.common.address import get_addresses
 
 class TestAddressRepo:
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
         [
-            (AddressDTO(
-                region="Республика Чечня",
-                city="Москва",
-                district="Измайловский",
-                street="улица Вернадского",
-                house=11,
-                location="SRID=4326;POINT(37.617 55.755)"),
-             1,
-             does_not_raise()),
-            (AddressDTO(
-                region="Республика Чечня",
-                city="Санкт-Петербург",
-                district="Красноярск",
-                street="улица Аникутина",
-                house=12,
-                location="SRID=4326;POINT(37.617 55.755)"),
-            2,
-            does_not_raise()
-            )
+            (get_addresses()[0], 1, does_not_raise()),
+            (get_addresses()[1], 2, does_not_raise())
         ]
     )
     async def test_add_address_different_addresses(self, model: AddressDTO, expected_id: int, expectation: AbstractContextManager):
@@ -39,25 +22,8 @@ class TestAddressRepo:
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
         [
-            (AddressDTO(
-                region="Республика Чечня",
-                city="Москва",
-                district="Измайловский",
-                street="улица Вернадского",
-                house=50,
-                location="SRID=4326;POINT(37.617 55.755)"),
-             3,
-             does_not_raise()),
-            (AddressDTO(
-                region="Республика Чечня",
-                city="Москва",
-                district="Калининский",
-                street="улица Аникутина",
-                house=13,
-                location="SRID=4326;POINT(37.617 55.755)"),
-             4,
-             does_not_raise()
-            )
+            (get_addresses()[2], 3, does_not_raise()),
+            (get_addresses()[3], 4, does_not_raise())
         ]
     )
     async def test_add_address_same_city(self, model: AddressDTO, expected_id: int, expectation: AbstractContextManager):
@@ -68,25 +34,8 @@ class TestAddressRepo:
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
         [
-            (AddressDTO(
-                region="Республика Чечня",
-                city="Москва",
-                district="Измайловский",
-                street="улица Вернадского",
-                house=50,
-                location="SRID=4326;POINT(37.617 55.755)"),
-             5,
-             does_not_raise()),
-            (AddressDTO(
-                region="Республика Чечня",
-                city="Москва",
-                district="Измайловский",
-                street="улица Аникутина",
-                house=13,
-                location="SRID=4326;POINT(37.617 55.755)"),
-             6,
-             does_not_raise()
-            )
+            (get_addresses()[4], 5, does_not_raise()),
+            (get_addresses()[5], 6, does_not_raise())
         ]
     )
     async def test_add_address_same_city_and_district(self, model: AddressDTO, expected_id: int, expectation: AbstractContextManager):
@@ -97,12 +46,8 @@ class TestAddressRepo:
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
         [
-            (AddressRequest(id=1),
-             1,
-             does_not_raise()),
-            (AddressRequest(id=2),
-             2,
-             does_not_raise()
+            (AddressRequest(id=1), 1, does_not_raise()),
+            (AddressRequest(id=2), 2, does_not_raise()
             )
         ]
     )

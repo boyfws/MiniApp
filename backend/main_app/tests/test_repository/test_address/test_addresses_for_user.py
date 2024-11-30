@@ -3,13 +3,13 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
 from sqlalchemy import text
 
-from src.models.dto.address import AddressDTO
-from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser
+from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser
 from src.models.dto.user import UserRequest
 from src.repository.address.address import AddressRepo
 from src.repository.address.address_for_user import AddressForUserRepo
 from src.repository.user import UserRepo
-from tests.conftest import get_session_test, cleanup
+from tests.conftest import get_session_test
+from tests.common.address import get_addresses
 
 @pytest.fixture()
 async def truncate_db():
@@ -18,41 +18,22 @@ async def truncate_db():
     finally:
         async with get_session_test() as session_test:
             for table in [
-                'users', 'address', 'district', 'city', 'street', 'addresses_for_user'
+                'users', 'address', 'district', 'city', 'street', 'addresses_for_user', 'region'
             ]:
                 await session_test.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE;"))
             await session_test.commit()
 
-
-@pytest.fixture()
-def addresses() -> list[AddressDTO]:
-    address_1 = AddressDTO(
-        region="Республика Чечня",
-        city="Москва",
-        district="Измайловский",
-        street="улица Вернадского",
-        house=50,
-        location="SRID=4326;POINT(37.617 55.755)")
-    address_2 = AddressDTO(
-        region="Республика Чечня",
-        city="Санкт-Петербург",
-        district="Красноярск",
-        street="улица Аникутина",
-        house=12,
-        location="SRID=4326;POINT(37.617 55.755)")
-    return [address_1, address_2]
-
 @pytest.fixture(scope="function")
-async def create_db_values_1(addresses):
-    await AddressRepo(session_getter=get_session_test).add_address(addresses[0])
-    await AddressRepo(session_getter=get_session_test).add_address(addresses[1])
+async def create_db_values_1():
+    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[1])
+    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[2])
     await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=1))
 
 @pytest.fixture(scope='function')
-async def create_db_values_2(addresses):
+async def create_db_values_2():
     # добавили пару различных адресов в базу
-    await AddressRepo(session_getter=get_session_test).add_address(addresses[0])
-    await AddressRepo(session_getter=get_session_test).add_address(addresses[1])
+    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[1])
+    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[2])
 
     # добавили одного юзера в базу с номером 1
     await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=1))
