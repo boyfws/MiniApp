@@ -27,7 +27,7 @@ async def truncate_db_rest():
     finally:
         async with get_session_test() as session_test:
             for table in [
-                'users', 'restaurants', 'fav_rest_for_user', 'owners', 'categories',
+                'users', 'restaurants', 'fav_rest_for_user', 'owners',
             ]:
                 await session_test.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE;"))
             await session_test.commit()
@@ -38,8 +38,6 @@ async def create_db_values_restaurants():
     await OwnerRepo(session_getter=get_session_test).create_owner(1)
     await user_repo.create_user(model=UserRequest(id=1))
     await user_repo.create_user(model=UserRequest(id=2))
-    await cat_repo.create(model=CategoryDTO(name='Бар'))
-    await cat_repo.create(model=CategoryDTO(name='Итальянское'))
     await rest_repo.create(model=rest_1)
     await rest_repo.create(model=rest_2)
 

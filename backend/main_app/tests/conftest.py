@@ -16,7 +16,7 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, Any, None]:
 @pytest.fixture(scope='module', autouse=True)
 async def cleanup():
     tables = [
-        'address', 'addresses_for_user', 'categories', 'city',
+        'address', 'addresses_for_user', 'city',
         'district', 'fav_cat_for_user', 'fav_rest_for_user',
         'owners', 'restaurants', 'street', 'users'
     ]

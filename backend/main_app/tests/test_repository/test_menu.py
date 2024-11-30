@@ -13,6 +13,7 @@ cocktails = Item(Name='Коктейли', Price=[500], Description='Авторс
 drinks = Category(category_name='Напитки', items=[vine, cocktails])
 burgers = Item(Name='Чизбургер комбо', Price=[500, 600, 700], Condition='цена за комбо s, m, l')
 food = Category(category_name='Бургеры', items=[burgers])
+
 @pytest.mark.parametrize(
     "model, expected_id, expectation",
     [

@@ -105,11 +105,18 @@ class UserActivityLog(Base):
     category = relationship("Category")
     restaurant = relationship("Restaurant", back_populates="activities")
 
+class Region(Base):
+    __tablename__ = 'region'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+
 
 class City(Base):
     __tablename__ = 'city'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    region_id: Mapped[int] = mapped_column(Integer, nullable=True)
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
 
 

@@ -18,7 +18,7 @@ async def truncate_db():
     finally:
         async with get_session_test() as session_test:
             for table in [
-                'users', 'categories', 'fav_cat_for_user'
+                'users', 'fav_cat_for_user'
             ]:
                 await session_test.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE;"))
             await session_test.commit()
@@ -27,8 +27,6 @@ async def truncate_db():
 async def create_db_values_categories():
     await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=1))
     await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=2))
-    await CategoryRepo(session_getter=get_session_test).create(model=CategoryDTO(name='Бар'))
-    await CategoryRepo(session_getter=get_session_test).create(model=CategoryDTO(name='Итальянское'))
 
 @pytest.fixture(scope="function")
 async def create_db_values_all_categories(create_db_values_categories):

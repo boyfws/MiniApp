@@ -53,17 +53,13 @@ async def truncate_db():
     finally:
         async with get_session_test() as session_test:
             for table in [
-                'owners', 'restaurants', 'categories',
+                'owners', 'restaurants',
             ]:
                 await session_test.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE;"))
             await session_test.commit()
 
 @pytest.fixture(scope='function')
 async def create_categories_and_owner():
-    cat1 = CategoryDTO(name='Бар')
-    cat2 = CategoryDTO(name='Бургерная')
-    await CategoryRepo(session_getter=get_session_test).create(cat1)
-    await CategoryRepo(session_getter=get_session_test).create(cat2)
     await OwnerRepo(session_getter=get_session_test).create_owner(1)
 
 

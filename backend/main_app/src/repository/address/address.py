@@ -4,7 +4,7 @@ from sqlalchemy import insert, delete, select, Row
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
-from src.models.orm.schemas import Address, City, District, Street
+from src.models.orm.schemas import Address, City, District, Street, Region
 from src.repository.interface import TablesRepositoryInterface
 
 
@@ -24,13 +24,26 @@ class AddressRepo(TablesRepositoryInterface):
             model: AddressDTO
     ) -> AddressResult:
         async with self.session_getter() as session:
+            # TODO: сделать здесь код более чистым
+            # найти айди региона, используя название
+            region_search_stmt = select(Region.id).where(Region.name == model.region)
+            region_search_result = await session.execute(region_search_stmt)
+            region_search_row: Optional[Row[tuple[int]]] = region_search_result.first()
+            if not region_search_row:
+                region_stmt = insert(Region).values(name=model.region).returning(Region.id)
+                region_result = await session.execute(region_stmt)
+                region_row: Optional[Row[tuple[int]]] = region_result.first()
+                if region_row is None: raise ValueError("No region ID returned from the database")
+                region_id = int(region_row[0])
+            else:
+                region_id = int(region_search_row[0])
 
             # найти айди города, используя название
-            city_search_stmt = select(City.id).where(City.name == model.city)
+            city_search_stmt = select(City.id).where(City.name == model.city).where(City.region_id == region_id)
             city_search_result = await session.execute(city_search_stmt)
             city_search_row: Optional[Row[tuple[int]]] = city_search_result.first()
             if not city_search_row: # если города нет в базе, то добавим
-                city_stmt = insert(City).values(name=model.city).returning(City.id)
+                city_stmt = insert(City).values(name=model.city, region_id=region_id).returning(City.id)
                 city_result = await session.execute(city_stmt)
                 city_row: Optional[Row[tuple[int]]] = city_result.first()
                 if city_row is None: raise ValueError("No city ID returned from the database")

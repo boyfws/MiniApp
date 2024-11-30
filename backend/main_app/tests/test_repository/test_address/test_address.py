@@ -1,11 +1,9 @@
-import asyncio
-
 import pytest
 from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
-from src.models.dto.address import AddressDTO, AddressRequest, AddressResult
+from src.models.dto.address import AddressDTO, AddressRequest
 from src.repository.address.address import AddressRepo
-from tests.conftest import get_session_test, cleanup
+from tests.conftest import get_session_test
 
 
 class TestAddressRepo:
@@ -13,6 +11,7 @@ class TestAddressRepo:
         "model, expected_id, expectation",
         [
             (AddressDTO(
+                region="Республика Чечня",
                 city="Москва",
                 district="Измайловский",
                 street="улица Вернадского",
@@ -21,6 +20,7 @@ class TestAddressRepo:
              1,
              does_not_raise()),
             (AddressDTO(
+                region="Республика Чечня",
                 city="Санкт-Петербург",
                 district="Красноярск",
                 street="улица Аникутина",
@@ -40,6 +40,7 @@ class TestAddressRepo:
         "model, expected_id, expectation",
         [
             (AddressDTO(
+                region="Республика Чечня",
                 city="Москва",
                 district="Измайловский",
                 street="улица Вернадского",
@@ -48,6 +49,7 @@ class TestAddressRepo:
              3,
              does_not_raise()),
             (AddressDTO(
+                region="Республика Чечня",
                 city="Москва",
                 district="Калининский",
                 street="улица Аникутина",
@@ -67,6 +69,7 @@ class TestAddressRepo:
         "model, expected_id, expectation",
         [
             (AddressDTO(
+                region="Республика Чечня",
                 city="Москва",
                 district="Измайловский",
                 street="улица Вернадского",
@@ -75,6 +78,7 @@ class TestAddressRepo:
              5,
              does_not_raise()),
             (AddressDTO(
+                region="Республика Чечня",
                 city="Москва",
                 district="Измайловский",
                 street="улица Аникутина",

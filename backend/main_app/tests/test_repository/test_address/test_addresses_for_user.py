@@ -27,12 +27,14 @@ async def truncate_db():
 @pytest.fixture()
 def addresses() -> list[AddressDTO]:
     address_1 = AddressDTO(
+        region="Республика Чечня",
         city="Москва",
         district="Измайловский",
         street="улица Вернадского",
         house=50,
         location="SRID=4326;POINT(37.617 55.755)")
     address_2 = AddressDTO(
+        region="Республика Чечня",
         city="Санкт-Петербург",
         district="Красноярск",
         street="улица Аникутина",
