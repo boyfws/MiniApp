@@ -58,6 +58,19 @@ services:
       - redis
       - db
 
+  telegram_bot:
+    container_name: telegram_bot
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+      - db
+      - web
+      - mongodb
+
 
 
 

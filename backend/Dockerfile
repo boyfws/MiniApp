@@ -1,9 +1,13 @@
-FROM python:3.11
+FROM python:3.10
+
+RUN mkdir "api"
 
 ENV PYTHONDONTWRITEBYCODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY requirements.txt requirements.txt
+COPY requirements.txt /api/requirements.txt
+
+WORKDIR api
 
 RUN pip install -r requirements.txt
 
