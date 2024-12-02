@@ -2,8 +2,8 @@ from telegram.ext import ConversationHandler
 
 from bot_api.config import *
 
-from bot_api.bot_handlers import (start_command,
-                                  add_rest_conv_callback_query as callback_query)
+from .start_command import start_command
+from .add_rest_conv_callback_query import add_rest_conversation_callback_query as callback_query
 
 
 add_rest_conv_handler = ConversationHandler(

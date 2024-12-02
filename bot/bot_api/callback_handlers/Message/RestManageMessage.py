@@ -1,6 +1,5 @@
 from bot_api.callback_handlers.Utils import QueryTools, UserValidation, ValidateArg
 
-from telegram import Update
 from telegram.ext import ContextTypes
 
 from bot_api.config import (NamesForCallback,
@@ -9,6 +8,9 @@ from bot_api.config import (NamesForCallback,
 from bot_api.keyboards import (back_to_this_message_keyboard,
                                rest_for_inheritance_keyboard)
 
+from bot_api.bot_utils import Update_mod
+
+
 
 class RestManageMessage(QueryTools,
                         UserValidation,
@@ -16,7 +18,7 @@ class RestManageMessage(QueryTools,
     def __init__(self):
         super().__init__()
 
-    async def handle_rest_click(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def handle_rest_click(self, update: Update_mod, context: ContextTypes.DEFAULT_TYPE) -> None:
         query, chat_id, user_id, bot, message, flag = await self.prepare_data(update=update, context=context)
 
         args = self.get_args(query)

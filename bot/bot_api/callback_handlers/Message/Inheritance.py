@@ -1,7 +1,6 @@
 from bot_api.callback_handlers.Utils import (QueryTools,
                                              UserValidation,
                                              ValidateArg)
-from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 
 from bot_api.external_api import (get_rest_properties,
@@ -15,6 +14,8 @@ from bot_api.keyboards import (inheritance_properties_keyboard,
                                back_to_this_message_keyboard,
                                rest_for_inheritance_keyboard)
 
+from bot_api.bot_utils import Update_mod
+
 
 class Inheritance(QueryTools,
                   UserValidation,
@@ -22,7 +23,7 @@ class Inheritance(QueryTools,
     def __init__(self):
         super().__init__()
 
-    async def create_new_rest(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | None:
+    async def create_new_rest(self, update: Update_mod, context: ContextTypes.DEFAULT_TYPE) -> int | None:
         query, chat_id, user_id, bot, message, flag = await self.prepare_data(update=update, context=context)
 
         restaurants = await get_user_rest(user_id=user_id)
@@ -53,8 +54,8 @@ class Inheritance(QueryTools,
             return None
 
     async def show_prop_for_inheritance(self,
-                                        update: Update,
-                                        context: ContextTypes.DEFAULT_TYPE) -> None:
+                                        update: Update_mod,
+                                        context: ContextTypes.DEFAULT_TYPE) -> None | int:
         query, chat_id, user_id, bot, message, flag = await self.prepare_data(update=update, context=context)
         args = self.get_args(query)
         if not self.validate_args(args=args, num_args=1, dtypes=[int], user_id=user_id):
@@ -88,13 +89,13 @@ class Inheritance(QueryTools,
         return INHERITANCE
 
     async def move_on_from_inheritance(self,
-                                       update: Update,
+                                       update: Update_mod,
                                        context: ContextTypes.DEFAULT_TYPE) -> int:
         self._log_move_on_from_inheritance(user_id=update.effective_user.id)
         return NAME
 
     async def stop_rest_adding_conv(self,
-                                    update: Update,
+                                    update: Update_mod,
                                     context: ContextTypes.DEFAULT_TYPE) -> int | None:
         query, chat_id, user_id, bot, message, flag = await self.prepare_data(update=update, context=context)
         if context.user_data['in_conversation']:

@@ -2,6 +2,7 @@ from telegram import CallbackQuery
 from typing import List
 
 from .Logger import Logger
+from bot_api.bot_utils import CallbackQuery_mod
 
 
 class ValidateArg(Logger):
@@ -9,7 +10,7 @@ class ValidateArg(Logger):
         pass
 
     @staticmethod
-    def get_args(query: CallbackQuery) -> List[str]:
+    def get_args(query: CallbackQuery_mod) -> List[str]:
         callback, arg = query.data.split(":")
         return arg.split(",")
 

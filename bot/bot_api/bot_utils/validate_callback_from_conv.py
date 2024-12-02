@@ -1,9 +1,8 @@
-from telegram import Update, CallbackQuery
-
+from .mypy_types import Update_mod, CallbackQuery_mod
 from .logger import injection_notifier_logger
 
 
-def val_callback_from_conv(query: CallbackQuery, update: Update) -> str | None:
+def val_callback_from_conv(query: CallbackQuery_mod, update: Update_mod) -> str | None:
     """
     Проверяет callback из Conversation на правильность, возвращает
     колбэк без префикса если все в порядке None иначе

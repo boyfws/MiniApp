@@ -1,4 +1,3 @@
-from telegram import Update
 from telegram.ext import ContextTypes, CommandHandler, ConversationHandler
 
 from bot_api.keyboards import start_keyboard
@@ -6,10 +5,10 @@ from bot_api.config import TextForMessages
 
 from bot_api.keyboards import menu_bottom_miniapp
 
-from bot_api.bot_utils import user_activity_logger
+from bot_api.bot_utils import user_activity_logger, Update_mod
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | None:
+async def start(update: Update_mod, context: ContextTypes.DEFAULT_TYPE) -> int | None:
     """
     Обрабатывает команду start выводя сообщение с кнопкой для перехода в мини приложение и кнопкой
     для управления ресторанами. Также прерывает conversation для добавления ресторана
@@ -17,8 +16,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | Non
     :param context:
     :return:
     """
-    if update.effective_chat is None or update.message is None or update.message.from_user is None:
-        return None
 
     chat_id = update.effective_chat.id
     bot = context.bot

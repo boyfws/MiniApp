@@ -1,12 +1,13 @@
 from .logger import injection_notifier_logger
-from telegram import CallbackQuery, Update
+from telegram import CallbackQuery
 
-from typing import Tuple
+from typing import Tuple, cast
 
 from .validate_callback_from_conv import val_callback_from_conv
+from .mypy_types import Update_mod, CallbackQuery_mod
 
 
-def val_callback_with_args(query: CallbackQuery, update: Update) -> Tuple[str, str] | Tuple[None, None]:
+def val_callback_with_args(query: CallbackQuery_mod, update: Update_mod) -> Tuple[str, str] | Tuple[None, None]:
     """
     Валидирует колбэк с аргументами, возвращает имя колбэка и
     аргумент если все в порядке None, None иначе
@@ -15,7 +16,7 @@ def val_callback_with_args(query: CallbackQuery, update: Update) -> Tuple[str, s
 
     try:
         if "_" in query.data:
-            callback_str = val_callback_from_conv(query=query, update=update)
+            callback_str = cast(str, val_callback_from_conv(query=query, update=update))
         else:
             callback_str = query.data
 

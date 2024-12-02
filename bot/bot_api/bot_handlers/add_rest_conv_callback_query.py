@@ -1,10 +1,9 @@
 from telegram.ext import (ContextTypes,
                           CallbackQueryHandler)
-from telegram import Update
 
 from bot_api.config import NamesForCallback
 
-from bot_api.bot_utils import val_callback_from_conv, val_callback_with_args
+from bot_api.bot_utils import val_callback_from_conv, val_callback_with_args, Update_mod
 
 from bot_api.callback_handlers import ConvCallBackHandlers
 
@@ -12,7 +11,7 @@ from bot_api.callback_handlers import ConvCallBackHandlers
 callback_handler = ConvCallBackHandlers()
 
 
-async def process_callbacks_for_rest_add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | None:
+async def process_callbacks_for_rest_add(update: Update_mod, context: ContextTypes.DEFAULT_TYPE) -> int | None:
     query = update.callback_query
     await query.answer()
 
@@ -43,8 +42,9 @@ async def process_callbacks_for_rest_add(update: Update, context: ContextTypes.D
             case NamesForCallback.inheritance_property_of_rest:
                 return await callback_handler.show_prop_for_inheritance(update=update,
                                                                         context=context)
+    return None
 
 
-add_rest_conv_callback_query = CallbackQueryHandler(process_callbacks_for_rest_add,
-                                                    pattern=rf'^{NamesForCallback.adding_rest_conv_mark}_[\w:,]*$')
+add_rest_conversation_callback_query = CallbackQueryHandler(process_callbacks_for_rest_add,
+                                                            pattern=rf'^{NamesForCallback.adding_rest_conv_mark}_[\w:,]*$')
 # Ловим только колбэки связанные с данным conversation

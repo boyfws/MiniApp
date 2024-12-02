@@ -1,5 +1,4 @@
 from bot_api.callback_handlers.Utils.QueryTools import QueryTools
-from telegram import Update
 from telegram.ext import ContextTypes
 
 from bot_api.external_api import get_user_rest
@@ -11,7 +10,7 @@ from bot_api.keyboards import (back_to_this_message_keyboard,
                                start_keyboard)
 
 
-from bot_api.bot_utils import user_activity_logger
+from bot_api.bot_utils import user_activity_logger, Update_mod
 
 
 class StartMessage(QueryTools):
@@ -19,7 +18,7 @@ class StartMessage(QueryTools):
         super().__init__()
 
     async def switch_to_rest_management(self,
-                                        update: Update,
+                                        update: Update_mod,
                                         context: ContextTypes.DEFAULT_TYPE) -> None:
 
         query, chat_id, user_id, bot, message, flag = await self.prepare_data(update=update, context=context)
@@ -44,7 +43,7 @@ class StartMessage(QueryTools):
                                   message_id=message.message_id)
 
     async def back_to_start_message(self,
-                                    update: Update,
+                                    update: Update_mod,
                                     context: ContextTypes.DEFAULT_TYPE) -> None:
         # Мы можем попасть на стартовое сообщение только через команду "Вернуться назад"
         query, chat_id, user_id, bot, message, flag = await self.prepare_data(update=update, context=context)

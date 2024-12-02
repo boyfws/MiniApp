@@ -1,15 +1,15 @@
-from telegram.ext import CallbackQueryHandler, ContextTypes
-from telegram import Update
+from telegram.ext import ContextTypes, CallbackQueryHandler
 
 from bot_api.config import NamesForCallback
 
-from bot_api.bot_utils import val_callback_with_args
+from bot_api.bot_utils import val_callback_with_args,Update_mod
 from bot_api.callback_handlers import CallBackHandlers
+
 
 callback_handler = CallBackHandlers()
 
 
-async def process_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def process_callback(update: Update_mod, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Отвечает за нажатие всех кнопок, кроме кнопок внутри conversation handler - ов
     """
