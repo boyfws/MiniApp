@@ -1,7 +1,10 @@
 from pathlib import Path
 import sys
+import asyncio
+import uvloop
 
-# Добавляем корневую директорию проекта в sys.path
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(root_dir))
 
