@@ -14,22 +14,3 @@ def main() -> Any:
                    **asdict(configuration.app)
                    ).included_cors().included_routers(routers=[router_v1])
     return app
-
-import os
-import shutil
-
-def remove_pycache(path):
-    for root, _, files in os.walk(path):
-        for item in files:
-            if item == '__pycache__':
-                full_path = os.path.join(root, item)
-                try:
-                    shutil.rmtree(full_path)  # Удаление папки и ее содержимого
-                    print(f"Удалена папка: {full_path}")
-                except OSError as e:
-                    print(f"Ошибка при удалении папки {full_path}: {e}")
-
-
-if __name__ == "__main__":
-    project_path = "."  # Текущая директория
-    remove_pycache(project_path)

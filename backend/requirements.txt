@@ -1,3 +1,4 @@
+python-multipart
 fastapi~=0.115.0
 motor==3.6.0
 pydantic==2.9.2
@@ -14,3 +15,4 @@ aiobotocore
 botocore
 pytest-asyncio
 sqlalchemy[asyncio]
+uvicorn
