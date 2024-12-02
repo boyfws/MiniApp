@@ -1,3 +1,10 @@
+from pathlib import Path
+import sys
+
+# Добавляем корневую директорию проекта в sys.path
+root_dir = Path(__file__).resolve().parent.parent
+sys.path.append(str(root_dir))
+
 from telegram.ext import ApplicationBuilder
 
 from config import TOKEN
@@ -16,7 +23,7 @@ def main() -> None:
     bot1.add_handler(callback_query)
     bot1.add_handler(add_rest_conv_handler)
 
-    #bot1.add_error_handler(error_handler)
+    bot1.add_error_handler(error_handler)
 
     bot1.run_polling()
 
