@@ -16,7 +16,7 @@ def main() -> None:
     bot1.add_handler(callback_query)
     bot1.add_handler(add_rest_conv_handler)
 
-    bot1.add_error_handler(error_handler)
+    #bot1.add_error_handler(error_handler)
 
     bot1.run_polling()
 

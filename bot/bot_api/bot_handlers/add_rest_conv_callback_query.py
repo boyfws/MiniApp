@@ -1,7 +1,7 @@
 from telegram.ext import (ContextTypes,
                           CallbackQueryHandler)
 
-from bot_api.config import NamesForCallback
+from bot_api.config import NamesForCallback, PropInCallBack_INH
 
 from bot_api.bot_utils import val_callback_from_conv, val_callback_with_args, Update_mod
 
@@ -42,6 +42,10 @@ async def process_callbacks_for_rest_add(update: Update_mod, context: ContextTyp
             case NamesForCallback.inheritance_property_of_rest:
                 return await callback_handler.show_prop_for_inheritance(update=update,
                                                                         context=context)
+            case NamesForCallback.show_prop_for_inh:
+                return await callback_handler.handle_property_click(update=update,
+                                                                    context=context)
+
     return None
 
 

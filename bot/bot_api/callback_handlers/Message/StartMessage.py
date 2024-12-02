@@ -31,11 +31,9 @@ class StartMessage(QueryTools):
 
         self._log_switch_to_rest_management(flag=flag, user_id=user_id)
 
-        if flag:
-            await query.edit_message_reply_markup(
-                reply_markup=back_to_this_message_keyboard(
-                    NamesForCallback.start)
-            )
+        await self.add_back_buttons(flag=flag,
+                                    query=query,
+                                    callback_name=NamesForCallback.start)
 
         await self.delete_message(flag=flag,
                                   bot=bot,

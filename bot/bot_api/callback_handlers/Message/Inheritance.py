@@ -12,7 +12,8 @@ from bot_api.config import *
 
 from bot_api.keyboards import (inheritance_properties_keyboard,
                                back_to_this_message_keyboard,
-                               rest_for_inheritance_keyboard)
+                               rest_for_inheritance_keyboard,
+                               inheritance_click_property_keyboard)
 
 from bot_api.bot_utils import Update_mod
 
@@ -68,6 +69,8 @@ class Inheritance(QueryTools,
 
         rest_name = await get_rest_name(rest_id=rest_id)
         properties = await get_rest_properties(rest_id=rest_id)
+        properties = tuple(el for el in properties if hasattr(PropInCallBack_INH, el))
+
         await bot.send_message(chat_id=chat_id,
                                text=TextForMessages.get_text_for_rest_mes_inheritance(rest_name),
                                reply_markup=inheritance_properties_keyboard(
@@ -75,12 +78,9 @@ class Inheritance(QueryTools,
                                    properties=properties)
                                 )
 
-        if flag:
-            await query.edit_message_reply_markup(reply_markup=
-            back_to_this_message_keyboard(
-                f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.create_new_rest}"
-            )
-            )
+        await self.add_back_buttons(flag=flag,
+                                    query=query,
+                                    callback_name=f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.create_new_rest}")
 
         await self.delete_message(flag=flag,
                                   bot=bot,
@@ -105,5 +105,34 @@ class Inheritance(QueryTools,
         else:
             # Если мы не в диалоге игнорим
             return None
+
+    async def handle_property_click(self, update: Update_mod, context: ContextTypes.DEFAULT_TYPE) -> int | None:
+        query, chat_id, user_id, bot, message, flag = await self.prepare_data(update=update, context=context)
+        args = self.get_args(query)
+        if not self.validate_args(args, num_args=2, dtypes=[int, str], user_id=user_id):
+            return None
+        rest_id, prop = args
+        rest_id = int(rest_id)
+
+        if not await self.validate_user(user_id=user_id, rest_id=rest_id):
+            return None
+
+        rest_name = await get_rest_name(rest_id=rest_id)
+        await bot.send_message(chat_id=chat_id,
+                               text=TextForMessages.get_text_for_mes_show_confirm_inh(prop, rest_name),
+                               reply_markup=inheritance_click_property_keyboard(rest_id=rest_id,
+                                                                                property=prop)
+                               )
+
+        await self.add_back_buttons(flag=flag,
+                                    query=query,
+                                    callback_name=f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.inheritance_property_of_rest}:{rest_id}")
+
+
+
+
+
+
+
 
 

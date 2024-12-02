@@ -11,7 +11,6 @@ from bot_api.keyboards import (back_to_this_message_keyboard,
 from bot_api.bot_utils import Update_mod
 
 
-
 class RestManageMessage(QueryTools,
                         UserValidation,
                         ValidateArg):
@@ -38,10 +37,10 @@ class RestManageMessage(QueryTools,
         self._log_handle_rest_click(user_id=user_id, flag=flag, rest_id=rest_id)
 
         await bot.send_message(chat_id=chat_id, text=text)
-        if flag:
-            await query.edit_message_reply_markup(reply_markup=back_to_this_message_keyboard(
-                NamesForCallback.switch_to_rest_management
-            ))
+
+        await self.add_back_buttons(flag=flag,
+                                    query=query,
+                                    callback_name=NamesForCallback.switch_to_rest_management)
 
         await self.delete_message(flag=flag,
                                   bot=bot,

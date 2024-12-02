@@ -72,8 +72,19 @@ def inheritance_properties_keyboard(
     rest_prop = [
         [
             InlineKeyboardButton(text=getattr(TextForButtons, el),
-                                 callback_data=f"{NamesForCallback.adding_rest_conv_mark}_{getattr(NamesForCallback, el)}:{rest_id}")
+                                 callback_data=f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.show_prop_for_inh}:{rest_id},{getattr(NamesForCallback, el)}")
         ]
         for el in properties
     ]
     return InlineKeyboardMarkup(rest_prop)
+
+
+def inheritance_click_property_keyboard(property: str,
+                                        rest_id: int) -> InlineKeyboardMarkup:
+    keyb = [
+        [InlineKeyboardButton(text=TextForButtons.show_prop_for_inheritance,
+                              callback_data=f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.SHOW}:{rest_id},{property}")],
+        [InlineKeyboardButton(text=TextForButtons.confirm_inheritance,
+                              callback_data=f"{NamesForCallback.adding_rest_conv_mark}_{NamesForCallback.CONFIRM}:{rest_id},{property}")]
+            ]
+    return InlineKeyboardMarkup(keyb)
