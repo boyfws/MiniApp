@@ -16,9 +16,9 @@ async def add_address(
 ) -> AddressResult:
     return await service.add_address(model)
 
-@address_router.delete("/delete_address")
+@address_router.delete("/delete_address/{address_id}")
 async def delete_address(
-        model: AddressRequest,
+        address_id: int,
         service: AddressService = Depends(get_address_service)
 ) -> AddressResult:
-    return await service.delete(model)
+    return await service.delete(AddressRequest(id=address_id))
