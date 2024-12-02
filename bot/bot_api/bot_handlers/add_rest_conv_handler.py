@@ -1,6 +1,4 @@
-from telegram.ext import MessageHandler, ConversationHandler, ContextTypes
-
-from telegram import Update
+from telegram.ext import ConversationHandler
 
 from bot_api.config import *
 

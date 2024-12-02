@@ -1,11 +1,12 @@
 from telegram import Update
 from telegram.ext import ContextTypes, CommandHandler, ConversationHandler
 
+from bot_api.keyboards import start_keyboard
+from bot_api.config import TextForMessages
+
 from bot_api.keyboards import menu_bottom_miniapp
 
 from bot_api.bot_utils import user_activity_logger
-
-from bot_api.callback_handlers import send_start_message
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | None:
@@ -28,7 +29,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | Non
 
     resp_of_button_set: bool = await bot.set_chat_menu_button(chat_id=chat_id,
                                                               menu_button=menu_bottom_miniapp)
-    await send_start_message(chat_id=chat_id, bot=bot)
+    await bot.send_message(chat_id=chat_id, text=TextForMessages.start, reply_markup=start_keyboard)
     return ConversationHandler.END
 
 
