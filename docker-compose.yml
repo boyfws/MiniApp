@@ -88,9 +88,23 @@ services:
       - telegram_bot
     command: ["sh", "-c", "npm run build && serve -s build"]
 
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx_log:/etc/nginx/var/log # Пишем логи в том 
+    depends_on:
+      - frontend
+    command: ["nginx", "-g", "daemon off;"]          # Команда для запуска
+
+
 
 
 volumes:
   postgres_data:
   redis_for_bot_data:
   mongodb_data:
+  nginx_log:
