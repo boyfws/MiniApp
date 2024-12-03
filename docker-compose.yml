@@ -86,7 +86,7 @@ services:
       - "3000:3000"
     depends_on:
       - telegram_bot
-    command: ["sh", "-c", "npm run build && npm start"]
+    command: ["sh", "-c", "npm run build && serve -s build"]
 
 
 
