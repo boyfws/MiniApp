@@ -29,9 +29,10 @@ async def add_address(
 ) -> AddressesResponse:
     return await service.create(model)
 
-@addresses_for_user_router.delete("/delete_address/")
+@addresses_for_user_router.delete("/delete_address/{user_id}/{address_id}")
 async def delete_address(
-        model: AddressForUserDTO,
+        user_id: int,
+        address_id: int,
         service: AddressesForUserService = Depends(get_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.delete(model)
+    return await service.delete(AddressForUserDTO(user_id=user_id, address_id=address_id))

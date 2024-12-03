@@ -12,19 +12,19 @@ addresses_for_user_router = APIRouter(
 def get_test_address_for_user_service() -> AddressesForUserService:
     return AddressesForUserService(session_getter=get_session_test)
 
-@addresses_for_user_router.get("/get_all_addresses/")
+@addresses_for_user_router.get("/get_all_addresses/{user_id}")
 async def get_all_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
 ) -> list[AddressForUserDTO]:
-    return await service.get_all_user_fav_restaurants(model=model)
+    return await service.get_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
 
-@addresses_for_user_router.delete("/drop_all_addresses/")
+@addresses_for_user_router.delete("/drop_all_addresses/{user_id}")
 async def drop_all_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.drop_all_user_fav_restaurants(model=model)
+    return await service.drop_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
 
 @addresses_for_user_router.post("/add_address/")
 async def add_address(
@@ -33,9 +33,10 @@ async def add_address(
 ) -> AddressesResponse:
     return await service.create(model)
 
-@addresses_for_user_router.delete("/delete_address/")
+@addresses_for_user_router.delete("/delete_address/{user_id}/{address_id}")
 async def delete_address(
-        model: AddressForUserDTO,
+        user_id: int,
+        address_id: int,
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.delete(model)
+    return await service.delete(AddressForUserDTO(user_id=user_id, address_id=address_id))
