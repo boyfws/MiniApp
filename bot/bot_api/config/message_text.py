@@ -33,14 +33,20 @@ def get_text_for_mes_show_confirm_inh(prop_callback: str, rest_name: str) -> str
     return f'Вы находитесь на странице добавления свойства "{conv_dict[prop_callback]}" из вашего ресторана {rest_name}. Вы можете применить данное свойство или отобразить его'
 
 
+
 @dataclass(frozen=True)
-class TextForMessages:
-    start: str = "Привет новый  пользователь скоро тут будет новая подпись, но пока что, есть только это"
-    rest_management: str = "Привет, ты перешел на страницу для управления ресторанами"
+class DynamicTextForMessages:
     get_text_for_rest_mes: Callable[[str, str, str, str], str] = get_text_for_rest_mes
     get_text_for_rest_mes_inheritance: Callable[[str], str] = get_text_for_rest_mes_inheritance
+    get_text_for_mes_with_show_confirm: Callable[[str, str], str] = get_text_for_mes_show_confirm_inh
+
+
+
+@dataclass(frozen=True)
+class TextForMessages(DynamicTextForMessages):
+    start: str = "Привет новый  пользователь скоро тут будет новая подпись, но пока что, есть только это"
+    rest_management: str = "Привет, ты перешел на страницу для управления ресторанами"
     start_init_rest: str = "Вы начали создание ресторана, пока вы находитесь в процессе добавления свойств ресторана прочие кнопки станут некликабельными, сейчас вы сможете выбрать свойтва своих уже сущесвтующих ресторанов, которые будут применены к добавляемому"
     notif_that_buttons_are_unclickable_while_adding_rest: str = "Прежде чем использовать интерфейс закончите добавление ресторана"
-    get_text_for_mes_show_confirm_inh: Callable[[str, str], str] = get_text_for_mes_show_confirm_inh
 
 

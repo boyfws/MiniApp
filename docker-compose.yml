@@ -63,14 +63,30 @@ services:
     build:
       context: ./bot
       dockerfile: Dockerfile
+    environment:
+      REDIS_FOR_BOT_PASSWORD: ${REDIS_FOR_BOT_PASSWORD}
+      BOT_TOKEN: ${BOT_TOKEN}
+    volumes:
+      - ./bot/bot_api:/bot/bot_api
     ports:
       - "8081:8081"
+    command: ["python3", "bot_api/bot.py"]
     depends_on:
-      - redis
-      - db
-      - web
-      - mongodb
+      - web # Зависит от бд-шек так как зависит от web 
 
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+     - ./frontend/public:/app/public
+     - ./frontend/src:/app/src
+    ports:
+      - "3000:3000"
+    depends_on:
+      - telegram_bot
+    command: ["sh", "-c", "npm run build && npm start"]
 
 
 
