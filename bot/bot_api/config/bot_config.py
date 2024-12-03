@@ -8,7 +8,7 @@ load_dotenv()
 
 MAX_INLINE_BUTTON_LEN = 15
 
-TOKEN: str = cast(str, os.getenv('TOKEN'))
+TOKEN: str = cast(str, os.getenv('BOT_TOKEN'))
 '''
 Можно юзать https://www.temporary-url.com/ для временных ссылок для теста
 '''
