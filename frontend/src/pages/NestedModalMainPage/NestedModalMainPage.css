@@ -1,0 +1,9 @@
+.upper_level_wrapper{
+    display: flex;
+    flex-direction: line; 
+    width: 100%;
+}
+
+.input{
+
+}

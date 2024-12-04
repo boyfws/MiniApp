@@ -41,7 +41,7 @@ const AdressLinesInModal = ({ adresses, onClick }) => {
     <div>
       {adresses.map((address, index) => (
         <React.Fragment key={index}>
-          <Cell onClick={() => onClick(address)} classname="address-cell">
+          <Cell onClick={() => onClick(address)} className="address-cell">
             <Text className="address-text">
             {formatAdress(address)}
             </Text>

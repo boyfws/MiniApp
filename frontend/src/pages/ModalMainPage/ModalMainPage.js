@@ -17,7 +17,7 @@ const ModalMainPage = ({ModalState, modalRef, Adresses, setAdresses, setDefaultA
             header={<Modal.Header/>}
             open={ModalState}
             ref={modalRef}
-            dismissible={true}
+            dismissible={false}
             nested={true}
               >
 
