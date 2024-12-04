@@ -1,13 +1,16 @@
-import { Title } from "@telegram-apps/telegram-ui";
+import { Title, Button, Modal } from "@telegram-apps/telegram-ui";
 import AdressLinesInModal from "../../components/AdressLinesInModal/AdressLinesInModal";
-import React from "react";
+import React , {useState} from "react";
+import  NestedModalMainPage from '../../pages/NestedModalMainPage/NestedModalMainPage.js'
 import './ModalMainPage.css';
 
 // Учесть, что ласт адрес хранится в локал сторадж 
-const ModalMainPage = ({Adresses, setAdresses}) => {
+const ModalMainPage = ({Adresses, setAdresses, setDefaultAdress, setModalState, InerModalRef}) => {
+    const [InnerModalState, SetInnerModalState] = useState(false)
 
     const handleAdressClick = (address) => {
         console.log("Клик по адресу: ", address);
+        setModalState(false)
     }
 
     return (
@@ -20,6 +23,24 @@ const ModalMainPage = ({Adresses, setAdresses}) => {
                     onClick={handleAdressClick}
                     className="adress-lines-in-modal"
             />
+            <Button 
+                mode={"outline"} 
+                className="AddAddresButton"
+                onClick={() => {SetInnerModalState(true)}}
+            >
+                Нажми меня сученыщ
+            </Button>
+
+            <Modal
+            header={<Modal.Header/>}
+            open={InnerModalState}
+            dismissible={true}
+            ref={InerModalRef}
+            >
+                <NestedModalMainPage/>
+
+
+            </Modal>
         </div>
     );
 };

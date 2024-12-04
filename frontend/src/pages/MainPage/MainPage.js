@@ -54,6 +54,10 @@ const MainPage = () => {
 
   const [searchClicked, setSearchClicked] = useState(false);
   const [InputValue, setInputValue] = useState('');
+  const [ModalState, setModalState] = useState(false)
+  const modalRef = useRef(null);
+  const InerModalRef = useRef(null)
+
 
   const history = useHistory();
 
@@ -116,6 +120,26 @@ const MainPage = () => {
   useEffect(LoadRestFromSearch, [InputValue]);
 
 
+  const handleClickOutside = (event) => {
+    if (modalRef.current && InerModalRef.current) {
+      if (!modalRef.current.contains(event.target) && !InerModalRef.current.contains(event.target)) {
+        setModalState(false);
+      }
+    } else if (modalRef.current && !InerModalRef.current) {
+      if (!modalRef.current.contains(event.target)) {
+        setModalState(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
   if (!showContent) {
     return (
     <div className='loading-wrapper' style={{backgroundColor: 'var(--tgui--bg_color)'}}>
@@ -132,49 +156,61 @@ const MainPage = () => {
       padding: 10
     }}>
       <div className={'page-content'}>
-        <List className='list'>
+          <List className='list'>
 
             <div className="upper-level-wrapper">
-              <div className={`upper-level${searchClicked ? '-hidden' : ''}`}>
-                <ProfileAvatar onClick={handleProfileClick} className='profile-avatar'/>
+                <div className={`upper-level${searchClicked ? '-hidden' : ''}`}>
+                  <ProfileAvatar onClick={handleProfileClick} className='profile-avatar'/>
+                  <AdressButton 
+                    defaultAdress={defaultAdress} 
+                    className='adress-button'
+                    onClick={() => {setModalState(true)}}/>
 
-                <Modal
-                  header={<Modal.Header/>}
-                  trigger={<AdressButton defaultAdress={defaultAdress} className='adress-button'/>}
-                  >
 
-                  <ModalMainPage 
-                  Adresses={Adresses} 
-                  setAdresses={setAdresses}/>
 
-                </Modal>
+                  <SearchButton onSearchClick={handleSearchClick} className='search-button' />
 
-                <SearchButton onSearchClick={handleSearchClick} className='search-button' />
+                </div>
+
+                <div className={`search${searchClicked ? '' : '-hidden'}`}>
+                  <SearchForm 
+                  handleBack={handleBackFromSearch} 
+                  ChangeValueInMainPage={setInputValue}/>
+                </div>
 
               </div>
 
-              <div className={`search${searchClicked ? '' : '-hidden'}`}>
-                <SearchForm 
-                handleBack={handleBackFromSearch} 
-                ChangeValueInMainPage={setInputValue}/>
-              </div>
-
-            </div>
-
-            <CategoryButtons 
-            categories={categories} 
-            onCategorySelect={handleCategorySelect} 
-            style={{marginBottom: 0, marginTop: 0}} 
-            className='category-buttons'/>
+              <CategoryButtons 
+              categories={categories} 
+              onCategorySelect={handleCategorySelect} 
+              style={{marginBottom: 0, marginTop: 0}} 
+              className='category-buttons'/>
 
 
-        </List>
+          </List>
 
-        <Title level="2" weight="1" plain={false} style={{padding: 0}}> 
-          Рестораны
-        </Title>
-        <RestaurantCards restaurants={filteredRestaurants} onCardClick={handleCardClick} />
-        <ScrollToTopButton className="scroll-to-top-button"/>
+          <Title level="2" weight="1" plain={false} style={{padding: 0}}> 
+            Рестораны
+          </Title>
+          <RestaurantCards restaurants={filteredRestaurants} onCardClick={handleCardClick} />
+          <ScrollToTopButton className="scroll-to-top-button"/>
+
+        <Modal
+            header={<Modal.Header/>}
+            open={ModalState}
+            ref={modalRef}
+            dismissible={true}
+            nested={true}
+              >
+
+            <ModalMainPage 
+              Adresses={Adresses} 
+              setAdresses={setAdresses}
+              setDefaultAdress={setDefaultAdress}
+              setModalState={setModalState}
+              InerModalRef={InerModalRef}
+            />
+        </Modal>
       </div>
     </div>
 
