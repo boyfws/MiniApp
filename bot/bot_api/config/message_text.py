@@ -38,7 +38,7 @@ def get_text_for_mes_show_confirm_inh(prop_callback: str, rest_name: str) -> str
 class DynamicTextForMessages:
     get_text_for_rest_mes: Callable[[str, str, str, str], str] = get_text_for_rest_mes
     get_text_for_rest_mes_inheritance: Callable[[str], str] = get_text_for_rest_mes_inheritance
-    get_text_for_mes_with_show_confirm: Callable[[str, str], str] = get_text_for_mes_show_confirm_inh
+    get_text_for_mes_show_confirm_inh: Callable[[str, str], str] = get_text_for_mes_show_confirm_inh
 
 
 
