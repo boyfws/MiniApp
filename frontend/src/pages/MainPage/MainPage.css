@@ -3,7 +3,8 @@
     flex-direction: column;
     justify-content: center; /* Центрирует по горизонтали */
     align-items: center;     /* Центрирует по вертикали */
-    height: 100vh;  /* Высота 100% от высоты окна браузера */       
+    height: 100vh;  /* Высота 100% от высоты окна браузера */
+    background-color: var(--tgui--bg_color);     
   }
 
 @keyframes fadeIn {
@@ -23,15 +24,20 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 0; /* По желанию: отступы по краям */
-  gap: 10px;
+  gap: var(--gap-betwen-upper-level-el-in-main-page);
 }
 
 
 .profile-avatar, .search-button {
-    width: 48px !important;
-    height: 36px !important;
+    width: var(--width-of-small-mainpage-buttons) !important;
+    height: var(--height-of-clickable-el) !important;
     padding: 0 0 !important;
     border-radius: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  
 }
 
 .profile-avatar {
@@ -45,7 +51,7 @@
 
 
 .adress-button {
-    height: 36px !important;
+    height: var(--height-of-clickable-el) !important;
     flex-grow: 1;
     text-align: center;
     padding: 0 0 !important;
@@ -54,8 +60,8 @@
 
 .scroll-to-top-button {
   position: fixed !important;
-  bottom: 30px ;
-  right: 30px ;
+  bottom: 30px;
+  right: 30px;
   z-index: 9999 ;
 }
 
@@ -78,6 +84,13 @@
 
 .main-page-container {
   min-height: 100vh; /* Минимальная высота 100% экрана */
+  background: var(--tgui--bg_color);
+  padding: var(--padding-for-pages);
 }
 
+
+.category-buttons{
+  margin-top: 0;
+  margin-bottom: 0;
+}
 

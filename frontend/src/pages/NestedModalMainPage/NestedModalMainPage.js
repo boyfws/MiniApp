@@ -17,8 +17,6 @@ const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
         >
             <div 
             className='NestedModalMainPage' 
-            style={{backgroundColor: 'var(--tgui--bg_color)', 
-                    padding: 'var(--padding-for-pages)'}}
             >
                 <Title level="2" weight="1" plain={false} style={{padding: 0}}>
                     Добавить адрес
@@ -31,7 +29,7 @@ const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
                     onChange={e => SetseearchString(e.target.value)}
                     className={'input_for_address'} 
                     />
-                    <LocationButton/>
+                    <LocationButton className='LocationButton'/>
                 </div>
 
                 <RecLinesInnerModal recomendations={recomendations}/>

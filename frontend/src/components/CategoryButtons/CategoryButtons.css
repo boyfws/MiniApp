@@ -13,7 +13,15 @@
 
 .category-buttons {
   display: inline-flex;
-  gap: 7px; /* Расстояние между кнопками */
+  gap: var(--gap-betwen-upper-level-el-in-main-page); /* Расстояние между кнопками */
+
+}
+
+.category-button{
+  height: var(--height-of-clickable-el) !important;
+  max-height: none !important;
+  min-height: none !important;
+
 }
 
 

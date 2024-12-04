@@ -1,3 +1,8 @@
 :root {
-    --padding-for-pages: 10
+    --padding-for-pages: 10;
+    --height-of-clickable-el: 40px; /* Меньше 24 нельзя */
+    --gap-betwen-upper-level-el-in-main-page: 7px;
+    --modal-options-height: 50px;
+    --roll-up-buttons-size: 55px;
+    --width-of-small-mainpage-buttons: 50px;
 }

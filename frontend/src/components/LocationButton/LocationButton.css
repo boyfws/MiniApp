@@ -1,6 +1,6 @@
 .location-button{
-    width: 52px !important;
-    height: 52px !important;
+    width: var(--modal-options-height) !important;
+    height: var(--modal-options-height) !important;
     padding: 0 0 !important;
     border-radius: 14px !important;
     margin-left: auto !important;

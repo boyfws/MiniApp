@@ -15,7 +15,7 @@ const RestaurantPage = () => {
     <div 
     style={
       {backgroundColor: 'var(--tgui--bg_color)',
-      padding: 10, 
+      padding: 'var(--padding-for-pages)', 
       height: '100vh', 
       width: '100vw'}}>
       <h1 style={{ color: 'red', textAlign: 'center' }}>Restaurant Page {id}</h1>

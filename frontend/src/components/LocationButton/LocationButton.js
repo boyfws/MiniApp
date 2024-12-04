@@ -29,7 +29,8 @@ const LocationButton = ({onClick}) => {
         size="m" 
         mode="bezeled" 
         onClick={onClick}
-        className='location-button' >
+        className='location-button'
+        >
             <Icon24LocationOutline/>
         </Button>
     )

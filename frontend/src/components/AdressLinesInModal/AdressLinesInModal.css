@@ -1,3 +1,7 @@
 .adress-cell, .adress-text {
     margin-right: auto;
 }
+
+.address-cell{
+    height: var(--modal-options-height) !important;
+}

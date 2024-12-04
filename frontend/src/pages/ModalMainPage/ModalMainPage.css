@@ -9,4 +9,5 @@
 
 .AddAddresButton{
     width: 100%;
+    height: var(--modal-options-height) !important;
 }

@@ -148,7 +148,7 @@ const MainPage = () => {
 
   if (!showContent) {
     return (
-    <div className='loading-wrapper' style={{backgroundColor: 'var(--tgui--bg_color)'}}>
+    <div className='loading-wrapper'>
         <Loader loading={loading} onFinish={handleLoadingFinish} />
     </div> // Показ сообщения о загрузке, пока данные не получены
     )
@@ -156,11 +156,7 @@ const MainPage = () => {
 
 
   return (
-    <div className="main-page-container" 
-    style={{
-      background: 'var(--tgui--bg_color)',
-      padding: 'var(--padding-for-pages)'
-    }}>
+    <div className="main-page-container">
       <div className={'page-content'}>
           <List className='list'>
 
@@ -189,7 +185,6 @@ const MainPage = () => {
               <CategoryButtons 
               categories={categories} 
               onCategorySelect={handleCategorySelect} 
-              style={{marginBottom: 0, marginTop: 0}} 
               className='category-buttons'/>
 
 
