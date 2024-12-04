@@ -5,41 +5,45 @@ import  NestedModalMainPage from '../../pages/NestedModalMainPage/NestedModalMai
 import './ModalMainPage.css';
 
 // Учесть, что ласт адрес хранится в локал сторадж 
-const ModalMainPage = ({Adresses, setAdresses, setDefaultAdress, setModalState, InerModalRef, InnerModalState, SetInnerModalState}) => {
-
+const ModalMainPage = ({ModalState, modalRef, Adresses, setAdresses, setDefaultAdress, setModalState, InerModalRef, InnerModalState, SetInnerModalState}) => {
     const handleAdressClick = (address) => {
         console.log("Клик по адресу: ", address);
         setModalState(false)
     }
 
     return (
-        <div className="modal-main-page">
-            <Title level="2" weight="1" plain={false} style={{padding: 0}}> 
-                Мои адреса
-            </Title>
-            <AdressLinesInModal
+        
+        <Modal
+            header={<Modal.Header/>}
+            open={ModalState}
+            ref={modalRef}
+            dismissible={true}
+            nested={true}
+              >
+
+            <div className="modal-main-page">
+                <Title level="2" weight="1" plain={false} style={{padding: 0}}> 
+                    Мои адреса
+                </Title>
+                <AdressLinesInModal
                     adresses={Adresses}
                     onClick={handleAdressClick}
                     className="adress-lines-in-modal"
-            />
-            <Button 
-                mode={"outline"} 
-                className="AddAddresButton"
-                onClick={() => {SetInnerModalState(true)}}
-            >
+                />
+                <Button 
+                    mode={"outline"} 
+                    className="AddAddresButton"
+                    onClick={() => {SetInnerModalState(true)}}
+                >
                 Нажми меня сученыщ
-            </Button>
-            <Modal
-            header={<Modal.Header/>}
-            open={InnerModalState}
-            dismissible={true}
-            ref={InerModalRef}
-            >
-                <NestedModalMainPage/>
-            </Modal>
-        </div>
-    );
-};
+                </Button>
+            <NestedModalMainPage
+            InnerModalState={InnerModalState}
+            InerModalRef={InerModalRef}/>
+            </div>
+        </Modal>
+    )
+}
 
 
 export default ModalMainPage

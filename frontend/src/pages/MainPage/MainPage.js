@@ -201,24 +201,17 @@ const MainPage = () => {
           <RestaurantCards restaurants={filteredRestaurants} onCardClick={handleCardClick} />
           <ScrollToTopButton className="scroll-to-top-button"/>
 
-        <Modal
-            header={<Modal.Header/>}
-            open={ModalState}
-            ref={modalRef}
-            dismissible={true}
-            nested={true}
-              >
 
-            <ModalMainPage 
-              Adresses={Adresses} 
-              setAdresses={setAdresses}
-              setDefaultAdress={setDefaultAdress}
-              setModalState={setModalState}
-              InerModalRef={InerModalRef}
-              InnerModalState={InnerModalState}
-              SetInnerModalState={SetInnerModalState}
-            />
-        </Modal>
+        <ModalMainPage
+        ModalState={ModalState} 
+        modalRef={modalRef} 
+        Adresses={Adresses}
+        setAdresses={setAdresses}
+        setDefaultAdress={setDefaultAdress}
+        setModalState={setModalState}
+        InerModalRef={InerModalRef}
+        InnerModalState={InnerModalState}
+        SetInnerModalState={SetInnerModalState}/>
       </div>
     </div>
 

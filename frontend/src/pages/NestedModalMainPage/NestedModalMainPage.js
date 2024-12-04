@@ -1,13 +1,23 @@
 import React, {useState} from 'react';
 
 
-const NestedModalMainPage = () => {
+const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
     return (
-        <div className='NestedModalMainPage'>
-            Привет мой друг, ты кликнул на дичь которая используется для тестов 
+        <Modal
+        header={<Modal.Header/>}
+        open={InnerModalState}
+        dismissible={true}
+        ref={InerModalRef}
+        >
+            <div 
+            className='NestedModalMainPage' 
+            style={{backgroundColor: 'var(--tgui--bg_color)'}}>
+                Привет мой друг, ты кликнул на дичь которая используется для тестов 
 
 
-        </div>
+            </div>
+        </Modal>
+
     )
 
 }
