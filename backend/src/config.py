@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import os
 import logging
 from pathlib import Path
@@ -17,6 +19,8 @@ if os.path.exists(dotenv_path):
 
 @dataclass(frozen=True)
 class AuthJWTConfig:
+    bot_token: str = os.environ.get("BOT_TOKEN", '123')
+    secret_key: str = hmac.new(bot_token.encode('utf-8'), "WebAppData".encode('utf-8'), hashlib.sha256).hexdigest()
     private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
     public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
     algorithm: str = "RS256"
