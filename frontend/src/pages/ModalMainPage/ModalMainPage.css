@@ -1,5 +1,5 @@
 .modal-main-page{
-    padding: 10;
+    padding: var(--padding-for-pages);
 }
 
 

@@ -159,7 +159,7 @@ const MainPage = () => {
     <div className="main-page-container" 
     style={{
       background: 'var(--tgui--bg_color)',
-      padding: 10
+      padding: 'var(--padding-for-pages)'
     }}>
       <div className={'page-content'}>
           <List className='list'>

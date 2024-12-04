@@ -17,10 +17,13 @@ const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
         >
             <div 
             className='NestedModalMainPage' 
-            style={{backgroundColor: 'var(--tgui--bg_color)'}}>
+            style={{backgroundColor: 'var(--tgui--bg_color)', 
+                    padding: 'var(--padding-for-pages)'}}
+            >
                 <Title level="2" weight="1" plain={false} style={{padding: 0}}>
                     Добавить адрес
                 </Title>
+
                 <div className='upper_level_wrapper'>
                     <Input status="focused" 
                     placeholder="Write and clean me" 
@@ -30,8 +33,8 @@ const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
                     />
                     <LocationButton/>
                 </div>
-                <RecLinesInnerModal recomendations={recomendations}/>
 
+                <RecLinesInnerModal recomendations={recomendations}/>
             </div>
         </Modal>
 
