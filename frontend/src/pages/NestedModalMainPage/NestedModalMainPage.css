@@ -1,9 +1,15 @@
 .upper_level_wrapper{
-    display: flex;
-    flex-direction: line; 
+    display: grid;
     width: 100%;
+    grid-template-columns: 1fr auto; 
+    gap: 5px
 }
 
-.input{
+.input_for_address{
 
+}
+
+
+.NestedModalMainPage{
+    padding: 10px;
 }

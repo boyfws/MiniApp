@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Input, Modal } from '@telegram-apps/telegram-ui'
+import { Input, Modal, Title } from '@telegram-apps/telegram-ui'
 import "./NestedModalMainPage.css"
 
 import LocationButton from '../../components/LocationButton/LocationButton';
@@ -18,12 +18,15 @@ const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
             <div 
             className='NestedModalMainPage' 
             style={{backgroundColor: 'var(--tgui--bg_color)'}}>
+                <Title level="2" weight="1" plain={false} style={{padding: 0}}>
+                    Добавить адрес
+                </Title>
                 <div className='upper_level_wrapper'>
                     <Input status="focused" 
-                    header="Input" 
                     placeholder="Write and clean me" 
                     value={seearchString} 
-                    onChange={e => SetseearchString(e.target.value)} 
+                    onChange={e => SetseearchString(e.target.value)}
+                    className={'input_for_address'} 
                     />
                     <LocationButton/>
                 </div>

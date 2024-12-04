@@ -19,7 +19,7 @@ const RECOM_LENGTH = 5
 const RecLinesInnerModal = ({ recomendations, onClick }) => {
     return (
       <div>
-        {sliceAndFill(recomendations, RECOM_LENGTH, {"full_name": "Ggege"}).map((recom, index) => (
+        {sliceAndFill(recomendations, RECOM_LENGTH, {"full_name": " G"}).map((recom, index) => (
           <React.Fragment key={index}>
             <Cell onClick={() => onClick(recom)} className="recom-cell">
               <Text className="address-text">
@@ -28,6 +28,7 @@ const RecLinesInnerModal = ({ recomendations, onClick }) => {
             </Cell>
             {index < RECOM_LENGTH - 1 && <Divider />}
           </React.Fragment>
+
         ))}
       </div>
     );
