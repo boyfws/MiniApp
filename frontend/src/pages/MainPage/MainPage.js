@@ -55,6 +55,8 @@ const MainPage = () => {
   const [searchClicked, setSearchClicked] = useState(false);
   const [InputValue, setInputValue] = useState('');
   const [ModalState, setModalState] = useState(false)
+
+  const [InnerModalState, SetInnerModalState] = useState(false)
   const modalRef = useRef(null);
   const InerModalRef = useRef(null)
 
@@ -120,17 +122,21 @@ const MainPage = () => {
   useEffect(LoadRestFromSearch, [InputValue]);
 
 
-  const handleClickOutside = (event) => {
-    if (modalRef.current && InerModalRef.current) {
-      if (!modalRef.current.contains(event.target) && !InerModalRef.current.contains(event.target)) {
-        setModalState(false);
-      }
-    } else if (modalRef.current && !InerModalRef.current) {
-      if (!modalRef.current.contains(event.target)) {
-        setModalState(false);
-      }
+  const CloseFirstModal = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setModalState(false)
     }
-  };
+  }
+
+
+  const handleClickOutside = (event) => {
+    if (InerModalRef.current && !InerModalRef.current.contains(event.target)) {
+      SetInnerModalState(false)
+    }
+    if (!InerModalRef.current) {
+      CloseFirstModal(event)
+    }
+  }
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -209,6 +215,8 @@ const MainPage = () => {
               setDefaultAdress={setDefaultAdress}
               setModalState={setModalState}
               InerModalRef={InerModalRef}
+              InnerModalState={InnerModalState}
+              SetInnerModalState={SetInnerModalState}
             />
         </Modal>
       </div>
