@@ -3,7 +3,7 @@ import { Input, Modal, Title } from '@telegram-apps/telegram-ui'
 import "./NestedModalMainPage.css"
 
 import LocationButton from '../../components/LocationButton/LocationButton';
-import RecLinesInnerModal from '../../components/RecomendationLinesInnnerModal/RecLinesInnerModal'
+import RecLinesInnerModal from '../../components/RecLinesInnnerModal/RecLinesInnerModal'
 
 const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
     const [seearchString, SetseearchString] = useState("")
