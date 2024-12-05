@@ -1,6 +1,6 @@
 
 // Post запрос к серверу
-const verificateInitData = (initData) => {
+const verificateInitData = async (initData) => {
     return {error: false, message: "true"};
 }
 

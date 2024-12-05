@@ -1,5 +1,6 @@
 import fetchRestaurantsSearch from "../api/fetchRestaurantsSearch";
-import { userId } from "../telegramInit";
+
+const userId = 1 // Мок 
 
 const GetLoadRestFromSearch = (InputValue, Adress_coordinates, setRestaurants) => () => { 
     const fetchData = async () => {

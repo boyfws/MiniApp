@@ -1,5 +1,6 @@
 import fetchRestaurants from "../api/fetchRestaurants";
-import { userId } from "../telegramInit";
+
+const userId = 1 // Мок
 
 const GetLoadRestByAdress = (num, Adress_coordinates, setDefaultRestaurants, AdressLoaded, loading, setLoading) => () => {
     const fetchData = async () => {

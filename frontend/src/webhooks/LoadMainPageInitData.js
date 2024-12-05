@@ -1,6 +1,8 @@
 import fetchAdress from "../api/fetchAdress";
 import fetchCategories from "../api/fetchCategories";
-import { userId } from "../telegramInit";
+
+
+const userId = 1 // Мок 
 
 const def_adress = {
   type: 'Feature',
