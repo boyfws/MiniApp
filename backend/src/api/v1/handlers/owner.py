@@ -7,12 +7,12 @@ owner_router = APIRouter(
     tags=["Owner"]
 )
 
-@owner_router.post("/create_owner/")
-async def create_owner(
-        owner_id: int,
-        service: OwnerService = Depends(get_owner_service)
-) -> None:
-    await service.create_owner(owner_id)
+# @owner_router.post("/create_owner/")
+# async def create_owner(
+#         owner_id: int,
+#         service: OwnerService = Depends(get_owner_service)
+# ) -> None:
+#     await service.create_owner(owner_id)
 
 @owner_router.get("/is_owner/{owner_id}")
 async def is_owner(

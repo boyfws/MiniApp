@@ -13,9 +13,9 @@ user_router = APIRouter(
 def get_test_user_service() -> UserService:
     return UserService(repo=UserRepo(session_getter=get_session_test))
 
-@user_router.post("/create_user/")
-async def create_user(
-        model: UserRequest,
-        service: UserService = Depends(get_test_user_service)
-) -> UserResult:
-    return await service.create_user(model)
+# @user_router.post("/create_user/")
+# async def create_user(
+#         model: UserRequest,
+#         service: UserService = Depends(get_test_user_service)
+# ) -> UserResult:
+#     return await service.create_user(model)

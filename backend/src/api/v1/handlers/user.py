@@ -8,9 +8,9 @@ user_router = APIRouter(
     tags=["User"]
 )
 
-@user_router.post("/create_user/")
-async def create_user(
-        model: UserRequest,
-        service: UserService = Depends(get_user_service)
-) -> UserResult:
-    return await service.create_user(model)
+# @user_router.post("/create_user/")
+# async def create_user(
+#         model: UserRequest,
+#         service: UserService = Depends(get_user_service)
+# ) -> UserResult:
+#     return await service.create_user(model)
