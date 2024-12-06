@@ -15,7 +15,8 @@ import GetDependency from '../../webhooks/DepBetwDefRestAndRest';
 import GetLoadRestByAddress from '../../webhooks/LoadRestByAddress';
 
 
-import {Context} from '../../Context';
+import { DefAddressContext } from "../../Contexts/DefAddressContext";
+import { LoadingContext } from "../../Contexts/LoadingContext";
 
 
 import './MainPage.css';
@@ -29,14 +30,14 @@ const MainPage = () => {
 
 
   // Стейты связанные с загрузкой
-  const [loading, setLoading] = useState(true); // Флаг загрузки
   const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
 
+  const { RestLoaded, CategoriesLoaded, setRestLoaded } = useContext(LoadingContext);
 
   const [ScrollPositionY, setScrollPositionY] = useState(0);
 
 
-  const { DefAddress } = useContext(Context);
+  const { DefAddress } = useContext(DefAddressContext);
 
 
   const history = useHistory();
@@ -56,10 +57,10 @@ const MainPage = () => {
 
 
   const LoadRestByAddress = GetLoadRestByAddress(
-    DefAddress,
-    setDefaultRestaurants,
-    loading,
-    setLoading
+      DefAddress,
+      setDefaultRestaurants,
+      RestLoaded,
+      setRestLoaded
   );
 
   
@@ -95,7 +96,7 @@ const MainPage = () => {
   if (!showContent) {
     return (
     <div className='loading-wrapper'>
-        <Loader loading={loading} setShowContent={setShowContent} />
+        <Loader loading={!(RestLoaded && CategoriesLoaded)} setShowContent={setShowContent} />
     </div> // Показ сообщения о загрузке, пока данные не получены
     )
   }
@@ -115,6 +116,7 @@ const MainPage = () => {
             setScrollPositionY={setScrollPositionY}
             defaultRestaurants={defaultRestaurants}
             setModalState={setModalState}
+
           />
 
           <Title level="2" weight="1" plain={false} style={{padding: 0}}> 

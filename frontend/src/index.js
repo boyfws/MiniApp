@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import '@telegram-apps/telegram-ui/dist/styles.css'; // Глобальные стили из библиотеки
 import { AppRoot } from '@telegram-apps/telegram-ui';
-import { Context, ContextProvider } from './Context';
+import { ContextProvider } from './Context';
 
 
 document.documentElement.style.backgroundColor = 'var(--tgui--bg_color)';

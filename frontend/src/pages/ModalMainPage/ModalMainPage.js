@@ -37,7 +37,7 @@ const ModalMainPage = ({ModalState, modalRef, setModalState, InerModalRef, Inner
                     className="AddAddresButton"
                     onClick={() => {SetInnerModalState(true)}}
                 >
-                Нажми меня сученыщ
+                Добавить новый адрес
                 </Button>
             <NestedModalMainPage
             InnerModalState={InnerModalState}

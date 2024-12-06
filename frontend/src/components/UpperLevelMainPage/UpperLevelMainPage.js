@@ -7,7 +7,7 @@ import ProfileAvatar from '../../components/ProfileAvatar/ProfileAvatar';
 
 import GetLoadRestFromSearch from '../../webhooks/GetNewRestFromSearch';
 
-import { Context } from "../../Context";
+import { DefAddressContext } from '../../Contexts/DefAddressContext';
 
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
@@ -19,7 +19,7 @@ const UpperLevelMainPage = ({setRestaurants, setScrollPositionY, defaultRestaura
 
     const history = useHistory();
 
-    const { DefAddress } = useContext(Context);
+    const { DefAddress } = useContext(DefAddressContext);
 
 
     const LoadRestFromSearch = GetLoadRestFromSearch(
