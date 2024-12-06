@@ -59,3 +59,10 @@ async def get_restaurant_by_id(
         service: RestaurantService = Depends(get_restaurant_service)
 ) -> RestaurantRequestFullModel:
     return await service.get(RestaurantRequestUsingID(rest_id=rest_id))
+
+@restaurant_router.get("/get_restaurant_name_by_id/{rest_id}")
+async def get_restaurant_name_by_id(
+        rest_id: int,
+        service: RestaurantService = Depends(get_restaurant_service)
+) -> str:
+    return await service.get_name(rest_id)

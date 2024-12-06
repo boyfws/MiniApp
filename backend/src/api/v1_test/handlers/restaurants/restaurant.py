@@ -66,3 +66,10 @@ async def get_restaurant_by_geo_and_name(
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> list[RestaurantGeoSearch]:
     return await service.get_by_geo_and_name(RestaurantRequestUsingGeoPointAndName(point=Point(lon=lon, lat=lat), name_pattern=name_pattern))
+
+@restaurant_router.get("/get_restaurant_name_by_id/{rest_id}")
+async def get_restaurant_name_by_id(
+        rest_id: int,
+        service: RestaurantService = Depends(get_test_restaurant_service)
+) -> str:
+    return await service.get_name(rest_id)

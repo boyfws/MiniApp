@@ -56,3 +56,6 @@ class RestaurantService:
             model: RestaurantRequestUsingGeoPointAndName
     ) -> list[RestaurantGeoSearch]:
         return await self.repo.get_by_geo_and_name(model)
+
+    async def get_name(self, rest_id) -> str:
+        return await self.repo.get_name(rest_id)

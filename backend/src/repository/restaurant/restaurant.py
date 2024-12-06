@@ -160,3 +160,12 @@ class RestaurantRepo(TablesRepositoryInterface):
             return [
                 RestaurantRequestFullModel.model_validate(rest, from_attributes=True) for rest in rest_tuple
             ]
+
+    async def get_name(self, rest_id: int) -> str:
+        async with self.session_getter() as session:
+            stmt = select(Restaurant.name).where(Restaurant.id == rest_id)
+            response = await session.execute(stmt)
+            row: Optional[Row[tuple[str]]] = response.first()
+            if not row:
+                raise ValueError('no name returned')
+            return row[0]

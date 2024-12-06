@@ -9,6 +9,7 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 from tests.common.restaurants import restaurants, get_search_result
 from tests.sql_connector import get_session_test
 
+rest_repo = RestaurantRepo(session_getter=get_session_test)
 
 @pytest.fixture(scope="function")
 async def truncate_db():
@@ -39,52 +40,52 @@ async def test_create_one_rest(
         truncate_db
 ):
     with expectation:
-        result = await RestaurantRepo(session_getter=get_session_test).create(model)
+        result = await rest_repo.create(model)
         assert expected_id == result.rest_id
 
 async def test_create_multiple_rests(create_categories_and_owner, truncate_db):
     with does_not_raise():
-        result1 = await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        result2 = await RestaurantRepo(session_getter=get_session_test).create(restaurants()[1])
+        result1 = await rest_repo.create(restaurants()[0])
+        result2 = await rest_repo.create(restaurants()[1])
         assert result1.rest_id == 1
         assert result2.rest_id == 2
 
 async def test_delete_rest(create_categories_and_owner, truncate_db):
     with does_not_raise():
-        inserted_id = await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        result = await RestaurantRepo(session_getter=get_session_test).delete(RestaurantRequestUsingID(rest_id=inserted_id.rest_id))
+        inserted_id = await rest_repo.create(restaurants()[0])
+        result = await rest_repo.delete(RestaurantRequestUsingID(rest_id=inserted_id.rest_id))
         assert result.rest_id == inserted_id.rest_id
 
 async def test_update(create_categories_and_owner, truncate_db):
     with does_not_raise():
         # создать ресторан
-        inserted_id = await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
+        inserted_id = await rest_repo.create(restaurants()[0])
         # обновить его
-        await RestaurantRepo(session_getter=get_session_test).update(inserted_id.rest_id, restaurants()[1])
+        await rest_repo.update(inserted_id.rest_id, restaurants()[1])
 
 async def test_get(create_categories_and_owner, truncate_db):
     with does_not_raise():
         # создать ресторан
-        inserted_id = await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        rest = await RestaurantRepo(session_getter=get_session_test).get(RestaurantRequestUsingID(rest_id=inserted_id.rest_id))
+        inserted_id = await rest_repo.create(restaurants()[0])
+        rest = await rest_repo.get(RestaurantRequestUsingID(rest_id=inserted_id.rest_id))
         assert rest == restaurants()[0] # возвращенная схема должна быть равна той, что вставили
 
 async def test_get_by_geo(create_categories_and_owner, truncate_db):
     with does_not_raise():
         # создали 3 ресторана
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
+        await rest_repo.create(restaurants()[0])
+        await rest_repo.create(restaurants()[0])
+        await rest_repo.create(restaurants()[0])
         # получить список ресторанов
-        rest_list = await RestaurantRepo(session_getter=get_session_test).get_by_geo(Point(lon=30, lat=60))
+        rest_list = await rest_repo.get_by_geo(Point(lon=30, lat=60))
         assert rest_list == get_search_result()
 
 async def test_get_by_geo_and_name(create_categories_and_owner, truncate_db):
     with does_not_raise():
         # создали 3 ресторана
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
+        await rest_repo.create(restaurants()[0])
+        await rest_repo.create(restaurants()[0])
+        await rest_repo.create(restaurants()[0])
         # получить список ресторанов
         rest_list = await RestaurantRepo(session_getter=get_session_test).get_by_geo_and_name(
             RestaurantRequestUsingGeoPointAndName(point=Point(lon=30, lat=60), name_pattern='kf')
@@ -94,11 +95,16 @@ async def test_get_by_geo_and_name(create_categories_and_owner, truncate_db):
 async def test_get_by_owner(create_categories_and_owner, truncate_db):
     with does_not_raise():
         # создали 3 ресторана
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[0])
-        await RestaurantRepo(session_getter=get_session_test).create(restaurants()[1])
+        await rest_repo.create(restaurants()[0])
+        await rest_repo.create(restaurants()[1])
 
         # получить список всех рестиков у овнера 1
         rest_list = await RestaurantRepo(session_getter=get_session_test).get_by_owner(
             RestaurantRequestUsingOwner(owner_id=1)
         )
         assert rest_list == [restaurants()[0], restaurants()[1]]
+
+async def test_get_name(create_categories_and_owner, truncate_db):
+    rest_id = await rest_repo.create(restaurants()[0])
+    rest_name = await rest_repo.get_name(rest_id.rest_id)
+    assert rest_name == 'kfc'

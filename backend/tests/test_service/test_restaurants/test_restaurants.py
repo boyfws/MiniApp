@@ -66,3 +66,8 @@ async def test_get_by_owner(create_categories_and_owner, truncate_db):
         RestaurantRequestUsingOwner(owner_id=1)
     )
     assert rest_list == [restaurants()[0], restaurants()[1]]
+
+async def test_get_name(create_categories_and_owner, truncate_db):
+    rest_id = await restaurant_service.create(restaurants()[0])
+    rest_name = await restaurant_service.get_name(rest_id.rest_id)
+    assert rest_name == 'kfc'
