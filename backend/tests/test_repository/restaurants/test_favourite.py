@@ -36,8 +36,8 @@ async def truncate_db_rest():
 async def create_db_values_restaurants():
     rest_1, rest_2 = restaurants()
     await OwnerRepo(session_getter=get_session_test).create_owner(1)
-    await user_repo.create_user(model=UserRequest(id=1))
-    await user_repo.create_user(model=UserRequest(id=2))
+    await user_repo.create_user(1)
+    await user_repo.create_user(2)
     await rest_repo.create(model=rest_1)
     await rest_repo.create(model=rest_2)
 

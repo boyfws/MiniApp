@@ -25,8 +25,8 @@ async def truncate_db():
 
 @pytest.fixture(scope="function")
 async def create_db_values_categories():
-    await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=1))
-    await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=2))
+    await UserRepo(session_getter=get_session_test).create_user(1)
+    await UserRepo(session_getter=get_session_test).create_user(2)
 
 @pytest.fixture(scope="function")
 async def create_db_values_all_categories(create_db_values_categories):

@@ -24,8 +24,8 @@ async def truncate_db():
 @pytest.mark.parametrize(
     "model, expected_status",
     [
-        (UserRequest(id=1), 200),
-        (UserRequest(id=20000), 200)
+        (1, 200),
+        (20000, 200)
     ]
 )
 async def test_create_user(

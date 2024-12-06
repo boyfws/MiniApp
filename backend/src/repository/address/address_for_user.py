@@ -2,6 +2,7 @@ from sqlalchemy import select, insert, delete
 from src.models.dto.address_for_user import AddressesResponse, AddressForUserDTO, AllAddressesForUser
 from src.models.orm.schemas import AddressesForUser
 from src.repository.interface import TablesRepositoryInterface
+from src.repository.user import UserRepo
 
 
 class AddressForUserRepo(TablesRepositoryInterface):
@@ -24,6 +25,13 @@ class AddressForUserRepo(TablesRepositoryInterface):
             model: AddressForUserDTO,
     ) -> AddressesResponse:
         async with self.session_getter() as session:
+
+            # если юзера раньше не было в базе, то добавим
+            user_repo = UserRepo(session_getter=self.session_getter)
+            is_user = await user_repo.is_user(model.user_id)
+            if not is_user:
+                await user_repo.create_user(model.user_id)
+
             stmt = insert(AddressesForUser).values(**model.dict())
             await session.execute(stmt)
             return AddressesResponse(status=200)

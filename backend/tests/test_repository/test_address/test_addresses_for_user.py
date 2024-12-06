@@ -27,7 +27,7 @@ async def truncate_db():
 async def create_db_values_1():
     await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[1])
     await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[2])
-    await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=1))
+    await UserRepo(session_getter=get_session_test).create_user(1)
 
 @pytest.fixture(scope='function')
 async def create_db_values_2():
@@ -36,7 +36,7 @@ async def create_db_values_2():
     await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[2])
 
     # добавили одного юзера в базу с номером 1
-    await UserRepo(session_getter=get_session_test).create_user(model=UserRequest(id=1))
+    await UserRepo(session_getter=get_session_test).create_user(1)
 
     # добавили адреса для юзера номера 1
     model1 = AddressForUserDTO(user_id=1, address_id=1)

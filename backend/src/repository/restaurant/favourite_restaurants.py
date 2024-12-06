@@ -4,6 +4,7 @@ from sqlalchemy import select, insert, delete, Row, exists
 from src.models.dto.favourites import (FavouriteRestaurantResponse, FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
 from src.models.orm.schemas import FavRestForUser
 from src.repository.interface import TablesRepositoryInterface
+from src.repository.user import UserRepo
 
 
 class FavouriteRestaurantRepo(TablesRepositoryInterface):
@@ -55,9 +56,17 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
 
     async def is_favourite(self, user_id: int, rest_id: int) -> bool:
         async with (self.session_getter() as session):
-            result = await session.execute(select(exists().where(
+
+            # если юзера раньше не было в базе, то добавим
+            user_repo = UserRepo(session_getter=self.session_getter)
+            is_user = await user_repo.is_user(user_id)
+            if not is_user:
+                await user_repo.create_user(user_id)
+
+            stmt = select(exists().where(
                 FavRestForUser.user_id == user_id, FavRestForUser.rest_id == rest_id
-            )))
+            ))
+            result = await session.execute(stmt)
             row: Optional[Row[tuple[int]]] = result.first()
             if row is None:
                 raise ValueError("Nothing returned from the db")

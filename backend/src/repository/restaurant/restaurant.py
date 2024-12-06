@@ -7,6 +7,7 @@ from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingO
                                        RestaurantRequestFullModel, RestaurantGeoSearch, Point)
 from src.models.orm.schemas import Restaurant
 from src.repository.interface import TablesRepositoryInterface
+from src.repository.owner import OwnerRepo
 
 names = ['owner_id', 'name', 'main_photo', 'photos',
          'ext_serv_link_1', 'ext_serv_link_2', 'ext_serv_link_3',
@@ -22,6 +23,13 @@ class RestaurantRepo(TablesRepositoryInterface):
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
         async with self.session_getter() as session:
+
+            # если владельца раньше не было в базе, то добавим
+            user_repo = OwnerRepo(session_getter=self.session_getter)
+            is_user = await user_repo.is_owner(model.owner_id)
+            if not is_user:
+                await user_repo.create_owner(model.owner_id)
+
             stmt = insert(Restaurant).values(**model.model_dump()).returning(Restaurant.id)
             result = await session.execute(stmt)
             row: Optional[Row[tuple[int]]] = result.first()
