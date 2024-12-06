@@ -36,10 +36,7 @@ jwt_router = APIRouter(
 async def auth_user_jwt(
     data_check_string: str,
 ) -> TokenInfo:
-    sha256 = hashlib.sha256()
-    sha256.update(data_check_string.encode('utf-8'))
-    hash_ = sha256.hexdigest()
-    if not is_valid_telegram_request(data_check_string, hash_):
+    if not is_valid_telegram_request(data_check_string):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid Telegram request signature.",
