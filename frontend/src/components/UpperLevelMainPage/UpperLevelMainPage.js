@@ -31,8 +31,6 @@ const UpperLevelMainPage = ({setRestaurants, setScrollPositionY, defaultRestaura
     useEffect(LoadRestFromSearch, [InputValue]);
 
 
-
-
     return (
         <div className="upper-level-wrapper">
             <div className={`upper-level${searchClicked ? '-hidden' : ''}`}>

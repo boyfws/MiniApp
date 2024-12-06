@@ -19,18 +19,6 @@ const ListOfUpperElMainPage = ({
                                    defaultRestaurants,
                                    setModalState
                                }) => {
-    const [selectedCategories, setSelectedCategories] = useState(new Set())
-
-
-    const SortByCategory = GetSortByCategory(
-        setFilteredRestaurants, 
-        selectedCategories, 
-        restaurants
-      );
-
-
-    useEffect(SortByCategory, [selectedCategories, restaurants]);
-
 
     return (
 
@@ -44,8 +32,9 @@ const ListOfUpperElMainPage = ({
             setModalState={setModalState}
         />
 
-        <CategoryButtons 
-        setSelectedCategories={setSelectedCategories}
+        <CategoryButtons
+        restaurants={restaurants}
+        setFilteredRestaurants={setFilteredRestaurants}
         className='category-buttons'
         />
 

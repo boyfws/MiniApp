@@ -1,9 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import { Button } from '@telegram-apps/telegram-ui';
 import './CategoryButtons.css';
 import GetHandleCategorySelect from "../../handlers/handleCategorySelect";
 
 import { CategoriesContext } from "../../Contexts/CategoriesContext";
+
+import GetSortByCategory from "../../webhooks/SortByCategory";
+
 
 const CategoryButton = ({ category, onClick }) => {
   const [isPressed, setIsPressed] = useState(false); // Локальное состояние кнопки
@@ -28,7 +31,18 @@ const CategoryButton = ({ category, onClick }) => {
   );
 };
 
-const CategoryButtons = ({ setSelectedCategories }) => {
+const CategoryButtons = ({ setFilteredRestaurants, restaurants }) => {
+  const [selectedCategories, setSelectedCategories] = useState(new Set())
+
+  const SortByCategory = GetSortByCategory(
+      setFilteredRestaurants,
+      selectedCategories,
+      restaurants
+  );
+
+
+  useEffect(SortByCategory, [selectedCategories, restaurants]);
+
   const { categories } = useContext(CategoriesContext);
   const onCategorySelect = GetHandleCategorySelect(setSelectedCategories)
 
