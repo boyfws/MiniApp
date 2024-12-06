@@ -25,3 +25,13 @@ async def test_create_owner(truncate_db, test_app):
     assert response1.status_code == 200
     response2 = await test_app.post(f"/v1_test/Owner/create_owner/{1}")
     assert response2.status_code == 200
+
+async def test_is_owner(truncate_db, test_app):
+    response1 = await test_app.post(f"/v1_test/Owner/create_owner/{1}")
+    assert response1.status_code == 200
+    response2 = await test_app.get(f"/v1_test/Owner/is_owner/{1}")
+    assert response2.status_code == 200
+    assert response2.json()
+    response3 = await test_app.get(f"/v1_test/Owner/is_owner/{2}")
+    assert response3.status_code == 200
+    assert not response3.json()

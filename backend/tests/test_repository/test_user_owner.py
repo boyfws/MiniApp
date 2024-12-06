@@ -36,6 +36,13 @@ async def test_create_user(
     result = await UserRepo(session_getter=get_session_test).create_user(model)
     assert expected_status == result.status
 
+owner_repo = OwnerRepo(session_getter=get_session_test)
+
 async def test_create_owner(truncate_db):
-    await OwnerRepo(session_getter=get_session_test).create_owner(owner_id=20000)
-    await OwnerRepo(session_getter=get_session_test).create_owner(owner_id=1)
+    await owner_repo.create_owner(owner_id=20000)
+    await owner_repo.create_owner(owner_id=1)
+
+async def test_is_owner(truncate_db):
+    await owner_repo.create_owner(owner_id=1)
+    assert await owner_repo.is_owner(1)
+    assert not await owner_repo.is_owner(2)

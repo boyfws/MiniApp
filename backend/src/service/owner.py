@@ -17,3 +17,9 @@ class OwnerService:
             owner_id: int
     ) -> None:
         return await self.repo.create_owner(owner_id)
+
+    async def is_owner(
+            self,
+            owner_id: int
+    ) -> bool:
+        return await self.repo.is_owner(owner_id)
