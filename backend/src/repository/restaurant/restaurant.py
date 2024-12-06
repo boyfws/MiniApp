@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from asyncpg import Record # type: ignore
 from sqlalchemy import select, insert, delete, update, Row, text
@@ -169,3 +169,46 @@ class RestaurantRepo(TablesRepositoryInterface):
             if not row:
                 raise ValueError('no name returned')
             return row[0]
+
+    async def change_restaurant_property(self, rest_id: int, key: str, value: Any) -> None:
+        async with self.session_getter() as session:
+            if key == "location":
+                stmt = (
+                    "UPDATE restaurants "
+                    f"SET {key} = {value} "
+                    f"WHERE id = {rest_id};"
+                )
+                await session.execute(text(stmt))
+            if isinstance(value, list):
+                stmt = (
+                    "UPDATE restaurants "
+                    f'SET {key} = ARRAY{value} '
+                    f"WHERE id = {rest_id};"
+                )
+            elif isinstance(value, str):
+                stmt = (
+                    "UPDATE restaurants "
+                    f"SET {key} = '{value}' "
+                    f"WHERE id = {rest_id};"
+                )
+            elif isinstance(value, dict):
+                ddd = {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [34, 34]
+                    },
+                    "properties": {
+                        "city": "Saint Petersburg",
+                        "street": "Nevsky Prospect",
+                        "house": "28",
+                    }
+                }
+                stmt = (
+                    "UPDATE restaurants "
+                    f'SET {key} = {ddd}::JSONB '
+                    f"WHERE id = {rest_id};"
+                )
+            else:
+                raise ValueError("введите правильный тип (str, dict, list)")
+            await session.execute(text(stmt))

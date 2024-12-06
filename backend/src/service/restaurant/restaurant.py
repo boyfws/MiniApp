@@ -69,3 +69,7 @@ class RestaurantService:
             field_status[field] = value is not None
 
         return field_status
+
+    async def change_restaurant_property(self, rest_id: int, key: str, value: str) -> None:
+        await self.repo.change_restaurant_property(rest_id, key, value)
+

@@ -1,4 +1,6 @@
-from sqlalchemy import text
+from typing import Any, Optional
+
+from sqlalchemy import text, Row
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantRequestUsingID, Point, RestaurantGeoSearch, \
     RestaurantRequestUsingGeoPointAndName, RestaurantRequestUsingOwner
 from src.repository.owner import OwnerRepo
@@ -108,3 +110,32 @@ async def test_get_name(create_categories_and_owner, truncate_db):
     rest_id = await rest_repo.create(restaurants()[0])
     rest_name = await rest_repo.get_name(rest_id.rest_id)
     assert rest_name == 'kfc'
+
+@pytest.mark.parametrize(
+    "key, value",
+    [
+        ('name', 'КОТИК КОМАРУ'),
+        ('photos', ["pic.jpg", "citty.jpg", "cat.jpg", "dog.jpg"]),
+        ('location', 'SRID=4326;POINT(125.6 10.1)'),
+        ('address', {"type": "Feature", "geometry": {"type": "Point", "coordinates": [90.6, 10.1]}, "properties": {"name": "Moscow"}})
+    ]
+)
+async def test_change_property(key: str, value: Any, create_categories_and_owner, truncate_db):
+    rest_id = await rest_repo.create(restaurants()[0])
+    await rest_repo.change_restaurant_property(rest_id.rest_id, key, value)
+    async with get_session_test() as session:
+        # получить измененное проперти
+        if key != "location":
+            stmt = (
+                f"SELECT {key} FROM restaurants WHERE id = {rest_id.rest_id};"
+            )
+        else:
+            stmt = (
+                f"SELECT ST_AsEWKT(location) AS location FROM restaurants WHERE id = {rest_id.rest_id};"
+            )
+        result = await session.execute(text(stmt))
+        row: Optional[Row[tuple[str]]] = result.first()
+        if not row:
+            raise ValueError('no name returned')
+        actual_value = row[0]
+        assert actual_value == value

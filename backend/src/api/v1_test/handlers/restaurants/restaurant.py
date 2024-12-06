@@ -80,3 +80,12 @@ async def get_restaurant_available_properties(
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> dict[str, bool]:
     return await service.get_available_properties(rest_id)
+
+@restaurant_router.patch("/change_restaurant_property/{rest_id}/{key}/{value}")
+async def change_restaurant_property(
+        rest_id: int,
+        key: str,
+        value: str,
+        service: RestaurantService = Depends(get_test_restaurant_service)
+) -> None:
+    await service.change_restaurant_property(rest_id, key, value)
