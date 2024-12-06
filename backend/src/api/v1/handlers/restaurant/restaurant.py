@@ -66,3 +66,10 @@ async def get_restaurant_name_by_id(
         service: RestaurantService = Depends(get_restaurant_service)
 ) -> str:
     return await service.get_name(rest_id)
+
+@restaurant_router.get("/get_restaurant_available_properties/{rest_id}")
+async def get_restaurant_available_properties(
+        rest_id: int,
+        service: RestaurantService = Depends(get_restaurant_service)
+) -> dict[str, bool]:
+    return await service.get_available_properties(rest_id)

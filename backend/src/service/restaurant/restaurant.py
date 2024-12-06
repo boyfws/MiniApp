@@ -57,5 +57,15 @@ class RestaurantService:
     ) -> list[RestaurantGeoSearch]:
         return await self.repo.get_by_geo_and_name(model)
 
-    async def get_name(self, rest_id) -> str:
+    async def get_name(self, rest_id: int) -> str:
         return await self.repo.get_name(rest_id)
+
+    async def get_available_properties(self, rest_id: int) -> dict[str, bool]:
+        rest_properties: RestaurantRequestFullModel = await self.get(RestaurantRequestUsingID(rest_id=rest_id))
+        list_properties = list(RestaurantRequestFullModel.__dict__['__annotations__'].keys())
+        field_status = {}
+        for field in list_properties:
+            value = getattr(rest_properties, field)
+            field_status[field] = value is not None
+
+        return field_status

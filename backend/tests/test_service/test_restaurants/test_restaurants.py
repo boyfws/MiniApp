@@ -71,3 +71,30 @@ async def test_get_name(create_categories_and_owner, truncate_db):
     rest_id = await restaurant_service.create(restaurants()[0])
     rest_name = await restaurant_service.get_name(rest_id.rest_id)
     assert rest_name == 'kfc'
+
+async def test_get_properties(create_categories_and_owner, truncate_db):
+    rest_id = await restaurant_service.create(restaurants()[0])
+    result = await restaurant_service.get_available_properties(rest_id.rest_id)
+    assert result == {
+        'owner_id': True,
+        'name': True,
+        'main_photo': True,
+        'photos': True,
+        'ext_serv_link_1': False,
+        'ext_serv_link_2': False,
+        'ext_serv_link_3': False,
+        'ext_serv_rank_1': False,
+        'ext_serv_rank_2': False,
+        'ext_serv_rank_3': False,
+        'ext_serv_reviews_1': False,
+        'ext_serv_reviews_2': False,
+        'ext_serv_reviews_3': False,
+        'tg_link': False,
+        'inst_link': False,
+        'vk_link': False,
+        'orig_phone': True,
+        'wapp_phone': True,
+        'location': True,
+        'address': True,
+        'categories': True
+    }
