@@ -42,3 +42,11 @@ async def delete_fav_restaurant(
         service: FavouriteRestaurantService = Depends(get_test_fav_restaurant_service)
 ) -> FavouriteRestaurantResponse:
     return await service.delete(FavouriteRestaurantDTO(user_id=user_id, rest_id=rest_id))
+
+@fav_restaurant_router.get("/check_is_favourite/{user_id}/{rest_id}")
+async def check_is_favourite(
+        user_id: int,
+        rest_id: int,
+        service: FavouriteRestaurantService = Depends(get_test_fav_restaurant_service)
+) -> bool:
+    return await service.is_favourite(user_id, rest_id)

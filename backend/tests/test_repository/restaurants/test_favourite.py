@@ -106,7 +106,7 @@ async def test_get_all_user_fav_restaurants(
         create_db_values_all_restaurants,
         truncate_db_rest
 ):
-    async with expectation:
+    with expectation:
         result = await fav_rest_repo.get_all_user_fav_restaurants(model)
         assert result == expected_list_rest
 
@@ -124,6 +124,27 @@ async def test_drop_all_user_fav_restaurants(
         create_db_values_all_restaurants,
         truncate_db_rest
 ):
-    async with expectation:
+    with expectation:
         result = await fav_rest_repo.drop_all_user_fav_restaurants(model)
         assert expected_user_id == result.user_id
+
+@pytest.mark.parametrize(
+    "user_id, rest_id, expectation",
+    [
+        (1, 1, does_not_raise()),
+        (1, 2, does_not_raise()),
+        (2, 1, does_not_raise()),
+        (3, 1, pytest.raises(AssertionError)),
+        (3000, 11111, pytest.raises(AssertionError))
+    ]
+)
+async def test_is_favourite(
+        user_id: int,
+        rest_id: int,
+        expectation: AbstractContextManager,
+        create_db_values_all_restaurants,
+        truncate_db_rest
+):
+    with expectation:
+        result = await fav_rest_repo.is_favourite(user_id, rest_id)
+        assert result

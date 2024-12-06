@@ -21,3 +21,6 @@ class FavouriteRestaurantService:
             model: AllFavouriteRestaurantsRequest
     ) -> AllFavouriteRestaurantsRequest:
         return await self.repo.drop_all_user_fav_restaurants(model)
+
+    async def is_favourite(self, user_id: int, rest_id: int) -> bool:
+        return await self.repo.is_favourite(user_id, rest_id)

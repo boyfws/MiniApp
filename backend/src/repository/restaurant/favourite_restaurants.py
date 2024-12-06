@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select, insert, delete, Row
+from sqlalchemy import select, insert, delete, Row, exists
 from src.models.dto.favourites import (FavouriteRestaurantResponse, FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
 from src.models.orm.schemas import FavRestForUser
 from src.repository.interface import TablesRepositoryInterface
@@ -52,3 +52,13 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             stmt = select(FavRestForUser).where(FavRestForUser.user_id == model.user_id)
             await session.execute(stmt)
             return model
+
+    async def is_favourite(self, user_id: int, rest_id: int) -> bool:
+        async with (self.session_getter() as session):
+            result = await session.execute(select(exists().where(
+                FavRestForUser.user_id == user_id, FavRestForUser.rest_id == rest_id
+            )))
+            row: Optional[Row[tuple[int]]] = result.first()
+            if row is None:
+                raise ValueError("Nothing returned from the db")
+            return row[0]
