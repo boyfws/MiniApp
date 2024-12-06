@@ -21,3 +21,11 @@ class CategoryRepo(TablesRepositoryInterface):
                 raise ValueError("No category ID returned from the database")
             return CategoryResult(cat_id=int(row[0]))
 
+    async def get_all(self) -> list[CategoryDTO]:
+        async with self.session_getter() as session:
+            stmt = select(Category.name)
+            categories = await session.execute(stmt)
+            return [
+                CategoryDTO.model_validate(cat, from_attributes=True) for cat in categories.all()
+            ]
+

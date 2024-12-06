@@ -9,3 +9,6 @@ class CategoryService:
 
     async def get(self, model: CategoryDTO) -> CategoryResult:
         return await self.repo.get(model)
+
+    async def get_all(self) -> list[CategoryDTO]:
+        return await self.repo.get_all()

@@ -4,6 +4,8 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 from tests.conftest import get_session_test, cleanup
 from src.repository.category.category import CategoryRepo
 
+cat_repo = CategoryRepo(session_getter=get_session_test)
+
 @pytest.mark.parametrize(
     "model, expected_dto, expectation",
     [
@@ -13,5 +15,12 @@ from src.repository.category.category import CategoryRepo
 )
 async def test_get_category(model: CategoryDTO, expected_dto: CategoryResult, expectation: AbstractContextManager):
     async with expectation:
-        result = await CategoryRepo(session_getter=get_session_test).get(model)
+        result = await cat_repo.get(model)
         assert expected_dto.cat_id == result.cat_id
+
+async def test_get_all():
+    result = await cat_repo.get_all()
+    assert [model.model_dump() for model in result] ==  [
+        {"name": "Бургеры"}, {"name": "Суши"},
+        {"name": "Пицца"}, {"name": "Паста"}, {"name": "Десерты"}
+    ]

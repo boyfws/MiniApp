@@ -15,3 +15,8 @@ async def get_category_id(
 ) -> CategoryResult:
     return await service.get(model)
 
+@category_router.get("/get_all_categories/")
+async def get_all_categories(
+        service: CategoryService = Depends(get_category_service)
+) -> list[CategoryDTO]:
+    return await service.get_all()
