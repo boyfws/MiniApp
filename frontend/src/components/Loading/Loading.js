@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Steps } from '@telegram-apps/telegram-ui';
 import './Loading.css';
+import GetHandleLoadingFinish from '../../handlers/handleLoadingFinish';
+
 
 const SLOW_CHANGE_DURATION_MS = 1000; // Время для медленной фазы
 const FAST_CHANGE_DURATION_MS = 350; // Время для быстрой фазы
 
-const Loader = ({ loading, onFinish }) => {
+const LoaderComp = ({ loading, onFinish }) => {
     const [progress, setProgress] = useState(0);
     const count = 10; // Количество шагов индикатора
 
@@ -64,5 +66,13 @@ const Loader = ({ loading, onFinish }) => {
         />
     );
 };
+
+
+const Loader = ({loading, setShowContent}) => {
+    const onFinish = GetHandleLoadingFinish(setShowContent)
+    return (
+        <LoaderComp loading={loading} onFinish={onFinish}/>
+    )
+}
 
 export default Loader;

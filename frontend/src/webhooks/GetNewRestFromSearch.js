@@ -2,10 +2,12 @@ import fetchRestaurantsSearch from "../api/fetchRestaurantsSearch";
 
 const userId = 1 // Мок 
 
-const GetLoadRestFromSearch = (InputValue, Adress_coordinates, setRestaurants) => () => { 
+
+// Добавить логику для работы с redux для получения дефолтного адреса 
+const GetLoadRestFromSearch = (defAddress, InputValue, setRestaurants) => () => {
     const fetchData = async () => {
 
-        const restaurants_query = await fetchRestaurantsSearch(userId, Adress_coordinates, InputValue);
+        const restaurants_query = await fetchRestaurantsSearch(userId, defAddress.geometry.coordinates, InputValue);
 
         if (!restaurants_query.error) {
 
@@ -17,9 +19,9 @@ const GetLoadRestFromSearch = (InputValue, Adress_coordinates, setRestaurants) =
         }
         
     }
-    if (InputValue != "") {
+    if (InputValue !== "") {
         fetchData()
-    };
+    }
 };
 
 

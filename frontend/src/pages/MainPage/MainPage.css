@@ -18,46 +18,6 @@
   }
 
 
-.upper-level-wrapper {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 0; /* По желанию: отступы по краям */
-  gap: var(--gap-betwen-upper-level-el-in-main-page);
-}
-
-
-.profile-avatar, .search-button {
-    width: var(--width-of-small-mainpage-buttons) !important;
-    height: var(--height-of-clickable-el) !important;
-    padding: 0 0 !important;
-    border-radius: 20px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-  
-}
-
-.profile-avatar {
-    margin-right: auto !important;
-}
-
-
-.search-button {
-    margin-left: auto !important;
-}
-
-
-.adress-button {
-    height: var(--height-of-clickable-el) !important;
-    flex-grow: 1;
-    text-align: center;
-    padding: 0 0 !important;
-    margin : 0 0 !important;
-}
-
 .scroll-to-top-button {
   position: fixed !important;
   bottom: 30px;
@@ -65,22 +25,6 @@
   z-index: 9999 ;
 }
 
-.search, .upper-level {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0; /* По желанию: отступы по краям */
-
-}
-
-.upper-level {
-  gap: 10px;
-}
-
-.upper-level-hidden, .search-hidden {
-  display: none;
-}
 
 .main-page-container {
   min-height: 100vh; /* Минимальная высота 100% экрана */
@@ -88,9 +32,4 @@
   padding: var(--padding-for-pages);
 }
 
-
-.category-buttons{
-  margin-top: 0;
-  margin-bottom: 0;
-}
 

@@ -2,9 +2,12 @@ import fetchRestaurants from "../api/fetchRestaurants";
 
 const userId = 1 // Мок
 
-const GetLoadRestByAdress = (num, Adress_coordinates, setDefaultRestaurants, AdressLoaded, loading, setLoading) => () => {
+const GetLoadRestByAddress = (defAddress, setDefaultRestaurants, loading, setLoading) => () => {
     const fetchData = async () => {
-      const restaurants_query = await fetchRestaurants(userId, num, Adress_coordinates);
+
+
+
+      const restaurants_query = await fetchRestaurants(userId, defAddress.geometry.coordinates);
       if (!restaurants_query.error) {
   
         const RestaurnatsData = restaurants_query.data.map(restaurant => ({
@@ -16,12 +19,13 @@ const GetLoadRestByAdress = (num, Adress_coordinates, setDefaultRestaurants, Adr
         if (loading) {
           setLoading(false);}
       }
-      }
-      if (AdressLoaded) {
-        fetchData();
-        console.log("Вызвана инициализация ресторанов");
-      }
+    }
+    if (Object.keys(defAddress).length !== 0) {
+      console.log(defAddress);
+      fetchData();
+      console.log("Вызвана инициализация ресторанов");
+    }
 }
 
 
-export default GetLoadRestByAdress
+export default GetLoadRestByAddress

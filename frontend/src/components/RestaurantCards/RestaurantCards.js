@@ -1,6 +1,9 @@
 import React, { useCallback, memo } from 'react';
 import { Card } from '@telegram-apps/telegram-ui';
 import './RestaurantCards.css';
+import GetHandleCardClick from '../../handlers/handleRestCardClick';
+
+
 
 const RestaurantCard = memo(({ restaurant, onCardClick }) => (
   <Card key={restaurant.id} onClick={() => onCardClick(restaurant)} className="restaurant-card">
@@ -24,7 +27,9 @@ const RestaurantCard = memo(({ restaurant, onCardClick }) => (
   </Card>
 ));
 
-const RestaurantCards = ({ restaurants, onCardClick }) => {
+const RestaurantCards = ({ restaurants, setScrollPositionY, history}) => {
+  const onCardClick = GetHandleCardClick(setScrollPositionY, history)
+
   const handleCardClick = useCallback((restaurant) => {
     onCardClick(restaurant);
   }, [onCardClick]);

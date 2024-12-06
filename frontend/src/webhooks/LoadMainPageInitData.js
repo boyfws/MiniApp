@@ -18,18 +18,16 @@ const def_adress = {
   }
 }
 // Ласт адрес достается из локал стораджа на самом деле 
+// Ласт адрес также проикдывается в tg storage 
 
-const GetLoadMainPageInitData =  (setDefaultAdress, setAdress_coordinates, setAdresses, setCategories, setAdressLoaded) => () => {
+const GetLoadMainPageInitData =  (SetdefAddress, setCategories, setAdressLoaded) => () => {
     // Функция для получения данных, запускается один раз
     const fetchData = async () => {
-      const adress_query = await fetchAdress(userId);
       const categories_query = await fetchCategories(userId);
-      if (!adress_query.error && !categories_query.error) {
-        setDefaultAdress(def_adress.properties);
-        setAdress_coordinates(def_adress.geometry.coordinates);
-
-        setAdresses(adress_query.data);
+      if (!categories_query.error) {
+        SetdefAddress(def_adress);
         setCategories(categories_query.data);
+
         setAdressLoaded(true);
 
     };

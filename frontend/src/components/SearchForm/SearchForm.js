@@ -2,12 +2,14 @@ import { Button, Input } from '@telegram-apps/telegram-ui';
 import { Icon24Close } from '@telegram-apps/telegram-ui/dist/icons/24/close';
 import React, { useState, useEffect, useRef } from 'react';
 import './SearchForm.css';
+import GetHandleBackFromSearch from '../../handlers/handleBackFromSearch';
+
 
 
 const CALLBACK_DELAY_MS = 300;
 const CALLBACK_SYMBOL_LIMIT = 2;
 
-const SearchForm = ({ handleBack, ChangeValueInMainPage }) => {
+const SearchForm = ({setSearchClicked, setRestaurants, defaultRestaurants, ChangeValueInMainPage }) => {
     const [SearchValue, setSearchValue] = useState('');
     const debounceTimeout = useRef(null);
 
@@ -36,6 +38,8 @@ const SearchForm = ({ handleBack, ChangeValueInMainPage }) => {
             }
         };
     }, []);
+
+    const handleBack = GetHandleBackFromSearch(setSearchClicked, setRestaurants, defaultRestaurants)
 
     return (
         <div style={{ backgroundColor: 'var(--tgui--bg_color)', width: '100%' }}>

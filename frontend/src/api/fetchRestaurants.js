@@ -16,8 +16,9 @@ import fetchWithRetry from "../queries/GET_query";
   };
 
 
-const fetchRestaurants = (id, count, coordinates) => {
+const fetchRestaurants = async (id, coordinates) => {
 
+    const count = 200
     const cat_for_generating_restaurants = ['Категория 1', 'Категория 2', 'Категория 3', 'Шашлык', 'Японская кухня', 'Пиво', 'Бургеры', 'Другие'];
     const baseImageUrl = 'https://i.imgur.com/892vhef.jpeg';
     

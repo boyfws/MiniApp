@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@telegram-apps/telegram-ui';
-import './CategoryButtons.css'; 
+import './CategoryButtons.css';
+import GetHandleCategorySelect from "../../handlers/handleCategorySelect";
 
 const CategoryButton = ({ category, onClick }) => {
   const [isPressed, setIsPressed] = useState(false); // Локальное состояние кнопки
@@ -25,7 +26,9 @@ const CategoryButton = ({ category, onClick }) => {
   );
 };
 
-const CategoryButtons = ({ categories, onCategorySelect }) => {
+const CategoryButtons = ({ categories, setSelectedCategories }) => {
+  const onCategorySelect = GetHandleCategorySelect(setSelectedCategories)
+
   return (
     <div className="category-buttons-wrapper">
       <div className="category-buttons">

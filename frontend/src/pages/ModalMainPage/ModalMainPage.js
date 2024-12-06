@@ -5,7 +5,9 @@ import  NestedModalMainPage from '../../pages/NestedModalMainPage/NestedModalMai
 import './ModalMainPage.css';
 
 // Учесть, что ласт адрес хранится в локал сторадж 
-const ModalMainPage = ({ModalState, modalRef, Adresses, setAdresses, setDefaultAdress, setModalState, InerModalRef, InnerModalState, SetInnerModalState}) => {
+const ModalMainPage = ({ModalState, modalRef, setModalState, InerModalRef, InnerModalState, SetInnerModalState, SetdefAddress}) => {
+    const [Addresses, setAddresses] = useState([])
+
     const handleAdressClick = (address) => {
         console.log("Клик по адресу: ", address);
         setModalState(false)
@@ -26,7 +28,7 @@ const ModalMainPage = ({ModalState, modalRef, Adresses, setAdresses, setDefaultA
                     Мои адреса
                 </Title>
                 <AdressLinesInModal
-                    adresses={Adresses}
+                    adresses={Addresses}
                     onClick={handleAdressClick}
                     className="adress-lines-in-modal"
                 />

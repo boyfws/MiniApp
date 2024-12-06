@@ -8,6 +8,7 @@ import RecLinesInnerModal from '../../components/RecLinesInnnerModal/RecLinesInn
 const NestedModalMainPage = ({InnerModalState, InerModalRef}) => {
     const [seearchString, SetseearchString] = useState("")
     const [recomendations, SetRecomendations] = useState([])
+    
     return (
         <Modal
         header={<Modal.Header/>}

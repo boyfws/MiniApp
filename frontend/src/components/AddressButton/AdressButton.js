@@ -15,7 +15,7 @@ const getadress = (adress) => {
     }
 }
 
-const AdressButton = React.forwardRef(({ defaultAdress, onClick }, ref) => {
+const AddressButton = React.forwardRef(({ defaultAdress, onClick }, ref) => {
     return (
         <Button
             size="s"
@@ -29,4 +29,4 @@ const AdressButton = React.forwardRef(({ defaultAdress, onClick }, ref) => {
     );
 });
 
-export default AdressButton;
+export default AddressButton;
