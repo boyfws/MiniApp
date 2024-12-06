@@ -75,3 +75,11 @@ async def test_get_by_owner(create_categories_and_owner, truncate_db, test_app):
     rest_list = await test_app.get(f'/v1_test/Restaurant/get_by_owner/{1}')
     assert rest_list.status_code == 200
     assert rest_list.json() == [data.model_dump() for data in restaurants()[:2]]
+
+async def test_get_name(create_categories_and_owner, truncate_db, test_app):
+    response = await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
+    assert response.status_code == 200
+    rest_id = response.json()['rest_id']
+    result = await test_app.get(f"/v1_test/Restaurant/get_restaurant_name_by_id/{rest_id}")
+    assert result.status_code == 200
+    assert result.json() == 'kfc'
