@@ -1,8 +1,9 @@
 import hmac
 import hashlib
-import urllib.parse
 from datetime import datetime, timedelta
 from typing import Any
+from urllib.parse import unquote
+
 import jwt
 
 from src.config import configuration as settings
@@ -45,12 +46,14 @@ def decode_jwt(
     )
     return decoded
 
-def is_valid_telegram_request(data_check_string: str) -> bool:
+def is_valid_telegram_request(init_data: str) -> bool:
+    bot_token = settings.auth_jwt.bot_token
     try:
-        params = urllib.parse.parse_qs(data_check_string)
-        hash_from_telegram = params['hash'][0]
-        secret_key = hmac.new(settings.auth_jwt.bot_token.encode('utf-8'), b'WebAppData', hashlib.sha256).digest()
-        computed_hash = hmac.new(data_check_string.encode('utf-8'), secret_key, hashlib.sha256).hexdigest()
-        return computed_hash == hash_from_telegram
+        vals = {k: unquote(v) for k, v in [s.split('=', 1) for s in init_data.split('&')]}
+        data_check_string = '\n'.join(f"{k}={v}" for k, v in sorted(vals.items()) if k != 'hash')
+
+        secret_key = hmac.new("WebAppData".encode(), bot_token.encode(), hashlib.sha256).digest()
+        h = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256)
+        return h.hexdigest() == vals['hash']
     except (KeyError, IndexError):
         return False

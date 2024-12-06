@@ -58,6 +58,11 @@ async def auth_user_jwt(
 async def auth_refresh_jwt(
     data_check_string: str,
 ) -> TokenInfo:
+    if not is_valid_telegram_request(data_check_string):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid Telegram request signature.",
+        )
     access_token = create_access_token(data_check_string)
     return TokenInfo(
         access_token=access_token,
