@@ -6,10 +6,6 @@ import CategoryButtons from '../../components/CategoryButtons/CategoryButtons';
 
 // Webhooks
 import GetSortByCategory from '../../webhooks/SortByCategory';
-import GetLoadCategWhenRestAreAdded from "../../webhooks/GetLoadCategWhenRestAreAdded";
-
-import { LoadingContext } from '../../Contexts/LoadingContext';
-
 
 import React, { useState, useEffect, useContext } from 'react'
 import { List } from '@telegram-apps/telegram-ui'
@@ -23,10 +19,7 @@ const ListOfUpperElMainPage = ({
                                    defaultRestaurants,
                                    setModalState
                                }) => {
-    const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState(new Set())
-
-    const {setCategoriesLoaded, RestLoaded} = useContext(LoadingContext);
 
 
     const SortByCategory = GetSortByCategory(
@@ -35,15 +28,8 @@ const ListOfUpperElMainPage = ({
         restaurants
       );
 
-    const LoadCategWhenRestAreAdded = GetLoadCategWhenRestAreAdded(
-        setCategories,
-        setCategoriesLoaded,
-        RestLoaded
-    )
 
     useEffect(SortByCategory, [selectedCategories, restaurants]);
-
-    useEffect(LoadCategWhenRestAreAdded, [RestLoaded]);
 
 
     return (
@@ -59,7 +45,6 @@ const ListOfUpperElMainPage = ({
         />
 
         <CategoryButtons 
-        categories={categories}
         setSelectedCategories={setSelectedCategories}
         className='category-buttons'
         />

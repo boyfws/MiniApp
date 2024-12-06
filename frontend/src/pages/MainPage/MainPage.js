@@ -30,7 +30,7 @@ const MainPage = () => {
 
 
   // Стейты связанные с загрузкой
-  const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после индикатора
+  const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после того как все данные загружены
 
   const { RestLoaded, CategoriesLoaded, setRestLoaded } = useContext(LoadingContext);
 

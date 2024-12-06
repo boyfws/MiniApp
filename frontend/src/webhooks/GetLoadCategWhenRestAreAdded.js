@@ -8,7 +8,7 @@ const GetLoadCategWhenRestAreAdded = (setCategories,
         // Адрес мы грузили уже зная id иначе не загрузили бы, след user_id точно определен
         const category_query = await fetchCategories(user_id)
         if (!category_query.error) {
-            setCategories([category_query.data])
+            setCategories(category_query.data)
             setCategoriesLoaded(true)
         }
     }

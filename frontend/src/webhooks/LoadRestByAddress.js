@@ -2,7 +2,7 @@ import fetchRestaurants from "../api/fetchRestaurants";
 
 const userId = 1 // Мок
 
-const GetLoadRestByAddress = (defAddress, setDefaultRestaurants, loading, setLoading) => () => {
+const GetLoadRestByAddress = (defAddress, setDefaultRestaurants, RestLoaded, setRestLoaded) => () => {
     const fetchData = async () => {
 
 
@@ -16,8 +16,8 @@ const GetLoadRestByAddress = (defAddress, setDefaultRestaurants, loading, setLoa
         }));
   
         setDefaultRestaurants(RestaurnatsData);
-        if (loading) {
-          setLoading(false);}
+        if (!RestLoaded) {
+            setRestLoaded(true);}
       }
     }
     if (Object.keys(defAddress).length !== 0) {
