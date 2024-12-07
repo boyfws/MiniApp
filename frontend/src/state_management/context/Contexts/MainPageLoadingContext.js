@@ -1,24 +1,27 @@
 import React, {createContext, useEffect, useState} from 'react';
 
-const LoadingContext = createContext();
+const MainPageLoadingContext = createContext();
 
 
-function LoadingContextProvider({ children }) {
+function MainPageLoadingContextProvider({ children }) {
     const [RestLoaded, setRestLoaded] = useState(false); // Флаг загрузки
     const [CategoriesLoaded, setCategoriesLoaded] = useState(false);
+    const [AddressesLoaded, setAddressesLoaded] = useState(false);
 
     const contextValue = {
         RestLoaded,
         setRestLoaded,
         CategoriesLoaded,
         setCategoriesLoaded,
+        AddressesLoaded,
+        setAddressesLoaded,
     };
 
     return (
-        <LoadingContext.Provider value={contextValue}>
+        <MainPageLoadingContext.Provider value={contextValue}>
             {children}
-        </LoadingContext.Provider>
+        </MainPageLoadingContext.Provider>
     );
 }
 
-export { LoadingContext, LoadingContextProvider };
+export { MainPageLoadingContext, MainPageLoadingContextProvider };

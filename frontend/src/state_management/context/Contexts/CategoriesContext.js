@@ -2,12 +2,12 @@ import React, {createContext, useEffect, useState, useContext} from 'react';
 
 const CategoriesContext = createContext();
 
-import { LoadingContext } from './LoadingContext';
+import { MainPageLoadingContext } from './MainPageLoadingContext';
 import GetLoadCategWhenRestAreAdded from "../../utils/GetLoadCategWhenRestAreAdded";
 
 
 function CategoriesContextProvider({ children }) {
-    const {setCategoriesLoaded, RestLoaded} = useContext(LoadingContext);
+    const {setCategoriesLoaded, RestLoaded} = useContext(MainPageLoadingContext);
     const [categories, setCategories] = useState([]);
 
     const LoadCategWhenRestAreAdded = GetLoadCategWhenRestAreAdded(

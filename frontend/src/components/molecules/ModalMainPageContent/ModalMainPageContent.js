@@ -3,7 +3,7 @@ import './ModalMainPageContent.css'
 
 
 // Ext lib
-import React, {useState} from "react";
+import React from "react";
 
 // Comp
 import ModalMainPageTitle from "../../atoms/ModalMainPageTitle/ModalMainPageTitle";
@@ -12,8 +12,6 @@ import AddAddressButton from "../../atoms/AddAddressButton/AddAddressButton";
 
 
 const ModalMainPageContent = ({setModalState, SetInnerModalState}) => {
-    const [Addresses, setAddresses] = useState([])
-
     const handleAddressClick = (address) => {
         console.log("Клик по адресу: ", address);
         setModalState(false)
@@ -24,7 +22,6 @@ const ModalMainPageContent = ({setModalState, SetInnerModalState}) => {
             <ModalMainPageTitle/>
 
             <UserAddresses
-                addresses={Addresses}
                 onClick={handleAddressClick}
                 className="address-lines-in-modal"
             />

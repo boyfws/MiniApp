@@ -1,14 +1,14 @@
-import { LoadingContextProvider } from "./Contexts/LoadingContext";
+import { MainPageLoadingContextProvider } from "./Contexts/MainPageLoadingContext";
 import { CategoriesContextProvider } from "./Contexts/CategoriesContext";
 
 
 const ContextProvider = ({ children }) => {
     return (
-        <LoadingContextProvider>
+        <MainPageLoadingContextProvider>
                 <CategoriesContextProvider>
                     {children}
                 </CategoriesContextProvider>
-        </LoadingContextProvider>
+        </MainPageLoadingContextProvider>
     );
 };
 

@@ -5,14 +5,16 @@ import './MainPage.css';
 import React, { useState, useEffect, useRef, useContext } from 'react';
 
 // State
-import { LoadingContext } from "../../state_management/context/Contexts/LoadingContext";
+import { MainPageLoadingContext } from "../../state_management/context/Contexts/MainPageLoadingContext";
 import DefAddressStore from "../../state_management/stores/DefAddressStore";
 import RestStore from "../../state_management/stores/RestStore";
+import AddressesStore from "../../state_management/stores/AddressesStore";
 
 
 // Webhooks
 import GetDependency from './utils/DepBetwDefRestAndRest';
 import GetLoadRestByAddress from './utils/LoadRestByAddress';
+import GetLoadAddressesWhenRestAreLoaded from "./utils/LoadAddressesWhenRestAreLoaded";
 
 
 // Comp
@@ -26,10 +28,11 @@ const MainPage = () => {
 
     const { setRestaurants, defaultRestaurants, setDefaultRestaurants } = RestStore()
     const { DefAddress, setDefAddress } =  DefAddressStore();
+    const { SetAddresses } = AddressesStore();
 
     // Сейты связанные с загрузкой
     const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после того как все данные загружены
-    const { RestLoaded, setRestLoaded } = useContext(LoadingContext);
+    const { RestLoaded, setRestLoaded, CategoriesLoaded, setAddressesLoaded } = useContext(MainPageLoadingContext);
 
     const [ScrollPositionY, setScrollPositionY] = useState(0);
 
@@ -41,31 +44,6 @@ const MainPage = () => {
 
 
     // Хуки связанные с дефолтным адресом инициализируем на самом высоком уровне
-
-  //  По факту будем доставать из session storage
-    useEffect(() => {
-        setDefAddress({
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [37.587914, 55.783954]
-            },
-            properties: {
-                street: 'Поликарпова',
-                house: '1',
-                district: 'Хорошёвский',
-                city: 'Москва'
-            }
-        })
-    }, [])
-
-
-    useEffect(() => {
-//        tg.CloudStorage.setItem("last_address", DefAddress);
-    }, [DefAddress]);
-
-
-
     const Dependency = GetDependency(
         setRestaurants,
         defaultRestaurants
@@ -86,7 +64,34 @@ const MainPage = () => {
         SetInnerModalState,
         setModalState)
 
-  
+    const LoadAddressesWhenRestAreLoaded = GetLoadAddressesWhenRestAreLoaded(
+        RestLoaded,
+        setAddressesLoaded,
+        SetAddresses
+    )
+
+
+    //  По факту будем доставать из session storage
+    useEffect(() => {
+        setDefAddress({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [37.587914, 55.783954]
+            },
+            properties: {
+                street: 'Поликарпова',
+                house: '1',
+                district: 'Хорошёвский',
+                city: 'Москва'
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+//        tg.CloudStorage.setItem("last_address", DefAddress);
+    }, [DefAddress]);
+
     useEffect(Dependency, [defaultRestaurants]);
 
     useEffect(LoadRestByAddress, [DefAddress]);
@@ -98,6 +103,9 @@ const MainPage = () => {
         };
     }, []);
 
+    useEffect(LoadAddressesWhenRestAreLoaded, [
+        RestLoaded
+    ]);
 
     if (!showContent) {
         return (
