@@ -6,6 +6,8 @@
 
 ### backend 
 
+видео: https://disk.yandex.ru/i/tpOuwVU73Pvcew
+
 ## Общие сведения
 
 - фреймворк FastAPI для создания API
