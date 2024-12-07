@@ -18,7 +18,8 @@
     "react-dom": "^18.3.1",
     "react-router-cache-route": "^1.13.0",
     "react-router-dom": "5.3.4",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "zustand": "^5.0.2"
   },
   "browserslist": {
     "production": [

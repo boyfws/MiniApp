@@ -3,11 +3,11 @@ import { Title } from '@telegram-apps/telegram-ui';
 import { useHistory } from 'react-router-dom';
 
 
-import RestaurantCards from '../../components/RestaurantCards/RestaurantCards';
-import Loader from '../../components/Loading/Loading';
-import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopButton';
-import ModalMainPage from '../../pages/ModalMainPage/ModalMainPage';
-import ListOfUpperElMainPage from '../../components/ListOfUpperElMainPage/ListOfUpperElMainPage';
+import RestaurantCards from '../../components/organisms/RestaurantCards/RestaurantCards';
+import Loader from '../../components/molecules/Loading/Loading';
+import ScrollToTopButton from '../../components/atoms/ScrollToTopButton/ScrollToTopButton';
+import ModalMainPage from '../../components/templates/ModalMainPage/ModalMainPage';
+import ListOfUpperElMainPage from '../../components/templates/ListOfUpperElMainPage/ListOfUpperElMainPage';
 
 
 // Webhooks
@@ -15,8 +15,10 @@ import GetDependency from '../../webhooks/DepBetwDefRestAndRest';
 import GetLoadRestByAddress from '../../webhooks/LoadRestByAddress';
 
 
-import { DefAddressContext } from "../../Contexts/DefAddressContext";
 import { LoadingContext } from "../../Contexts/LoadingContext";
+
+import DefAddressStore from "../../stores/DefAddressStore";
+import RestStore from "../../stores/RestStore";
 
 
 import './MainPage.css';
@@ -24,9 +26,8 @@ import './MainPage.css';
 
 const MainPage = () => {
   // Стейты связанные с ресторанами 
-  const [restaurants, setRestaurants] = useState([]); // Рестораны отобранные по запросу
-  const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Рестораны с учетом поиска и категорий
-  const [defaultRestaurants, setDefaultRestaurants] = useState([]); // Все рестораны без фильтраций по категориям и посику
+
+  const { setRestaurants, defaultRestaurants, setDefaultRestaurants } = RestStore()
 
 
   // Стейты связанные с загрузкой
@@ -37,11 +38,31 @@ const MainPage = () => {
   const [ScrollPositionY, setScrollPositionY] = useState(0);
 
 
-  const { DefAddress } = useContext(DefAddressContext);
+  const { DefAddress, setDefAddress } =  DefAddressStore();
+
+  // Хуки связанные с дефолтным адресом инициализируем на самом высоком уровне
+
+  //  По факту будем доставать из session storage
+  useEffect(() => {
+        setDefAddress({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [37.587914, 55.783954]
+            },
+            properties: {
+                street: 'Поликарпова',
+                house: '1',
+                district: 'Хорошёвский',
+                city: 'Москва'
+            }
+        })
+  }, [])
 
 
-  const history = useHistory();
-
+    useEffect(() => {
+//        tg.CloudStorage.setItem("last_address", DefAddress);
+    }, [DefAddress]);
 
   // Работа с модальными окнами
   const [ModalState, setModalState] = useState(false)
@@ -108,15 +129,8 @@ const MainPage = () => {
 
 
           <ListOfUpperElMainPage
-            setFilteredRestaurants={setFilteredRestaurants}
-
-            restaurants={restaurants} 
-            setRestaurants={setRestaurants}
-
             setScrollPositionY={setScrollPositionY}
-            defaultRestaurants={defaultRestaurants}
             setModalState={setModalState}
-
           />
 
           <Title level="2" weight="1" plain={false} style={{padding: 0}}> 
@@ -124,9 +138,7 @@ const MainPage = () => {
           </Title>
 
           <RestaurantCards 
-            restaurants={filteredRestaurants}
             setScrollPositionY={setScrollPositionY}
-            history={history}
           />
 
           <ScrollToTopButton className="scroll-to-top-button"/>

@@ -1,0 +1,6 @@
+.category-button{
+    height: var(--height-of-clickable-el) !important;
+    max-height: none !important;
+    min-height: none !important;
+
+}
