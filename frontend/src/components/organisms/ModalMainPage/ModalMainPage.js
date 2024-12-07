@@ -5,6 +5,9 @@ import './ModalMainPage.css';
 import React , {useState} from "react";
 import {  Modal } from "@telegram-apps/telegram-ui";
 
+// Store
+import MainPageModalStore from "../../../state_management/stores/MianPageModalsStateStore";
+
 
 // Components
 import NestedModalMainPage from '../NestedModalMainPage/NestedModalMainPage.js'
@@ -12,13 +15,8 @@ import ModalMainPageContent from "../../molecules/ModalMainPageContent/ModalMain
 
 
 // Учесть, что ласт адрес хранится в локал сторадж 
-const ModalMainPage = ({ModalState, modalRef, setModalState, InnerModalRef, InnerModalState, SetInnerModalState}) => {
-    const [Addresses, setAddresses] = useState([])
-
-    const handleAddressClick = (address) => {
-        console.log("Клик по адресу: ", address);
-        setModalState(false)
-    }
+const ModalMainPage = ({modalRef, InnerModalRef}) => {
+    const { ModalState } = MainPageModalStore()
 
     return (
         
@@ -30,13 +28,9 @@ const ModalMainPage = ({ModalState, modalRef, setModalState, InnerModalRef, Inne
             nested={true}
               >
 
-            <ModalMainPageContent
-                SetInnerModalState={SetInnerModalState}
-                setModalState={setModalState}
-            />
+            <ModalMainPageContent/>
 
             <NestedModalMainPage
-            InnerModalState={InnerModalState}
             InnerModalRef={InnerModalRef}/>
 
         </Modal>

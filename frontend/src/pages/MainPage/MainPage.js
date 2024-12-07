@@ -9,6 +9,7 @@ import { MainPageLoadingContext } from "../../state_management/context/Contexts/
 import DefAddressStore from "../../state_management/stores/DefAddressStore";
 import RestStore from "../../state_management/stores/RestStore";
 import AddressesStore from "../../state_management/stores/AddressesStore";
+import MainPageModalStore from "../../state_management/stores/MianPageModalsStateStore";
 
 
 // Webhooks
@@ -36,9 +37,7 @@ const MainPage = () => {
 
     const [ScrollPositionY, setScrollPositionY] = useState(0);
 
-
-    const [ModalState, setModalState] = useState(false)
-    const [InnerModalState, SetInnerModalState] = useState(false)
+    const { SetInnerModalState,  setModalState } = MainPageModalStore()
     const modalRef = useRef(null);
     const InnerModalRef = useRef(null)
 
@@ -120,12 +119,8 @@ const MainPage = () => {
           <MainPageTemp setModalState={setModalState} setScrollPositionY={setScrollPositionY}/>
 
           <ModalMainPage
-            ModalState={ModalState}
             modalRef={modalRef}
-            setModalState={setModalState}
             InnerModalRef={InnerModalRef}
-            InnerModalState={InnerModalState}
-            SetInnerModalState={SetInnerModalState}
           />
 
       </div>

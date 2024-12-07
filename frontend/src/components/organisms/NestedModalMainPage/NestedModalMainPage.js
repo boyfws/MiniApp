@@ -5,11 +5,15 @@ import "./NestedModalMainPage.css"
 import React from 'react';
 import { Modal } from '@telegram-apps/telegram-ui'
 
+// State
+import MainPageModalStore from "../../../state_management/stores/MianPageModalsStateStore";
+
 // Comp
 import NestedModalMainPageContent from "../../molecules/NestedModalMainPageContent/NestedModalMainPageContent";
 
 
-const NestedModalMainPage = ({InnerModalState, InnerModalRef}) => {
+const NestedModalMainPage = ({InnerModalRef}) => {
+    const { InnerModalState } = MainPageModalStore()
 
     return (
         <Modal

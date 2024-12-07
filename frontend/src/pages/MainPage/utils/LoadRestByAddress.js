@@ -20,6 +20,7 @@ const GetLoadRestByAddress = (defAddress, setDefaultRestaurants, RestLoaded, set
             setRestLoaded(true);}
       }
     }
+    console.log("Хук затригерен")
     if (Object.keys(defAddress).length !== 0) {
       console.log(defAddress);
       fetchData();

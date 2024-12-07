@@ -1,7 +1,6 @@
 const GetHandleAddressClick = (setModalState, setDefAddress) => (address) => {
-    setDefAddress(address);
-    setModalState(false);
-
+    setModalState(false)
+    setTimeout(setDefAddress(address), 0)
 }
 
 
