@@ -1,5 +1,56 @@
 # Тема нашего проекта - Агрегатор ресторанов
 
+# ИНФА ДЛЯ КТ2
+
+## Как запустить проект
+
+Создайте в корне проекта .env файл, согласно .env-example
+
+Также создайте по образцу .env файл в директории databases и backend
+
+Теперь можно запустить докер компоуз с нашими контейнерами
+
+```shell
+docker-compose up
+```
+
+### Вся документация по API находится в Swagger
+
+ссылка на Swagger: http://localhost:8000/docs
+
+ссылка на тг бот: https://t.me/ristari_bot
+
+ссылка на MiniApp: http://localhost:3000/
+
+## Как протестировать проект локально
+
+Запустите базы данных
+```shell
+cd databases
+docker-compose up
+```
+
+### Тестирование бэкенда
+
+```shell
+cd ../backend/ # если были в папке databases
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pytest -v
+```
+### Тестирование бота
+
+```shell
+cd ../bot/
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pytest -v
+```
+
+## ИНФА ДЛЯ КТ1
+
 Мы разрабатываем мини-приложение ТГ для удобной агрегации ресторанов рядом с пользователем. Весь интерфейс будет завязан на телеграм боте
 
 ## Функционал
