@@ -17,14 +17,14 @@ async def create_restaurant(
 ) -> RestaurantResult:
     return await service.create(model)
 
-@restaurant_router.delete("/delete_restaurant/")
+@restaurant_router.delete("/delete_restaurant/{rest_id}")
 async def delete_restaurant(
-        model: RestaurantRequestUsingID,
+        rest_id: int,
         service: RestaurantService = Depends(get_restaurant_service)
 ) -> RestaurantResult:
-    return await service.delete(model)
+    return await service.delete(RestaurantRequestUsingID(rest_id=rest_id))
 
-@restaurant_router.patch("/update_restaurant/")
+@restaurant_router.patch("/update_restaurant/{rest_id}")
 async def update_restaurant(
         rest_id: int,
         model: RestaurantRequestFullModel,
@@ -32,33 +32,36 @@ async def update_restaurant(
 ) -> None:
     await service.update(rest_id, model)
 
-@restaurant_router.get("/get_by_owner/")
-async def get_restaurant_by_owner(
-        model: RestaurantRequestUsingOwner,
-        service: RestaurantService = Depends(get_restaurant_service)
-) -> list[RestaurantRequestFullModel]:
-    return await service.get_by_owner(model)
-
-@restaurant_router.get("/get_by_geo/")
-async def get_restaurant_by_geo(
-        model: Point,
-        service: RestaurantService = Depends(get_restaurant_service)
-) -> list[RestaurantGeoSearch]:
-    return await service.get_by_geo(model)
-
-@restaurant_router.get("/get_by_geo_and_name/")
-async def get_restaurant_by_geo_and_name(
-        model: RestaurantRequestUsingGeoPointAndName,
-        service: RestaurantService = Depends(get_restaurant_service)
-) -> list[RestaurantGeoSearch]:
-    return await service.get_by_geo_and_name(model)
-
 @restaurant_router.get("/get_by_id/{rest_id}")
 async def get_restaurant_by_id(
         rest_id: int,
         service: RestaurantService = Depends(get_restaurant_service)
 ) -> RestaurantRequestFullModel:
     return await service.get(RestaurantRequestUsingID(rest_id=rest_id))
+
+@restaurant_router.get("/get_by_owner/{owner_id}")
+async def get_restaurant_by_owner(
+        owner_id: int,
+        service: RestaurantService = Depends(get_restaurant_service)
+) -> list[RestaurantRequestFullModel]:
+    return await service.get_by_owner(RestaurantRequestUsingOwner(owner_id=owner_id))
+
+@restaurant_router.get("/get_by_geo/{lon}/{lat}")
+async def get_restaurant_by_geo(
+        lon: float,
+        lat: float,
+        service: RestaurantService = Depends(get_restaurant_service)
+) -> list[RestaurantGeoSearch]:
+    return await service.get_by_geo(Point(lon=lon, lat=lat))
+
+@restaurant_router.get("/get_by_geo_and_name/{lon}/{lat}/{name_pattern}")
+async def get_restaurant_by_geo_and_name(
+        lon: float,
+        lat: float,
+        name_pattern: str,
+        service: RestaurantService = Depends(get_restaurant_service)
+) -> list[RestaurantGeoSearch]:
+    return await service.get_by_geo_and_name(RestaurantRequestUsingGeoPointAndName(point=Point(lon=lon, lat=lat), name_pattern=name_pattern))
 
 @restaurant_router.get("/get_restaurant_name_by_id/{rest_id}")
 async def get_restaurant_name_by_id(

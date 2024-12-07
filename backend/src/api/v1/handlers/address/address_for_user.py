@@ -8,19 +8,19 @@ addresses_for_user_router = APIRouter(
     tags=["AddressesForUser"]
 )
 
-@addresses_for_user_router.get("/get_all_addresses/")
+@addresses_for_user_router.get("/get_all_addresses/{user_id}")
 async def get_all_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         service: AddressesForUserService = Depends(get_address_for_user_service)
 ) -> list[AddressForUserDTO]:
-    return await service.get_all_user_fav_restaurants(model=model)
+    return await service.get_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
 
-@addresses_for_user_router.delete("/drop_all_addresses/")
+@addresses_for_user_router.delete("/drop_all_addresses/{user_id}")
 async def drop_all_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         service: AddressesForUserService = Depends(get_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.drop_all_user_fav_restaurants(model=model)
+    return await service.drop_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
 
 @addresses_for_user_router.post("/add_address/")
 async def add_address(

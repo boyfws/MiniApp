@@ -12,12 +12,12 @@ menu_router = APIRouter(
     tags=["Menu"]
 )
 
-@menu_router.get('/get_menu_by_rest_id/')
+@menu_router.get('/get_menu_by_rest_id/{rest_id}')
 async def get_menu_by_rest_id(
-        model: RestaurantRequestUsingID,
+        rest_id: int,
         service: MenuService = Depends(get_menu_service)
 ) -> Optional[MenuDTO]:
-    return await service.get_menu_by_rest_id(model)
+    return await service.get_menu_by_rest_id(RestaurantRequestUsingID(rest_id=rest_id))
 
 @menu_router.post('/update_menu_by_rest_id/')
 async def update_menu_by_rest_id(
@@ -26,9 +26,9 @@ async def update_menu_by_rest_id(
 ) -> int:
     return await service.update_menu_by_rest_id(model)
 
-@menu_router.delete('/delete_menu_by_rest_id/')
+@menu_router.delete('/delete_menu_by_rest_id/{rest_id}')
 async def delete_menu_by_rest_id(
-        model: RestaurantRequestUsingID,
+        rest_id: int,
         service: MenuService = Depends(get_menu_service)
 ) -> bool:
-    return await service.delete_menu_by_rest_id(model)
+    return await service.delete_menu_by_rest_id(RestaurantRequestUsingID(rest_id=rest_id))
