@@ -1,9 +1,14 @@
 // Css
 import './ModalMainPageContent.css'
 
-
 // Ext lib
 import React from "react";
+
+// State
+import defAddressStore from "../../../state_management/stores/DefAddressStore";
+
+// Handlers
+import GetHandleAddressClick from "./utils/handleAddressClick";
 
 // Comp
 import ModalMainPageTitle from "../../atoms/ModalMainPageTitle/ModalMainPageTitle";
@@ -12,10 +17,8 @@ import AddAddressButton from "../../atoms/AddAddressButton/AddAddressButton";
 
 
 const ModalMainPageContent = ({setModalState, SetInnerModalState}) => {
-    const handleAddressClick = (address) => {
-        console.log("Клик по адресу: ", address);
-        setModalState(false)
-    }
+    const { setDefAddress } = defAddressStore();
+    const handleAddressClick = GetHandleAddressClick(setModalState, setDefAddress);
 
     return (
         <div className="modal-main-page">
