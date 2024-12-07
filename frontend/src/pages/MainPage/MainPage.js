@@ -16,7 +16,7 @@ import GetLoadRestByAddress from '../../webhooks/LoadRestByAddress';
 
 
 // Comp
-import LoaderWrapper from "../../components/templates/LoaderWrapper/LoaderWrapper";
+import LoaderWrapper from "../../components/templates/LoaderWrapper/LoaderWrapper.js";
 import MainPageTemp from "../../components/templates/MainPageTemp/MainPageTemp";
 import ModalMainPage from '../../components/organisms/ModalMainPage/ModalMainPage';
 
