@@ -1,11 +1,20 @@
-import React from 'react';
-import { Button } from '@telegram-apps/telegram-ui';
+// Css
 import './AdressButton.css';
 
-import modificate_address_for_displ from "../../../utils/modificate_address_for_displ";
+// Ext lib
+import React from 'react';
+import { Button } from '@telegram-apps/telegram-ui';
+
+// States
+import DefAddressStore from "../../../state_management/stores/DefAddressStore";
+
+// Utils
+import prepare_address_for_display from "./utils/prepare_address_for_display";
 
 
-const AddressButton = React.forwardRef(({ defaultAdress, onClick }, ref) => {
+const AddressButton = React.forwardRef(({ onClick }, ref) => {
+    const { DefAddress } = DefAddressStore();
+
     return (
         <Button
             size="s"
@@ -14,7 +23,7 @@ const AddressButton = React.forwardRef(({ defaultAdress, onClick }, ref) => {
             className='adress-button'
             ref={ref} // Передаем ref дочернему элементу
         >
-            {modificate_address_for_displ(defaultAdress)}
+            {prepare_address_for_display(DefAddress)}
         </Button>
     );
 });

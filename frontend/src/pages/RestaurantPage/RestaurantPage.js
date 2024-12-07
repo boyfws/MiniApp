@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import SearchForm from '../../components/molecules/SearchForm/SearchForm';
+import SearchForm from '../../components/atoms/SearchForm/SearchForm';
 
 const RestaurantPage = () => {
   const history = useHistory();

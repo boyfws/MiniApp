@@ -1,12 +1,3 @@
-.loading-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Центрирует по горизонтали */
-    align-items: center;     /* Центрирует по вертикали */
-    height: 100vh;  /* Высота 100% от высоты окна браузера */
-    background-color: var(--tgui--bg_color);     
-  }
-
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -17,13 +8,6 @@
   animation: fadeIn 0.28s ease-in-out;
   }
 
-
-.scroll-to-top-button {
-  position: fixed !important;
-  bottom: 30px;
-  right: 30px;
-  z-index: 9999 ;
-}
 
 
 .main-page-container {

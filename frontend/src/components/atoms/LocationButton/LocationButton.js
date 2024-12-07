@@ -1,7 +1,12 @@
+//Css
+import "./LocationButton.css"
+
+// Ext lib
 import React from 'react';
 import { Button } from '@telegram-apps/telegram-ui';
-import "./LocationButton.css"
-import Icon24LocationOutline from '../../../icons/Icon24LocationOutline';
+
+// Icon
+import Icon24LocationOutline from '../../_icons/Icon24LocationOutline';
 
 
 const LocationButton = ({onClick}) => {

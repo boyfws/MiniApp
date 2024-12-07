@@ -1,13 +1,13 @@
+// Css
+import './MainPage.css';
+
+// Ext lib
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { Title } from '@telegram-apps/telegram-ui';
-import { useHistory } from 'react-router-dom';
 
-
-import RestaurantCards from '../../components/organisms/RestaurantCards/RestaurantCards';
-import Loader from '../../components/molecules/Loading/Loading';
-import ScrollToTopButton from '../../components/atoms/ScrollToTopButton/ScrollToTopButton';
-import ModalMainPage from '../../components/templates/ModalMainPage/ModalMainPage';
-import ListOfUpperElMainPage from '../../components/templates/ListOfUpperElMainPage/ListOfUpperElMainPage';
+// State
+import { LoadingContext } from "../../state_management/context/Contexts/LoadingContext";
+import DefAddressStore from "../../state_management/stores/DefAddressStore";
+import RestStore from "../../state_management/stores/RestStore";
 
 
 // Webhooks
@@ -15,35 +15,33 @@ import GetDependency from '../../webhooks/DepBetwDefRestAndRest';
 import GetLoadRestByAddress from '../../webhooks/LoadRestByAddress';
 
 
-import { LoadingContext } from "../../Contexts/LoadingContext";
-
-import DefAddressStore from "../../stores/DefAddressStore";
-import RestStore from "../../stores/RestStore";
-
-
-import './MainPage.css';
+// Comp
+import LoaderWrapper from "../../components/templates/LoaderWrapper/LoaderWrapper";
+import MainPageTemp from "../../components/templates/MainPageTemp/MainPageTemp";
+import ModalMainPage from '../../components/organisms/ModalMainPage/ModalMainPage';
 
 
 const MainPage = () => {
-  // Стейты связанные с ресторанами 
 
-  const { setRestaurants, defaultRestaurants, setDefaultRestaurants } = RestStore()
+    const { setRestaurants, defaultRestaurants, setDefaultRestaurants } = RestStore()
+    const { DefAddress, setDefAddress } =  DefAddressStore();
 
+    // Сейты связанные с загрузкой
+    const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после того как все данные загружены
+    const { RestLoaded, CategoriesLoaded, setRestLoaded } = useContext(LoadingContext);
 
-  // Стейты связанные с загрузкой
-  const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после того как все данные загружены
-
-  const { RestLoaded, CategoriesLoaded, setRestLoaded } = useContext(LoadingContext);
-
-  const [ScrollPositionY, setScrollPositionY] = useState(0);
+    const [ScrollPositionY, setScrollPositionY] = useState(0);
 
 
-  const { DefAddress, setDefAddress } =  DefAddressStore();
+    const [ModalState, setModalState] = useState(false)
+    const [InnerModalState, SetInnerModalState] = useState(false)
+    const modalRef = useRef(null);
+    const InnerModalRef = useRef(null)
 
-  // Хуки связанные с дефолтным адресом инициализируем на самом высоком уровне
+    // Хуки связанные с дефолтным адресом инициализируем на самом высоком уровне
 
   //  По факту будем доставать из session storage
-  useEffect(() => {
+    useEffect(() => {
         setDefAddress({
             type: 'Feature',
             geometry: {
@@ -57,37 +55,32 @@ const MainPage = () => {
                 city: 'Москва'
             }
         })
-  }, [])
+    }, [])
 
 
     useEffect(() => {
 //        tg.CloudStorage.setItem("last_address", DefAddress);
     }, [DefAddress]);
 
-  // Работа с модальными окнами
-  const [ModalState, setModalState] = useState(false)
-  const [InnerModalState, SetInnerModalState] = useState(false)
-  const modalRef = useRef(null);
-  const InnerModalRef = useRef(null)
 
 
-  const Dependency = GetDependency(
-    setRestaurants, 
-    defaultRestaurants
-  );
+    const Dependency = GetDependency(
+        setRestaurants,
+        defaultRestaurants
+    );
 
 
-  const LoadRestByAddress = GetLoadRestByAddress(
-      DefAddress,
-      setDefaultRestaurants,
-      RestLoaded,
-      setRestLoaded
-  );
+    const LoadRestByAddress = GetLoadRestByAddress(
+        DefAddress,
+        setDefaultRestaurants,
+        RestLoaded,
+        setRestLoaded
+    );
 
   
-  useEffect(Dependency, [defaultRestaurants]);
+    useEffect(Dependency, [defaultRestaurants]);
 
-  useEffect(LoadRestByAddress, [DefAddress]);
+    useEffect(LoadRestByAddress, [DefAddress]);
 
 
   const CloseFirstModal = (event) => {
@@ -116,42 +109,25 @@ const MainPage = () => {
 
   if (!showContent) {
     return (
-    <div className='loading-wrapper'>
-        <Loader loading={!(RestLoaded && CategoriesLoaded)} setShowContent={setShowContent} />
-    </div> // Показ сообщения о загрузке, пока данные не получены
+        <LoaderWrapper setShowContent={setShowContent}/>
     )
   }
-
 
   return (
     <div className="main-page-container">
       <div className={'page-content'}>
 
-
-          <ListOfUpperElMainPage
-            setScrollPositionY={setScrollPositionY}
-            setModalState={setModalState}
-          />
-
-          <Title level="2" weight="1" plain={false} style={{padding: 0}}> 
-            Рестораны
-          </Title>
-
-          <RestaurantCards 
-            setScrollPositionY={setScrollPositionY}
-          />
-
-          <ScrollToTopButton className="scroll-to-top-button"/>
-
+          <MainPageTemp setModalState={setModalState} setScrollPositionY={setScrollPositionY}/>
 
           <ModalMainPage
             ModalState={ModalState}
             modalRef={modalRef}
             setModalState={setModalState}
-            InerModalRef={InnerModalRef}
+            InnerModalRef={InnerModalRef}
             InnerModalState={InnerModalState}
             SetInnerModalState={SetInnerModalState}
           />
+
       </div>
     </div>
 

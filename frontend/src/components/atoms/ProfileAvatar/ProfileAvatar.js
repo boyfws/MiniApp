@@ -1,11 +1,20 @@
-import React from "react";
+// Css
 import "./ProfileAvatar.css";
+
+// Ext lib
+import React from "react";
 import { Button } from "@telegram-apps/telegram-ui";
-import Icon24Profile from "../../../icons/Icon24Profile";
-import GetHandleProfileClick from '../../../handlers/hadleProfileClick';
+import { useHistory } from "react-router-dom";
+
+// Handlers
+import GetHandleProfileClick from './utils/hadleProfileClick';
+
+// Icons
+import Icon24Profile from "../../_icons/Icon24Profile";
 
 
-const ProfileAvatar = ({ setScrollPositionY, history }) => {
+const ProfileAvatar = ({ setScrollPositionY }) => {
+    const history = useHistory();
     
     const handleProfileClick = GetHandleProfileClick(setScrollPositionY, history);
 

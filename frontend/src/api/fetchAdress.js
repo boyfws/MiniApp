@@ -1,4 +1,4 @@
-import fetchWithRetry from "../queries/GET_query";
+import fetchWithRetry from "./queries/GET_query";
 
 /**
  * Функция предназначена для получения данных в формате GeoJSON, содержащих информацию об одном адресе.

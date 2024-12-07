@@ -1,0 +1,19 @@
+.restaurant-cards {
+  overflow: scroll;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 карточки в строке по умолчанию */
+  gap: 5px !important;
+
+}
+
+@media (min-width: 768px) {
+  .restaurant-cards {
+    grid-template-columns: repeat(3, 1fr); /* 3 карточки в строке на больших экранах */
+  }
+}
+
+@media (max-width: 380px) {
+  .restaurant-cards {
+    grid-template-columns: 1fr; /* 1 карточка в строке на маленьких экранах */
+  }
+}

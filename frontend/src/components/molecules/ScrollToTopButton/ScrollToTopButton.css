@@ -1,0 +1,11 @@
+.scroll-to-top-visible {
+    opacity: 1 !important;
+    transition: opacity 0.15s ease-in;
+    pointer-events: auto !important; /* Включаем кликабельность */
+}
+
+.scroll-to-top-hidden {
+    opacity: 0 !important;
+    transition: opacity 0.15s ease-out;
+    pointer-events: none !important; /* Отключаем кликабельность */
+}

@@ -1,4 +1,4 @@
-import fetchWithRetry from "../queries/GET_query";
+import fetchWithRetry from "./queries/GET_query";
   
   
   // Заглшука для тестов 

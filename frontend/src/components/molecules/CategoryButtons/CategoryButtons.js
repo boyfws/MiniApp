@@ -5,8 +5,8 @@ import './CategoryButtons.css';
 import React, {useState, useContext, useEffect} from 'react';
 
 // States
-import RestStore from "../../../stores/RestStore";
-import { CategoriesContext } from "../../../Contexts/CategoriesContext";
+import RestStore from "../../../state_management/stores/RestStore";
+import { CategoriesContext } from "../../../state_management/context/Contexts/CategoriesContext";
 
 // Handlers
 import GetHandleCategorySelect from "./utils/handleCategorySelect";
