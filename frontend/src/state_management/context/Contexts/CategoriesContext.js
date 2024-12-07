@@ -3,7 +3,7 @@ import React, {createContext, useEffect, useState, useContext} from 'react';
 const CategoriesContext = createContext();
 
 import { LoadingContext } from './LoadingContext';
-import GetLoadCategWhenRestAreAdded from "../../../webhooks/GetLoadCategWhenRestAreAdded";
+import GetLoadCategWhenRestAreAdded from "../../utils/GetLoadCategWhenRestAreAdded";
 
 
 function CategoriesContextProvider({ children }) {

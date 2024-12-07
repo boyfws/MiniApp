@@ -11,14 +11,15 @@ import RestStore from "../../state_management/stores/RestStore";
 
 
 // Webhooks
-import GetDependency from '../../webhooks/DepBetwDefRestAndRest';
-import GetLoadRestByAddress from '../../webhooks/LoadRestByAddress';
+import GetDependency from './utils/DepBetwDefRestAndRest';
+import GetLoadRestByAddress from './utils/LoadRestByAddress';
 
 
 // Comp
 import LoaderWrapper from "../../components/templates/LoaderWrapper/LoaderWrapper.js";
 import MainPageTemp from "../../components/templates/MainPageTemp/MainPageTemp";
 import ModalMainPage from '../../components/organisms/ModalMainPage/ModalMainPage';
+import GetHandleClickOutside from "./utils/hadleClickOutside";
 
 
 const MainPage = () => {
@@ -28,7 +29,7 @@ const MainPage = () => {
 
     // Сейты связанные с загрузкой
     const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после того как все данные загружены
-    const { RestLoaded, CategoriesLoaded, setRestLoaded } = useContext(LoadingContext);
+    const { RestLoaded, setRestLoaded } = useContext(LoadingContext);
 
     const [ScrollPositionY, setScrollPositionY] = useState(0);
 
@@ -37,6 +38,7 @@ const MainPage = () => {
     const [InnerModalState, SetInnerModalState] = useState(false)
     const modalRef = useRef(null);
     const InnerModalRef = useRef(null)
+
 
     // Хуки связанные с дефолтным адресом инициализируем на самом высоком уровне
 
@@ -77,41 +79,31 @@ const MainPage = () => {
         setRestLoaded
     );
 
+
+    const handleClickOutside = GetHandleClickOutside(
+        modalRef,
+        InnerModalRef,
+        SetInnerModalState,
+        setModalState)
+
   
     useEffect(Dependency, [defaultRestaurants]);
 
     useEffect(LoadRestByAddress, [DefAddress]);
 
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
-  const CloseFirstModal = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setModalState(false)
+
+    if (!showContent) {
+        return (
+            <LoaderWrapper setShowContent={setShowContent}/>
+        )
     }
-  }
-
-
-  const handleClickOutside = (event) => {
-    if (InnerModalRef.current && !InnerModalRef.current.contains(event.target)) {
-      SetInnerModalState(false)
-    }
-    if (!InnerModalRef.current) {
-      CloseFirstModal(event)
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-
-  if (!showContent) {
-    return (
-        <LoaderWrapper setShowContent={setShowContent}/>
-    )
-  }
 
   return (
     <div className="main-page-container">

@@ -1,4 +1,4 @@
-import fetchRestaurants from "../api/fetchRestaurants";
+import fetchRestaurants from "../../../api/fetchRestaurants";
 
 const userId = 1 // Мок
 

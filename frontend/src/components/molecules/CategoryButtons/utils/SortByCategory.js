@@ -1,4 +1,4 @@
-import intersection_checker from "../../../../utils/intersection_checker";
+import intersection_checker from "./intersection_checker";
 
 
 const GetSortByCategory = (setFilteredRestaurants, selectedCategories, restaurants) => () => {

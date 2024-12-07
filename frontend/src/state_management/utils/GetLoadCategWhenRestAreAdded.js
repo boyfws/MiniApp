@@ -1,4 +1,4 @@
-import fetchCategories from '../api/fetchCategories'
+import fetchCategories from '../../api/fetchCategories'
 
 const GetLoadCategWhenRestAreAdded = (setCategories,
                                       setCategoriesLoaded,
