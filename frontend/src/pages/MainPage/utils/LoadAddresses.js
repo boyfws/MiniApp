@@ -1,7 +1,7 @@
 import fetchAdress from "../../../api/fetchAdress";
 
 // Загружает адреса пользователя, если рестораны загружены
-const GetLoadAddressesWhenRestAreLoaded = (RestLoaded, setAddressesLoaded, SetAddresses) => () => {
+const GetLoadAddresses = (InitDataLoaded, setAddressesLoaded, SetAddresses) => () => {
     const fetchData = async () => {
         const user_id = sessionStorage.getItem("user_id");
         const addresses_query = await fetchAdress(user_id);
@@ -11,11 +11,11 @@ const GetLoadAddressesWhenRestAreLoaded = (RestLoaded, setAddressesLoaded, SetAd
         }
 
     }
-    if (RestLoaded) {
+    if (InitDataLoaded) {
         fetchData();
         console.log("Загружены адреса")
     }
 
 }
 
-export default GetLoadAddressesWhenRestAreLoaded
+export default GetLoadAddresses

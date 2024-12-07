@@ -1,6 +1,12 @@
+// State
+import InitDataStateStore from './state_management/stores/InitDataLoadingState';
+
+// Api
 import verificateInitData from "./api/verificateInitData";
 
 async function initializeTelegram() {
+    const { setInitDataLoaded } = InitDataStateStore()
+
     let tg = window.Telegram.WebApp;
     if (tg.initData && !(
         sessionStorage.getItem('userId') !== null && 
@@ -19,6 +25,7 @@ async function initializeTelegram() {
             sessionStorage.setItem('userId', userId);
             sessionStorage.setItem('access_token', verif_res.data.access_token)
             sessionStorage.setItem('refresh_token', verif_res.data.refresh_token)
+            setInitDataLoaded(true);
         }
     }
 }

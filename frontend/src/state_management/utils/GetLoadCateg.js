@@ -1,11 +1,11 @@
 import fetchCategories from '../../api/fetchCategories'
 
-const GetLoadCategWhenRestAreAdded = (setCategories,
-                                      setCategoriesLoaded,
-                                      RestLoaded) => () =>  {
+const GetLoadCateg = (setCategories,
+                      setCategoriesLoaded,
+                      InitDataLoaded) => () =>  {
     const fetchData = async () => {
         const user_id = sessionStorage.getItem('user_id');
-        // Адрес мы грузили уже зная id иначе не загрузили бы, след user_id точно определен
+        // Init Data точно есть следовательно все окс
         const category_query = await fetchCategories(user_id)
         if (!category_query.error) {
             setCategories(category_query.data)
@@ -13,7 +13,7 @@ const GetLoadCategWhenRestAreAdded = (setCategories,
         }
     }
 
-    if (RestLoaded) {
+    if (InitDataLoaded) {
         fetchData()
         console.log("Вызвано получение категорий")
     }
@@ -21,4 +21,4 @@ const GetLoadCategWhenRestAreAdded = (setCategories,
 }
 
 
-export default GetLoadCategWhenRestAreAdded
+export default GetLoadCateg

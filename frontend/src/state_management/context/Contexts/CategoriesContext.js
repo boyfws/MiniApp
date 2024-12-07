@@ -1,23 +1,24 @@
 import React, {createContext, useEffect, useState, useContext} from 'react';
 
 const CategoriesContext = createContext();
-
 import { MainPageLoadingContext } from './MainPageLoadingContext';
-import GetLoadCategWhenRestAreAdded from "../../utils/GetLoadCategWhenRestAreAdded";
+import InitDataStateStore from '../../stores/InitDataLoadingState';
+
+import GetLoadCateg from "../../utils/GetLoadCateg";
 
 
 function CategoriesContextProvider({ children }) {
-    const {setCategoriesLoaded, RestLoaded} = useContext(MainPageLoadingContext);
+    const {setCategoriesLoaded} = useContext(MainPageLoadingContext);
     const [categories, setCategories] = useState([]);
+    const { InitDataLoaded } = InitDataStateStore();
 
-    const LoadCategWhenRestAreAdded = GetLoadCategWhenRestAreAdded(
+    const LoadCateg = GetLoadCateg(
         setCategories,
         setCategoriesLoaded,
-        RestLoaded
+        InitDataLoaded
     )
 
-    useEffect(LoadCategWhenRestAreAdded, [RestLoaded]);
-
+    useEffect(LoadCateg, [InitDataLoaded]);
 
 
     const contextValue = {

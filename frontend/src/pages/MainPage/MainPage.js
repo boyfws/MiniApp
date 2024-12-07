@@ -10,12 +10,13 @@ import DefAddressStore from "../../state_management/stores/DefAddressStore";
 import RestStore from "../../state_management/stores/RestStore";
 import AddressesStore from "../../state_management/stores/AddressesStore";
 import MainPageModalStore from "../../state_management/stores/MianPageModalsStateStore";
+import InitDataStateStore from "../../state_management/stores/InitDataLoadingState";
 
 
 // Webhooks
 import GetDependency from './utils/DepBetwDefRestAndRest';
 import GetLoadRestByAddress from './utils/LoadRestByAddress';
-import GetLoadAddressesWhenRestAreLoaded from "./utils/LoadAddressesWhenRestAreLoaded";
+import GetLoadAddresses from "./utils/LoadAddresses";
 
 
 // Comp
@@ -33,13 +34,15 @@ const MainPage = () => {
 
     // Сейты связанные с загрузкой
     const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после того как все данные загружены
-    const { RestLoaded, setRestLoaded, CategoriesLoaded, setAddressesLoaded } = useContext(MainPageLoadingContext);
+    const { RestLoaded, setRestLoaded, setAddressesLoaded } = useContext(MainPageLoadingContext);
 
     const [ScrollPositionY, setScrollPositionY] = useState(0);
 
     const { SetInnerModalState,  setModalState } = MainPageModalStore()
     const modalRef = useRef(null);
     const InnerModalRef = useRef(null)
+
+    const { InitDataLoaded } = InitDataStateStore()
 
 
     // Хуки связанные с дефолтным адресом инициализируем на самом высоком уровне
@@ -48,7 +51,6 @@ const MainPage = () => {
         defaultRestaurants
     );
 
-
     const LoadRestByAddress = GetLoadRestByAddress(
         DefAddress,
         setDefaultRestaurants,
@@ -56,36 +58,37 @@ const MainPage = () => {
         setRestLoaded
     );
 
-
     const handleClickOutside = GetHandleClickOutside(
         modalRef,
         InnerModalRef,
         SetInnerModalState,
         setModalState)
 
-    const LoadAddressesWhenRestAreLoaded = GetLoadAddressesWhenRestAreLoaded(
-        RestLoaded,
+    const LoadAddresses = GetLoadAddresses(
+        InitDataLoaded,
         setAddressesLoaded,
         SetAddresses
     )
 
-
     //  По факту будем доставать из session storage
     useEffect(() => {
-        setDefAddress({
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [37.587914, 55.783954]
-            },
-            properties: {
-                street: 'Поликарпова',
-                house: '1',
-                district: 'Хорошёвский',
-                city: 'Москва'
-            }
-        })
-    }, [])
+        if (InitDataLoaded) {
+            setDefAddress({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [37.587914, 55.783954]
+                },
+                properties: {
+                    street: 'Поликарпова',
+                    house: '1',
+                    district: 'Хорошёвский',
+                    city: 'Москва'
+                }
+            })
+        }
+    }, [InitDataLoaded])
+
 
     useEffect(() => {
 //        tg.CloudStorage.setItem("last_address", DefAddress);
@@ -102,9 +105,7 @@ const MainPage = () => {
         };
     }, []);
 
-    useEffect(LoadAddressesWhenRestAreLoaded, [
-        RestLoaded
-    ]);
+    useEffect(LoadAddresses, [InitDataLoaded]);
 
     if (!showContent) {
         return (
