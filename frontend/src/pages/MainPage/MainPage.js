@@ -17,6 +17,7 @@ import InitDataStateStore from "../../state_management/stores/InitDataLoadingSta
 import GetDependency from './utils/DepBetwDefRestAndRest';
 import GetLoadRestByAddress from './utils/LoadRestByAddress';
 import GetLoadAddresses from "./utils/LoadAddresses";
+import GetLoadDefAddress from "./utils/LoadDefAddress";
 
 
 // Comp
@@ -70,28 +71,17 @@ const MainPage = () => {
         SetAddresses
     )
 
+    const LoadDefAddress = GetLoadDefAddress(
+        InitDataLoaded,
+        setDefAddress
+    )
+
     //  По факту будем доставать из session storage
-    useEffect(() => {
-        if (InitDataLoaded) {
-            setDefAddress({
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [37.587914, 55.783954]
-                },
-                properties: {
-                    street: 'Поликарпова',
-                    house: '1',
-                    district: 'Хорошёвский',
-                    city: 'Москва'
-                }
-            })
-        }
-    }, [InitDataLoaded])
+    useEffect(LoadDefAddress, [InitDataLoaded])
 
 
     useEffect(() => {
-//        tg.CloudStorage.setItem("last_address", DefAddress);
+//        window.Telegram.WebApp.CloudStorage.setItem("last_address", DefAddress);
     }, [DefAddress]);
 
     useEffect(Dependency, [defaultRestaurants]);
