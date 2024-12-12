@@ -102,7 +102,7 @@ services:
       - nginx_log:/etc/nginx/var/log # Пишем логи в том 
     depends_on:
       - frontend
-    command: sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"          # Команда для запуска
+    command: sh -c "envsubst '$$DOMEN' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"          # Команда для запуска
 
 
 
