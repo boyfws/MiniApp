@@ -1,9 +1,12 @@
 name: Deploy to Server
 
 on:
-  push:
-    branches:
-      - prod  # Запускать при пуше в ветку main
+    push:
+        branches:
+            - prod  # Запускать при пуше в ветку main
+    pull_request:
+        branches:
+            - prod  
 
 jobs:
   deploy:
