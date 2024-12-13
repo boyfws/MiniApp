@@ -9,7 +9,8 @@ import { Button } from '@telegram-apps/telegram-ui';
 import Icon24LocationOutline from '../../_icons/Icon24LocationOutline';
 
 
-const LocationButton = ({onClick}) => {
+const LocationButton = ({}) => {
+    const onClick = () => {}
     return (
         <Button 
         size="m" 
