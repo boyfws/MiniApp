@@ -18,7 +18,7 @@ const LocationButton = ({}) => {
         size="m" 
         mode="bezeled" 
         onClick={onClick}
-        className={`location-button${tg_version >= 7 ? '' : '-hidden'}`}
+        className={`location-button${tg_version >= 8 ? '' : '-hidden'}`}
         >
             <Icon24LocationOutline/>
         </Button>
