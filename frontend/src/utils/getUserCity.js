@@ -28,4 +28,4 @@ async function getUserCity() {
 }
 
 
-export default getUserIp;
+export default getUserCity;

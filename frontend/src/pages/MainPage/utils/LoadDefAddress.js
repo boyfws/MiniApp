@@ -4,13 +4,23 @@ import fetchDefAddress from "../../../api/fetchDefAddress";
 const GetLoadDefAddress = (InitDataLoaded, setDefAddress) => () => {
     const fetchData = async () => {
         let flag = true
-        const tg_storage = window.Telegram.WebApp.CloudStorage
-        tg_storage.getItem("last_address", (err, data) => {
-            if (!err) {
-                setDefAddress(data)
-                flag = false
-            }
-        })
+        try {
+            const tg_storage = window.Telegram.WebApp.CloudStorage
+            const data = await new Promise((resolve, reject) => {
+                tg_storage.getItem("last_address", (err, data) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(data);
+                    }
+                });
+            });
+
+            setDefAddress(data);
+            flag = false;
+        } catch (err) {
+            // Обработка ошибки
+        }
         if (flag) {
             const city_eng_query = await getUserCity()
             if (!city_eng_query.error) {
