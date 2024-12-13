@@ -38,10 +38,10 @@ jobs:
           SERVER_IP: ${{ secrets.SERVER_IP }}  # IP-адрес сервера
         run: |
           # Остановка docker-compose
-          sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /project && docker-compose down"
+          sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /root/project && docker-compose down"
 
           # Выполнение rsync
-          sshpass -p "$SSH_PASSWORD" rsync -avz --delete -e "ssh" . root@${{ secrets.SERVER_IP }}:/project
+          sshpass -p "$SSH_PASSWORD" rsync -avz --delete -e "ssh" . root@${{ secrets.SERVER_IP }}:/root/project
 
           # Запуск docker-compose
-          sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /project && docker-compose up -d --build"
+          sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /root/project && docker-compose up -d --build"
