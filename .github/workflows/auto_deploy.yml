@@ -1,0 +1,44 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - prod  # Запускать при пуше в ветку main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1: Клонируем репозиторий
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Шаг 2: Настройка SSH с использованием пароля
+      - name: Set up SSH with password
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}  # Пароль для SSH
+          SERVER_IP: ${{ secrets.SERVER_IP }}  # IP-адрес сервера
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+          # Устанавливаем sshpass для входа с паролем
+          sudo apt-get update && sudo apt-get install -y sshpass
+
+      # Шаг 3: Остановка docker-compose, выполнение rsync и запуск docker-compose
+      - name: Deploy to server
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}  # Пароль для SSH
+          SERVER_IP: ${{ secrets.SERVER_IP }}  # IP-адрес сервера
+        run: |
+          # Остановка docker-compose
+          sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /project && docker-compose down"
+
+          # Выполнение rsync
+          sshpass -p "$SSH_PASSWORD" rsync -avz --delete -e "ssh" . root@${{ secrets.SERVER_IP }}:/project
+
+          # Запуск docker-compose
+          sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /project && docker-compose up -d --build"
