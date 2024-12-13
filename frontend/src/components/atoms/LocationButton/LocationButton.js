@@ -10,13 +10,15 @@ import Icon24LocationOutline from '../../_icons/Icon24LocationOutline';
 
 
 const LocationButton = ({}) => {
+    let tg_version = parseFloat(window.Telegram.WebApp.version);
+
     const onClick = () => {}
     return (
         <Button 
         size="m" 
         mode="bezeled" 
         onClick={onClick}
-        className='location-button'
+        className={`location-button${tg_version >= 7 ? '' : '-hidden'}`}
         >
             <Icon24LocationOutline/>
         </Button>
