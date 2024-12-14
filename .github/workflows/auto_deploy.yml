@@ -41,7 +41,7 @@ jobs:
           sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /root/project && docker-compose down || true"
 
           # Выполнение rsync
-          sshpass -p "$SSH_PASSWORD" rsync -avz --delete -e "ssh" . root@${{ secrets.SERVER_IP }}:/root/project
+          sshpass -p "$SSH_PASSWORD" rsync -avzu -e "ssh" . root@${{ secrets.SERVER_IP }}:/root/project
 
           # Запуск docker-compose
           sshpass -p "$SSH_PASSWORD" ssh root@${{ secrets.SERVER_IP }} "cd /root/project && docker-compose up -d --build"
