@@ -19,6 +19,8 @@ services:
       - ./databases/PostgreSQL/init.sql:/init.sql
       - ./databases/PostgreSQL/roles.sql:/roles.sql
       - ./databases/PostgreSQL/roots.sql:/roots.sql
+    networks:
+      - default
 
   redis:
     container_name: redis_for_bot
@@ -33,6 +35,8 @@ services:
     environment:
       REDIS_FOR_BOT_PASSWORD: ${REDIS_FOR_BOT_PASSWORD}
     command: ["sh", "-c", "envsubst < /redis.conf > /tmp/processed_redis.conf && redis-server /tmp/processed_redis.conf"]
+    networks:
+      - default
 
   mongodb:
     container_name: mongodb
@@ -41,6 +45,8 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - default
 
   web:
     container_name: fast-api
@@ -57,6 +63,8 @@ services:
       - mongodb
       - redis
       - db
+    networks:
+      - default
 
   telegram_bot:
     container_name: telegram_bot
@@ -72,7 +80,9 @@ services:
       - "8081:8081"
     command: ["python3", "bot_api/bot.py"]
     depends_on:
-      - web # Зависит от бд-шек так как зависит от web 
+      - web # Зависит от бд-шек так как зависит от web
+    networks:
+      - default
 
   frontend:
     container_name: frontend
@@ -87,6 +97,8 @@ services:
     depends_on:
       - telegram_bot
     command: ["sh", "-c", "npm run build && serve -s build"]
+    networks:
+      - default
 
   nginx:
     container_name: nginx
@@ -104,6 +116,8 @@ services:
     depends_on:
       - frontend
     command: sh -c "nginx -g 'daemon off;'"
+    networks:
+      - default
   
   ddns:
     container_name: ddns
@@ -115,6 +129,8 @@ services:
     depends_on:
       - nginx
     command: ["/bin/bash", "/duckdns/duck.sh"]
+    networks:
+      - default
       
 networks:
   default:
