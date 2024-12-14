@@ -115,12 +115,12 @@ services:
     depends_on:
       - nginx
     command: ["/bin/bash", "/duckdns/duck.sh"]
-
-
       
-
-
-
+networks:
+  network1:
+    driver: overlay
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
 
 volumes:
   postgres_data:
