@@ -1,19 +1,47 @@
-async function getUserIP() {
-    let retries = 1; // Количество повторных попыток
+function getUserIP() {
+    return new Promise((resolve) => {
+        let retries = 1; // Количество повторных попыток
+        const callbackName = `jsonpCallback_${Date.now()}`;
 
-    while (retries >= 0) {
-        try {
-            const response = await fetch('http://www.geoplugin.net/json.gp');
+        function makeRequest() {
+            const script = document.createElement('script');
+            script.src = `http://edns.ip-api.com/json/?callback=${callbackName}`;
 
-            const data = await response.json();
-            return {"error": false, data: data.geoplugin_request} // Возвращаем IP-адрес
-        } catch (error) {
-            if (retries === 0) {
-                return {"error": true, "data": null};
+            // Обработчик успешного ответа
+            window[callbackName] = (response) => {
+                // Удаляем созданный элемент и колбэк
+                delete window[callbackName];
+                document.body.removeChild(script);
+
+                if (response) {
+                    if (response.edns && response.edns.ip) {
+                        resolve({"error": false, data: response.edns.ip});
+                    } else if (response.dns && response.dns.ip) {
+                        resolve({"error": false, data: response.dns.ip});
+                    } else {
+                        retryOrFail();
+                    }
+                }
             }
-            retries--;
+            // Обработчик ошибки загрузки
+            script.onerror = () => {
+                retryOrFail();
+            };
+
+            document.body.appendChild(script);
         }
-    }
+
+        function retryOrFail() {
+            if (retries === 0) {
+                resolve({ "error": true, "data": null });
+            } else {
+                retries--;
+                makeRequest();
+            }
+        }
+
+        makeRequest();
+    });
 }
 
 export default getUserIP;
