@@ -126,6 +126,7 @@ services:
       dockerfile: Dockerfile
     environment:
       DUCK_TOKEN: ${DUCK_TOKEN}
+      TEST: ${TEST}
     depends_on:
       - nginx
     command: ["/bin/bash", "/duckdns/duck.sh"]

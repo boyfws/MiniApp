@@ -1,5 +1,12 @@
 #!/bin/sh
 
+test_var="${TEST}"
+
+if [ "$test_var" = "1" ]; then
+    echo "Мы находимся в тестовом режиме не используем DDNS"
+    exit 0
+fi
+
 DOMAINS="mini-app-test-prikol"
 TOKEN="$DUCK_TOKEN"
 
