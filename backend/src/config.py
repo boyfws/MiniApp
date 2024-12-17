@@ -9,13 +9,14 @@ from dotenv import load_dotenv
 from dataclasses import dataclass, field
 from sqlalchemy.engine import URL
 
-
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 BASE_DIR = Path(__file__).parent.parent
+
+"""
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
-
+"""
 
 @dataclass(frozen=True)
 class AuthJWTConfig:
@@ -32,14 +33,12 @@ class YandexAPIConfig:
     TOKEN_FOR_GEOSUGGEST: Optional[str] = os.getenv("TOKEN_FOR_GEOSUGGEST")
     TOKEN_FOR_GEOCODER: Optional[str] = os.getenv("TOKEN_FOR_GEOCODER")
 
-@dataclass
-class NGINXConfig:
-    APP_PREFIX: Optional[str] = os.getenv("APP_NGINX_PREFIX")
+
 
 @dataclass
 class MongoDBConfig:
-    host: Optional[str] = os.getenv("MONGODB_HOST")
-    port: Union[str, int] = os.getenv("MONGODB_PORT", 1)
+    host: Optional[str] = "mongodb"
+    port: Union[str, int] = 27017
     database: str = os.getenv("MONGO_DATABASE", 'db')
     menu_collection: str = os.getenv("MENU_COLLECTION", 'collection')
     test_menu_collection: str = os.getenv("TEST_MENU_COLLECTION", 'test')
@@ -55,12 +54,12 @@ class S3Config:
 class DatabaseConfig:
     """Database connection variables."""
 
-    name: Optional[str] = os.getenv('POSTGRES_DATABASE')
-    test_name: Optional[str] = os.getenv("TEST_DATABASE")
-    user: Optional[str] = os.getenv('POSTGRES_USER')
-    password: Optional[str] = os.getenv('POSTGRES_PASSWORD', None)
-    port: int = int(os.getenv('POSTGRES_PORT', 5432))
-    host: str = os.getenv('POSTGRES_HOST', 'db')
+    name: Optional[str] = os.getenv('DBNAME')
+    test_name: Optional[str] = os.getenv("TEST_DB_NAME")
+    user: Optional[str] = "backend"
+    password: Optional[str] = os.getenv('BACKEND_PASSWORD', None)
+    port: int = 5432
+    host: str = 'db'
 
     driver: str = 'asyncpg'
     database_system: str = 'postgresql'
@@ -97,7 +96,7 @@ class AppConfig:
     title = "MiniApp python hse"
     description = "Наше приложение"
     version = "1.0"
-    root_path = NGINXConfig.APP_PREFIX
+    root_path = ""
 
 
 @dataclass

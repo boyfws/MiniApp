@@ -56,7 +56,22 @@ services:
     command: bash -c "uvicorn main:main --host 0.0.0.0 --port 8000"
     volumes:
       - .:/app
-    env_file: ./backend/src/.env
+    environment:
+      TOKEN_FOR_GEOSUGGEST: ${TOKEN_FOR_GEOSUGGEST}
+      TOKEN_FOR_GEOCODER: ${TOKEN_FOR_GEOCODER}
+      MONGO_DATABASE: ${MONGO_DATABASE}
+      MENU_COLLECTION: ${MENU_COLLECTION}
+      TEST_MENU_COLLECTION: ${TEST_MENU_COLLECTION}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BACKET_NAME: ${S3_BACKET_NAME}
+      DBNAME: ${DBNAME}
+      TEST_DB_NAME: ${TEST_DB_NAME}
+      BACKEND_PASSWORD: ${BACKEND_PASSWORD}
+      DEBUG: ${DEBUG}
+      LOGGING_LEVEL: ${LOGGING_LEVEL}
+      BOT_TOKEN: ${BOT_TOKEN}
+
     ports:
       - "8000:8000"
     depends_on:
