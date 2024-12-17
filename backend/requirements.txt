@@ -16,3 +16,4 @@ botocore
 pytest-asyncio
 sqlalchemy[asyncio]
 uvicorn
+googletrans==4.0.0-rc1
