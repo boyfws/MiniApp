@@ -1,5 +1,6 @@
 const prepare_address_for_display = (geojson) => {
     const address = geojson.properties
+    const city = address.city
     const district = address?.district ?? '';
     const street = address?.street ?? '';
     const house = address?.house ?? '';
@@ -8,8 +9,11 @@ const prepare_address_for_display = (geojson) => {
     if (street) {
         return `${street} ${house}`;
     }
-    else {
+    else  if (district) {
         return `${district}`
+    }
+    else {
+        return `г. ${city}`
     }
 }
 
