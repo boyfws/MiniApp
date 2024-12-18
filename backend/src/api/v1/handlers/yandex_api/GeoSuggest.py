@@ -1,5 +1,6 @@
 import aiohttp
-from typing import Optional, Dict, TypedDict, List
+from typing import Optional, Dict, List
+from typing_extensions import TypedDict
 from src.config import configuration
 
 
