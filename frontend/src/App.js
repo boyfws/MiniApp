@@ -8,7 +8,7 @@ import RestaurantPage from './pages/RestaurantPage/RestaurantPage';
 
 
 
-const App = () => {
+const App = ({}) => {
   return (
     <Router>
       <CacheSwitch>
