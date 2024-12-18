@@ -1,7 +1,8 @@
 from typing import Optional, List
 
-from .GeoSuggest import GeoSuggest
+from .GeoSuggest import GeoSuggest, AddressPart
 from .GeoCode import GeoCode
+from .translation import get_rus_city
 from .yandex_api_session import yandex_api_session
 from fastapi import APIRouter
 
@@ -68,4 +69,19 @@ async def verificate_new_restaurant_address(
     raise ValueError
 
 
+@yandex_api_router.get("/get_city_translation/{city}")
+async def get_translation(city: str):
+    # translate to russian
+    translated = get_rus_city(city)
+    # use geocoder to get coordinates
+    return await geocoder.get_coords_for_geosuggest_address(
+        location=AddressPart(
+            full_name=translated,
+            city=translated,
+            region=None,
+            district=None,
+            street=None,
+            house=None
+        )
+    )
 

@@ -35,7 +35,7 @@ async function query(url,
                     continue;
                 }
 
-                if (retryOnErrors.length === 0 || retryOnErrors.includes(errorCode)) {
+                if (retryOnErrors.length === 0 || retryOnErrors.includes(response.status)) {
                     attempt++;
                     if (attempt < retries) {
                         await new Promise(resolve => setTimeout(resolve, delay));

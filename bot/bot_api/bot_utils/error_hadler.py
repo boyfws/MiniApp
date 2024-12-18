@@ -12,6 +12,9 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         error_handler_logger.error("Бот не смог установить соединение с сервером в течение заданного времени ожидания")
     except telegram.error.BadRequest as e:
         error_handler_logger.error(f"Возникла ошибка при при отправке запроса. Причина: {e.message}")
+    except telegram.error.Conflict:
+        error_handler_logger.error(f"Приложение уже запущено на другом клиенте")
+        exit(0)
     except Exception as e:
         error_type = type(e).__name__
         error_message = str(e)
