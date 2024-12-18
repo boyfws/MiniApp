@@ -25,6 +25,19 @@ const UserAddresses = ({ }) => {
 
   const handleAddressClick = GetHandleAddressClick(setModalState, setDefAddress);
 
+  // Возможно под замену
+  if (Addresses.length === 0) {
+    return (
+        <div>
+          <Cell classsName="address-cell">
+            <Text className="address-text">
+              Тут пока пусто :)
+            </Text>
+          </Cell>
+        </div>
+    )
+  }
+
   return (
     <div>
       {Addresses.map((address, index) => (

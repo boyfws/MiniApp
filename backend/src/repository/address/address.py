@@ -1,6 +1,6 @@
 from typing import no_type_check, Optional
 
-from sqlalchemy import insert, delete, select, Row
+from sqlalchemy import insert, delete, select, Row, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
@@ -87,3 +87,41 @@ class AddressRepo(TablesRepositoryInterface):
             if not address_row: raise ValueError("No address id returned from the database")
             address_id = int(address_row[0])
             return AddressResult(id=address_id)
+        
+    async def get(self, address_id: int) -> AddressDTO:
+        async with self.session_getter() as session:
+            # address_stmt = select(Address.street_id, Address.house, Address.location).where(Address.id == address_id)
+            address_stmt = f"SELECT street_id, house, ST_AsEWKT(location) AS location FROM address WHERE id == {address_id}"
+            address_result = await session.execute(text(address_stmt))
+            street_id, house, location = address_result.first()[0]
+            
+            # select street
+            street_stmt = select(Street.name, Street.district_id).where(Street.id == street_id)
+            street_result = await session.execute(street_stmt)
+            street, district_id = street_result.first()[0]
+            
+            # select district
+            district_stmt = select(District.name, District.city_id).where(District.id == district_id)
+            district_result = await session.execute(district_stmt)
+            district, city_id = district_result.first()[0]
+            
+            # select city
+            city_stmt = select(City.name, City.region_id).where(City.id == city_id)
+            city_result = await session.execute(city_stmt)
+            city, region_id = city_result.first()[0]
+            
+            # select region
+            region_stmt = select(Region.name).where(Region.id == region_id)
+            region_result = await session.execute(region_stmt)
+            region = region_result.first()[0]
+            
+            return AddressDTO(
+                region=region, 
+                city=city, 
+                district=distrist, 
+                street=street, 
+                house=house, 
+                location=location
+            )
+            
+            

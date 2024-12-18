@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from typing import Any
 
 from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser
 from src.service.address import AddressesForUserService, get_address_for_user_service
@@ -12,8 +13,29 @@ addresses_for_user_router = APIRouter(
 async def get_all_addresses(
         user_id: int,
         service: AddressesForUserService = Depends(get_address_for_user_service)
-) -> list[AddressForUserDTO]:
-    return await service.get_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
+) -> list[dict[str, Any]]:
+    address_dto = await service.get_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
+    result = []
+    for address in address_dto:
+        model = address.model_dump()
+        result.append(
+            {
+                'type': 'Feature', 
+                'geometry': {
+                    'type': 'Point', 
+                    'coordinates': model.location
+                }, 
+                'properties': {
+                    'region': model.region, 
+                    'city': model.city, 
+                    'district': model.district, 
+                    'street': model.street, 
+                    'house': model.house, 
+                    'location': model.location
+                }
+            }
+        )
+    return result
 
 @addresses_for_user_router.delete("/drop_all_addresses/{user_id}")
 async def drop_all_addresses(

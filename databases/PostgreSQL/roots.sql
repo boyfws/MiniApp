@@ -54,6 +54,10 @@ BEGIN
     IF current_database() = TEST_DB_NAME THEN
         GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO backend;
         GRANT TRUNCATE ON ALL TABLES IN SCHEMA public TO backend;
+
+        GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO backend;
+
+
         RAISE NOTICE 'Выданы доп права пользователю backend';
     ELSE 
         RAISE NOTICE 'Доп права пользователю backend не были выданы';

@@ -46,19 +46,21 @@ async def get_restaurant_by_owner(
 ) -> list[RestaurantRequestFullModel]:
     return await service.get_by_owner(RestaurantRequestUsingOwner(owner_id=owner_id))
 
-@restaurant_router.get("/get_by_geo/{lon}/{lat}")
+@restaurant_router.get("/get_by_geo/{lon}/{lat}/{user_id}")
 async def get_restaurant_by_geo(
         lon: float,
         lat: float,
+        user_id: int,
         service: RestaurantService = Depends(get_restaurant_service)
 ) -> list[RestaurantGeoSearch]:
     return await service.get_by_geo(Point(lon=lon, lat=lat))
 
-@restaurant_router.get("/get_by_geo_and_name/{lon}/{lat}/{name_pattern}")
+@restaurant_router.get("/get_by_geo_and_name/{lon}/{lat}/{name_pattern}/{user_id}")
 async def get_restaurant_by_geo_and_name(
         lon: float,
         lat: float,
         name_pattern: str,
+        user_id: int,
         service: RestaurantService = Depends(get_restaurant_service)
 ) -> list[RestaurantGeoSearch]:
     return await service.get_by_geo_and_name(RestaurantRequestUsingGeoPointAndName(point=Point(lon=lon, lat=lat), name_pattern=name_pattern))
