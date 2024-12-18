@@ -125,7 +125,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/certs
+      - /etc/letsencrypt/live/mini-app-test-prikol.duckdns.org/privkey.pem:/privkey.pem
+      - /etc/letsencrypt/live/mini-app-test-prikol.duckdns.org/fullchain.pem:/fullchain.pem
       - nginx_log:/etc/nginx/var/log # Пишем логи в том 
 
     depends_on:
