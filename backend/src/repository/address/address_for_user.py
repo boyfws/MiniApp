@@ -22,17 +22,18 @@ class AddressForUserRepo(TablesRepositoryInterface):
 
     async def create(
             self,
-            model: AddressForUserDTO,
+            user_id: int,
+            address_id: int
     ) -> AddressesResponse:
         async with self.session_getter() as session:
 
             # если юзера раньше не было в базе, то добавим
             user_repo = UserRepo(session_getter=self.session_getter)
-            is_user = await user_repo.is_user(model.user_id)
+            is_user = await user_repo.is_user(user_id)
             if not is_user:
-                await user_repo.create_user(model.user_id)
+                await user_repo.create_user(user_id)
 
-            stmt = insert(AddressesForUser).values(**model.dict())
+            stmt = insert(AddressesForUser).values(user_id=user_id, address_id=address_id)
             await session.execute(stmt)
             return AddressesResponse(status=200)
 

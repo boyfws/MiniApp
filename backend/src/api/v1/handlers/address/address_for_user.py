@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 from src.api.v1.handlers.yandex_api.GeoCode import GeoJson
 from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser
-from src.service.address import AddressesForUserService, get_address_for_user_service
+from src.service.address import AddressesForUserService, get_address_for_user_service, transform_to_dto
 
 addresses_for_user_router = APIRouter(
     prefix="/AddressesForUser",
@@ -15,7 +15,7 @@ async def get_all_addresses(
         user_id: int,
         service: AddressesForUserService = Depends(get_address_for_user_service)
 ) -> list[Optional[GeoJson]]:
-    address_dto = await service.get_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
+    address_dto = await service.get_all_user_addresses(model=AllAddressesForUser(user_id=user_id))
     result = []
     for address in address_dto:
         point_str = address.location.split(';')[1].split('(')[1].split(')')[0]
@@ -34,12 +34,13 @@ async def drop_all_addresses(
 ) -> AddressesResponse:
     return await service.drop_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
 
-@addresses_for_user_router.post("/add_address/")
+@addresses_for_user_router.post("/add_address/{user_id}")
 async def add_address(
-        model: AddressForUserDTO,
+        user_id: int,
+        model: GeoJson,
         service: AddressesForUserService = Depends(get_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.create(model)
+    return await service.create(user_id, transform_to_dto(model))
 
 @addresses_for_user_router.delete("/delete_address/{user_id}/{address_id}")
 async def delete_address(
