@@ -14,8 +14,8 @@ class AddressesForUserService:
         return await self.repo.delete(model)
 
     async def create(self, user_id: int, model: AddressDTO) -> AddressesResponse:
-        address_id = await self.address_repo.get_address_id(model)
-        return await self.repo.create(user_id, address_id)
+        address_id = await self.address_repo.add_address(model)
+        return await self.repo.create(user_id, address_id.id)
 
     async def get_all_user_addresses(
             self,
