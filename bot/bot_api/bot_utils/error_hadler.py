@@ -13,8 +13,7 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     except telegram.error.BadRequest as e:
         error_handler_logger.error(f"Возникла ошибка при при отправке запроса. Причина: {e.message}")
     except telegram.error.Conflict:
-        error_handler_logger.error(f"Приложение уже запущено на другом клиенте")
-        exit(0)
+        error_handler_logger.error(f"Приложение запущено на еще одном кллиенте")
     except Exception as e:
         error_type = type(e).__name__
         error_message = str(e)
