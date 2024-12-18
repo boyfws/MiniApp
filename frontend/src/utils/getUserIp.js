@@ -5,7 +5,7 @@ function getUserIP() {
 
         function makeRequest() {
             const script = document.createElement('script');
-            script.src = `http://edns.ip-api.com/json/?callback=${callbackName}`;
+            script.src = `https://edns.ip-api.com/json/?callback=${callbackName}`;
 
             // Обработчик успешного ответа
             window[callbackName] = (response) => {
