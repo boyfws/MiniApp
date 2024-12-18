@@ -13,7 +13,6 @@ const GetLoadAddresses = (InitDataLoaded, setAddressesLoaded, SetAddresses) => (
     }
     if (InitDataLoaded) {
         fetchData();
-        console.log("Загружены адреса")
     }
 
 }
