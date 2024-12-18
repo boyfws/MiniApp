@@ -1,13 +1,18 @@
-import fetchWithRetry from "./queries/GET_query";
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
+import GET_query from "./queries/GET_query";
 
 const fetchCategories = async (id) => {
-  await sleep(1000); // Поток "спит" 2 секунды
-    return {data: 
-      ['Категория 1', 'Категория 2', 'Категория 3', 'Шашлык', 'Японская кухня', 'Пиво', 'Бургеры', 'Другие'],
-      error: false};
-      
+  const path = "/api/v1/Category/get_all_categories/";
+  const retries = 3;
+  const delay = 5;
+  const cat_query = await GET_query(path, {}, retries, delay);
+
+  if (cat_query.error) {
+    return {error: true, data: null};
+  }
+  else {
+    return {error: false, data: cat_query.data.map(item => item.name)};
   }
 
-  export default fetchCategories
+}
+
+export default fetchCategories
