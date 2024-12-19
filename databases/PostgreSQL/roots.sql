@@ -45,6 +45,7 @@ ON
     public.users
 TO backend;
 
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO backend;
 
 -- Если мы находимся в тестовой базе, даем доступ бэку на последоавтельности для удобства тестов 
 DO $$
@@ -55,7 +56,6 @@ BEGIN
         GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO backend;
         GRANT TRUNCATE ON ALL TABLES IN SCHEMA public TO backend;
 
-        GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO backend;
 
 
         RAISE NOTICE 'Выданы доп права пользователю backend';
