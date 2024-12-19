@@ -12,6 +12,9 @@ import RestStore from "../../../state_management/stores/RestStore";
 // Handlers
 import GetHandleBackFromSearch from './utils/handleBackFromSearch';
 
+// Utils
+import GetHandleSearchChange from "../../../utils/GetHadleSearchChange";
+
 
 const CALLBACK_DELAY_MS = 300;
 const CALLBACK_SYMBOL_LIMIT = 2;
@@ -23,22 +26,13 @@ const SearchForm = ({setSearchClicked, ChangeValueInMainPage }) => {
     const { setRestaurants, defaultRestaurants } = RestStore()
 
 
-    const handleSearchChange = (event) => {
-        const searchValue = event.target.value;
-        setSearchValue(searchValue);
-
-        // Очищаем предыдущий таймер
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-
-        // Устанавливаем новый таймер
-        debounceTimeout.current = setTimeout(() => {
-            if (searchValue.length > CALLBACK_SYMBOL_LIMIT) {
-                ChangeValueInMainPage(searchValue);
-            }
-        }, CALLBACK_DELAY_MS); // Задержка 
-    };
+    const handleSearchChange = GetHandleSearchChange(
+        debounceTimeout,
+        setSearchValue,
+        ChangeValueInMainPage,
+        CALLBACK_SYMBOL_LIMIT,
+        CALLBACK_DELAY_MS
+    );
 
     // Очистка таймера при размонтировании компонента
     useEffect(() => {
