@@ -32,18 +32,17 @@ async def prepare_classes_for_yandex_api():
 
 
 
-@yandex_api_router.get("/get_rest_suggestion/")
-async def get_suggestions(text: str, longitude: Optional[float] = None, latitude: Optional[float] = None):
+@yandex_api_router.get("/get_address_suggestion/")
+async def get_suggestions(text: str, lon: Optional[float] = None, lat: Optional[float] = None):
     """
     Возвращает подсказки пользователю при вводе адреса
     """
     return await geosuggest.get_similar_locations(text=text,
                                                   number_of_suggestions=NUM_of_SUGGESTIONS,
-                                                  longitude=longitude,
-                                                  latitude=latitude)
+                                                  longitude=lon,
+                                                  latitude=lat)
 
 
-#@yandex_api_router.get("/test/")
 async def verificate_new_restaurant_address(
         city: str,
         street: str,
