@@ -5,11 +5,14 @@ function sliceAndFill(array, size) {
     const sliced = array.slice(0, size);
     const new_sliced = sliced.map(prepareRecomForDispl).filter(item => item !== null);
 
-    while (new_sliced.length < size) {
-        new_sliced.push(filler);
+    const res = Array.from(new Map(new_sliced.map(item => [item, true])).keys());
+
+
+    while (res.length < size) {
+        res.push(filler);
     }
 
-    return new_sliced;
+    return res;
 }
 
 
