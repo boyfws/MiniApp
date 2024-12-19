@@ -3,11 +3,11 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 class AddressDTO(BaseModel):
-    region: str
+    region: Optional[str]
     city: str
-    district: str
-    street: str
-    house: str
+    district: Optional[str]
+    street: Optional[str]
+    house: Optional[str]
     location: str
 
 class AddressRequest(BaseModel):
