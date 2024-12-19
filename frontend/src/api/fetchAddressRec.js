@@ -1,7 +1,7 @@
-import GET_query from "./api/queries/GET_query";
+import GET_query from "./queries/GET_query";
 
 const fetchAddressRec = async (text, lon, lat) => {
-    const baseUrl = '/api/v1/YandexApi/get_rest_suggestion/';
+    const baseUrl = '/api/v1/YandexApi/get_address_suggestion/';
     const textParam = encodeURIComponent(text); // Кодируем текст для безопасности
 
 
