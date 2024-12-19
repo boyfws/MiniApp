@@ -2,18 +2,32 @@
 import './NestedModalMainPageContent.css'
 
 // Ext lib
-import React, {useState} from "react";
-import {Input} from "@telegram-apps/telegram-ui";
+import React, {useState, useEffect} from "react";
+
+// State
+import DefAddressStore from "../../../state_management/stores/DefAddressStore";
 
 
 // Comp
 import NestedModalMainPageTitle from "../../atoms/NestedModalMainPageTitle/NestedModalMainPageTitle";
 import LocationButton from "../../atoms/LocationButton/LocationButton";
 import RecLinesInnerModal from "../../atoms/RecLinesInnnerModal/RecLinesInnerModal";
+import SearchFormAddress from "../../atoms/SearchFormAddress/SearchFormAddress";
+
+// Utils
+import GetLoadAddressRecom from "./utils/LoadAddressRecom";
 
 const NestedModalMainPageContent = ({}) => {
     const [searchString, SetSearchString] = useState("")
     const [recommendations, SetRecommendations] = useState([])
+
+    const { DefAddress } = DefAddressStore()
+
+    const LoadAddressRecom = GetLoadAddressRecom(SetRecommendations, searchString, DefAddress);
+
+    useEffect(LoadAddressRecom, [searchString])
+
+
 
 
     return (
@@ -25,12 +39,10 @@ const NestedModalMainPageContent = ({}) => {
 
             <div className='upper_level_wrapper'>
 
-                <Input status="focused"
-                       placeholder="Write and clean me"
-                       value={searchString}
-                       onChange={e => SetSearchString(e.target.value)}
-                       className={'input_for_address'}
+                <SearchFormAddress
+                    ChangeValueInUpperComp={SetSearchString}
                 />
+
                 <LocationButton className='LocationButton'/>
 
             </div>
