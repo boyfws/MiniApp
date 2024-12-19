@@ -82,7 +82,7 @@ const MainPage = () => {
 
     useEffect(() => {
         if (Object.keys(DefAddress).length !== 0) {
-            window.Telegram.WebApp.CloudStorage.setItem("last_address", DefAddress);
+            window.Telegram.WebApp.CloudStorage.setItem("last_address", JSON.stringify(DefAddress));
         }
     }, [DefAddress]);
 

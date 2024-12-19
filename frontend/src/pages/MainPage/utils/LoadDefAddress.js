@@ -14,13 +14,18 @@ const GetLoadDefAddress = (InitDataLoaded, setDefAddress) => () => {
                     }
                 });
             });
-            if (data === "" && Object.keys(data).length !== 0) {
+            if (data === "") {
                 throw new Error("Пустой ключ")
             }
             else {
-                setDefAddress(data);
+                const address = JSON.parse(data);
+                if (Object.keys(address).length === 0) {
+                    throw new Error("Пустой адрес")
+                }
+                else {
+                    setDefAddress(address);
+                }
             }
-
 
         } catch (err) {
             const city_eng_query = await getUserCity()
