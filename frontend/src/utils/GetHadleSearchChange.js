@@ -13,7 +13,7 @@ const GetHandleSearchChange = (debounceTimeout,
 
     // Устанавливаем новый таймер
     debounceTimeout.current = setTimeout(() => {
-        if (searchValue.length > symbol_limit) {
+        if (searchValue.length > symbol_limit || searchValue === "") {
             ChangeValueInUpperComponent(searchValue);
         }
     }, delay_ms); // Задержка

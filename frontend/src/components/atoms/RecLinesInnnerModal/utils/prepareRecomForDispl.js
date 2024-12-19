@@ -2,18 +2,20 @@ const PrepareDataForDispl = (recommendation) => {
     if (typeof recommendation === "string") {
         return recommendation;
     }
-    const city = recommendation.city
+    const city = recommendation?.city ?? ""
     const street = recommendation?.street ?? ""
     const house = recommendation?.house ?? ""
-    let res = city
-    if (street !== "") {
-        res = res + ", " + street
-    }
 
-    if (house !== "") {
-        res = res + ", " + house
+    if (house === "" && street === "" && house === "") {
+        return null
     }
-    return res
+    else if (house === "" && street === "") {
+        return city
+    }
+    else if (house === "") {
+        return `${city}, ${street}`
+    }
+    return `${city}, ${street}, ${house}`
 }
 
 export default PrepareDataForDispl
