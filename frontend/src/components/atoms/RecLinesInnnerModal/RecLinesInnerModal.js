@@ -20,20 +20,18 @@ const blockHeight = parseFloat(modalOptionsHeight);
   
 const RECOMM_LENGTH = Math.ceil(targetHeight / blockHeight);
 
-const filler = ""
-
 
 const RecLinesInnerModal = ({ recommendations, onClick }) => {
     return (
       <div>
-        {sliceAndFill(recommendations, RECOMM_LENGTH, {"full_name":filler}).map((recom, index) => (
+        {sliceAndFill(recommendations, RECOMM_LENGTH).map((recom, index) => (
           <React.Fragment key={index}>
             <Cell onClick={() => onClick(recom)} className="recom-cell">
               <Text className="address-text">
-              {recom.full_name}
+              {recom}
               </Text>
             </Cell>
-            {(index < RECOMM_LENGTH - 1) && (recom.full_name !== filler)  && <Divider />}
+            {(index < RECOMM_LENGTH - 1) && (recom !== "")  && <Divider />}
           </React.Fragment>
 
         ))}

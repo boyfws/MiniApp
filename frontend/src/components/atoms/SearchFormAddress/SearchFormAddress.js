@@ -10,8 +10,8 @@ import GetHandleSearchChange from "../../../utils/GetHadleSearchChange";
 import {Input} from "@telegram-apps/telegram-ui";
 
 
-const CALLBACK_DELAY_MS = 100;
-const CALLBACK_SYMBOL_LIMIT = 5;
+const CALLBACK_DELAY_MS = 150;
+const CALLBACK_SYMBOL_LIMIT = 2;
 
 
 const SearchFormAddress = ({ChangeValueInUpperComp}) => {

@@ -1,4 +1,4 @@
-import fetchAddressRec from "../../../../fetchAddressRec";
+import fetchAddressRec from "../../../../api/fetchAddressRec";
 
 const GetLoadAddressRecom = (SetRecommendations,
                              searchString,
@@ -13,6 +13,9 @@ const GetLoadAddressRecom = (SetRecommendations,
     }
     if (searchString !== "") {
         fetchData();
+    }
+    else {
+        SetRecommendations([])
     }
 }
 
