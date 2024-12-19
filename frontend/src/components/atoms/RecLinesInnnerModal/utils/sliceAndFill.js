@@ -1,15 +1,24 @@
 import prepareRecomForDispl from "./prepareRecomForDispl";
 
 function sliceAndFill(array, size) {
-    const filler = ""
     const sliced = array.slice(0, size);
-    const new_sliced = sliced.map(prepareRecomForDispl).filter(item => item !== null);
 
-    const res = Array.from(new Map(new_sliced.map(item => [item, true])).keys());
+    const array_of_both_values = sliced.map(item => [prepareRecomForDispl(item), item]).filter(item => item[0] !== null);
+
+    const res = [];
+    const seen = new Set();
+
+    for (const item of array_of_both_values) {
+        const key = item[0]; // Используем первый элемент массива как ключ
+        if (!seen.has(key)) {
+            res.push(item);
+            seen.add(key);
+        }
+    }
 
 
     while (res.length < size) {
-        res.push(filler);
+        res.push(["", null]);
     }
 
     return res;
