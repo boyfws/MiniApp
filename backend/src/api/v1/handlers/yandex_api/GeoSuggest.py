@@ -41,13 +41,14 @@ class GeoSuggest:
                                     text: str,
                                     number_of_suggestions: int,
                                     longitude: Optional[float] = None,
-                                    latitude: Optional[float] = None) -> List[AddressPart]:
+                                    latitude: Optional[float] = None,
+                                    sort_by_dist: bool = True) -> List[AddressPart]:
         params = self.def_params_for_sim_loc | {
             "text": text,
             "results": number_of_suggestions,
         }
         if longitude is not None and latitude is not None:
-            params["ull"] = f"{longitude},{longitude}"
+            params["ull"] = f"{longitude},{latitude}"
 
         async with self.session.get(self.url, params=params) as response:
             if response.status != 200:
@@ -57,6 +58,9 @@ class GeoSuggest:
 
             if "results" not in data:
                 return []
+            if sort_by_dist:
+                data["results"] = sorted(data["results"], key=lambda x: x["distance"]["value"])
+
             try:
                 return [
                     {
