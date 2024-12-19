@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
-from typing import Any
+from typing import Any, Optional
 
+from src.api.v1.handlers.yandex_api.GeoCode import GeoJson
 from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser
-from src.service.address import AddressesForUserService, get_address_for_user_service
+from src.service.address import AddressesForUserService, get_address_for_user_service, transform_to_dto
 
 addresses_for_user_router = APIRouter(
     prefix="/AddressesForUser",
@@ -13,28 +14,17 @@ addresses_for_user_router = APIRouter(
 async def get_all_addresses(
         user_id: int,
         service: AddressesForUserService = Depends(get_address_for_user_service)
-) -> list[dict[str, Any]]:
-    address_dto = await service.get_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
+) -> list[Optional[GeoJson]]:
+    address_dto = await service.get_all_user_addresses(model=AllAddressesForUser(user_id=user_id))
     result = []
     for address in address_dto:
-        model = address.model_dump()
-        result.append(
-            {
-                'type': 'Feature', 
-                'geometry': {
-                    'type': 'Point', 
-                    'coordinates': model.location
-                }, 
-                'properties': {
-                    'region': model.region, 
-                    'city': model.city, 
-                    'district': model.district, 
-                    'street': model.street, 
-                    'house': model.house, 
-                    'location': model.location
-                }
-            }
-        )
+        point_str = address.location.split(';')[1].split('(')[1].split(')')[0]
+        coordinates = [float(x) for x in point_str.split()]
+        result.append({
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": coordinates},
+            "properties": {key: value for key, value in address.model_dump().items() if key != "location"}
+        })
     return result
 
 @addresses_for_user_router.delete("/drop_all_addresses/{user_id}")
@@ -44,12 +34,13 @@ async def drop_all_addresses(
 ) -> AddressesResponse:
     return await service.drop_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
 
-@addresses_for_user_router.post("/add_address/")
+@addresses_for_user_router.post("/add_address/{user_id}")
 async def add_address(
-        model: AddressForUserDTO,
+        user_id: int,
+        model: GeoJson,
         service: AddressesForUserService = Depends(get_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.create(model)
+    return await service.create(user_id, transform_to_dto(model))
 
 @addresses_for_user_router.delete("/delete_address/{user_id}/{address_id}")
 async def delete_address(

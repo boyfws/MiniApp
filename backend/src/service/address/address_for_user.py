@@ -13,10 +13,11 @@ class AddressesForUserService:
     async def delete(self, model: AddressForUserDTO) -> AddressesResponse:
         return await self.repo.delete(model)
 
-    async def create(self, model: AddressForUserDTO) -> AddressesResponse:
-        return await self.repo.create(model)
+    async def create(self, user_id: int, model: AddressDTO) -> AddressesResponse:
+        address_id = await self.address_repo.add_address(model)
+        return await self.repo.create(user_id, address_id.id)
 
-    async def get_all_user_fav_restaurants(
+    async def get_all_user_addresses(
             self,
             model: AllAddressesForUser
     ) -> list[AddressDTO]:
@@ -24,8 +25,7 @@ class AddressesForUserService:
         addresses_geo = []
         # теперь надо для каждого адреса сделать запрос и получить пропертис
         for address in addresses:
-            addresses_geo.append(self.address_repo.get(address.address_id))
-            
+            addresses_geo.append(await self.address_repo.get(address.address_id))
         return addresses_geo
 
     async def drop_all_user_fav_restaurants(

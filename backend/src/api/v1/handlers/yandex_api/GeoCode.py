@@ -1,5 +1,6 @@
 import aiohttp
-from typing import Dict, List, Optional, TypedDict
+from typing import Dict, List, Optional
+from typing_extensions import TypedDict
 from src.config import configuration
 
 from .GeoSuggest import AddressPart, AddressProperties

@@ -85,7 +85,7 @@ class RestaurantRepo(TablesRepositoryInterface):
         async with self.session_getter() as session:
             query = (
                 "SELECT "
-                    "id, name, main_photo, "
+                    "id, name, main_photo, categories, "
                     "ST_Distance("
                         "location, "
                         f"ST_SetSRID(ST_MakePoint({model.lon}, {model.lat}), 4326)::geography"
@@ -113,7 +113,7 @@ class RestaurantRepo(TablesRepositoryInterface):
         async with self.session_getter() as session:
             query = (
                 "SELECT "
-                    "id, name, main_photo, "
+                    "id, name, main_photo, categories, "
                     "ST_Distance("
                         "location, "
                         f"ST_SetSRID(ST_MakePoint({model.point.lon}, {model.point.lat}), 4326)::geography"
