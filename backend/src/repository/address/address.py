@@ -87,27 +87,32 @@ class AddressRepo(TablesRepositoryInterface):
                     f"SELECT EXISTS ("
                         f"SELECT 1 FROM address "
                         f"WHERE street_id = {street_id} AND "
-                        f"house = {model.house} AND "
+                        f"house = {int(model.house)} AND "
                         f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
                     f")"
                 )
             )
+            address_exists_result = address_exists.first()
+            exist_flag = int(address_exists_result[0])
 
-            if not address_exists:
+            if not exist_flag:
                 address_result = await session.execute(
                     insert(Address).values(
                         street_id=street_id,
-                        house=model.house,
+                        house=int(model.house),
                         location=model.location
                     ).returning(Address.id)
                 )
                 address_id_row: Optional[Row[tuple[int]]] = address_result.first()
                 address_id = int(address_id_row[0])
             else:
-                address_id_res = await session.execute(
-                    select(Address.id).where(Address.street_id == street_id).where(Address.house == model.house).where(
-                        Address.location == model.location)
+                address_stmt = (
+                    f"SELECT id FROM address "
+                    f"WHERE street_id = {street_id} AND "
+                    f"house = {int(model.house)} AND "
+                    f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
                 )
+                address_id_res = await session.execute(text(address_stmt))
                 address_id_row: Optional[Row[tuple[int]]] = address_id_res.first()
                 address_id = int(address_id_row[0])
             return AddressResult(id=address_id)
@@ -144,7 +149,7 @@ class AddressRepo(TablesRepositoryInterface):
                 city=city, 
                 district=district,
                 street=street, 
-                house=house, 
+                house=str(house),
                 location=location
             )
 
