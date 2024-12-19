@@ -11,7 +11,7 @@ import CategoryButtons from '../../molecules/CategoryButtons/CategoryButtons';
 
 const HeaderMainPage = ({setScrollPositionY, setModalState}) => {
     return (
-        <List className='list'>
+        <div className='list'>
 
             <UpperLevelInHeaderMainPage
                 setScrollPositionY={setScrollPositionY}
@@ -20,9 +20,9 @@ const HeaderMainPage = ({setScrollPositionY, setModalState}) => {
 
             <CategoryButtons className='category-buttons'/>
 
-        </List>
+        </div>
     )
 }
 
 
-export default HeaderMainPage
+export default HeaderMainPage;
