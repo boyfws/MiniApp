@@ -6,7 +6,7 @@ const PrepareDataForDispl = (recommendation) => {
     const street = recommendation?.street ?? ""
     const house = recommendation?.house ?? ""
 
-    if (house === "" && street === "" && house === "") {
+    if (house === "" && street === "" && city === "") {
         return null
     }
     else if (house === "" && street === "") {
