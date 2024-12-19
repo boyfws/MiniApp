@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import Any, Optional
 
-from src.api.v1.handlers.yandex_api.GeoCode import GeoJson
+from src.models.dto.address import GeoJson
 from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser
 from src.service.address import AddressesForUserService, get_address_for_user_service, transform_to_dto
 
