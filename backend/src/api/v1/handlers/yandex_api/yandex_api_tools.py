@@ -19,7 +19,6 @@ class LocationNotFoundError(ValueError):
     pass
 
 
-NUM_of_SUGGESTIONS = 10
 
 
 #geocoder, geosuggest = None, None
@@ -38,7 +37,7 @@ async def get_suggestions(text: str, lon: Optional[float] = None, lat: Optional[
     Возвращает подсказки пользователю при вводе адреса
     """
     return await geosuggest.get_similar_locations(text=text,
-                                                  number_of_suggestions=NUM_of_SUGGESTIONS,
+                                                  number_of_suggestions=5,
                                                   longitude=lon,
                                                   latitude=lat)
 
