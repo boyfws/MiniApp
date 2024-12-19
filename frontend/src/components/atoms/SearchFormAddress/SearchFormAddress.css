@@ -1,0 +1,12 @@
+.SearchFormAddressWrapper{
+    background-color: var(--tgui--bg_color);
+    width: 100%;
+}
+
+.input_for_address{
+    width: 100% !important;
+    border-radius: 20px !important;
+    max-width: unset !important;
+    background-color: var(--tgui--secondary_fill) !important;
+    min-height: 0 !important;
+}

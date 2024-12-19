@@ -11,6 +11,10 @@ const AppWrapper = ({}) => {
 
     useEffect(initTG, [])
 
+    useEffect(() => {
+        window.Telegram.WebApp?.LocationManager.init()
+    }, [])
+
 
     return (
         <App />

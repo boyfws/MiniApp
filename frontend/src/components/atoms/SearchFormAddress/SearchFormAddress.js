@@ -37,12 +37,14 @@ const SearchFormAddress = ({ChangeValueInUpperComp}) => {
 
 
     return (
-        <Input status="focused"
+        <div className="SearchFormAddressWrapper">
+            <Input status="focused"
                placeholder="Добавить новый ресторан"
                value={SearchValue}
                onChange={handleSearchChange}
                className={'input_for_address'}
-        />
+            />
+        </div>
     );
 }
 
