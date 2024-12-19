@@ -7,11 +7,14 @@ const GetinitializeTelegram = (setInitDataLoaded) => () => {
 
         let tg = window.Telegram.WebApp;
         console.log("Начали верифицировать юзера")
-        if (tg.initData && !(
+
+        let user_verified = (
             sessionStorage.getItem('userId') !== null &&
             sessionStorage.getItem('access_token') !== null &&
             sessionStorage.getItem('refresh_token') !== null
-        )) {
+        )
+
+        if (tg.initData && !user_verified) {
             const verif_res = await verificateInitData(tg.initData)
             if (!verif_res.error) {
 
@@ -27,6 +30,9 @@ const GetinitializeTelegram = (setInitDataLoaded) => () => {
                 sessionStorage.setItem('refresh_token', verif_res.data.refresh_token)
                 setInitDataLoaded(true);
             }
+        }
+        else if (user_verified) {
+            setInitDataLoaded(true);
         }
     }
 
