@@ -14,7 +14,7 @@ const GetLoadDefAddress = (InitDataLoaded, setDefAddress) => () => {
                     }
                 });
             });
-            if (data === "") {
+            if (data === "" && Object.keys(data).length !== 0) {
                 throw new Error("Пустой ключ")
             }
             else {

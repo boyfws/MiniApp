@@ -81,7 +81,9 @@ const MainPage = () => {
 
 
     useEffect(() => {
-       window.Telegram.WebApp.CloudStorage.setItem("last_address", DefAddress);
+        if (Object.keys(DefAddress).length !== 0) {
+            window.Telegram.WebApp.CloudStorage.setItem("last_address", DefAddress);
+        }
     }, [DefAddress]);
 
     useEffect(Dependency, [defaultRestaurants]);
