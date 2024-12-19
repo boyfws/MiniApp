@@ -7,7 +7,7 @@ def get_addresses() -> tuple[AddressDTO, AddressDTO, AddressDTO, AddressDTO, Add
         city="Москва",
         district="Измайловский",
         street="улица Вернадского",
-        house=11,
+        house='11',
         location="SRID=4326;POINT(37.617 55.755)"
     )
     address_2 = AddressDTO(
@@ -15,7 +15,7 @@ def get_addresses() -> tuple[AddressDTO, AddressDTO, AddressDTO, AddressDTO, Add
         city="Санкт-Петербург",
         district="Красноярск",
         street="улица Аникутина",
-        house=12,
+        house='12',
         location="SRID=4326;POINT(37.617 55.755)"
     )
 
@@ -24,7 +24,7 @@ def get_addresses() -> tuple[AddressDTO, AddressDTO, AddressDTO, AddressDTO, Add
         city="Москва",
         district="Измайловский",
         street="улица Вернадского",
-        house=50,
+        house='50',
         location="SRID=4326;POINT(37.617 55.755)"
     )
 
@@ -33,7 +33,7 @@ def get_addresses() -> tuple[AddressDTO, AddressDTO, AddressDTO, AddressDTO, Add
         city="Москва",
         district="Калининский",
         street="улица Аникутина",
-        house=13,
+        house='13',
         location="SRID=4326;POINT(37.617 55.755)"
     )
 
@@ -42,7 +42,7 @@ def get_addresses() -> tuple[AddressDTO, AddressDTO, AddressDTO, AddressDTO, Add
         city="Москва",
         district="Измайловский",
         street="улица Вернадского",
-        house=50,
+        house='50',
         location="SRID=4326;POINT(37.617 55.755)"
     )
 
@@ -51,7 +51,7 @@ def get_addresses() -> tuple[AddressDTO, AddressDTO, AddressDTO, AddressDTO, Add
         city="Москва",
         district="Измайловский",
         street="улица Аникутина",
-        house=13,
+        house='13',
         location="SRID=4326;POINT(37.617 55.755)"
     )
     return address_1, address_2, address_3, address_4, address_5, address_6
