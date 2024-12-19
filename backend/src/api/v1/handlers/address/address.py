@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from src.api.v1.handlers.yandex_api.GeoCode import GeoJson
-from src.models.dto.address import AddressResult, AddressDTO, AddressRequest
+
+from src.models.dto.address import AddressResult, AddressDTO, AddressRequest, GeoJson
 from src.service.address import get_address_service, transform_to_dto
 from src.service.address import AddressService
 
