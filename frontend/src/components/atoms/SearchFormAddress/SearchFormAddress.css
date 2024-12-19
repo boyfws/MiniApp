@@ -1,6 +1,6 @@
 .SearchFormAddressWrapper{
     background-color: var(--tgui--bg_color);
-    width: 100%;
+    flex-grow: 1;
 }
 
 .input_for_address{
