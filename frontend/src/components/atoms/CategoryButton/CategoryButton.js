@@ -11,7 +11,7 @@ const CategoryButton = ({ category, onClick }) => {
 
     const handleClick = () => {
         setIsPressed(!isPressed); // Мгновенное изменение состояния
-        window.Telegram.WebApp.HapticFeedback.impactOccurred("light")
+        window.Telegram.WebApp.HapticFeedback.impactOccurred("light");
         setTimeout(() => {
             onClick(category);
         }, 0);

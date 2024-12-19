@@ -10,15 +10,18 @@ const FAST_CHANGE_DURATION_MS = 350; // Время для быстрой фаз�
 
 const LoaderComp = ({ loading, onFinish }) => {
     const [progress, setProgress] = useState(0);
-    const count = 10; // Количество шагов индикатора
+    const [startTime, setStartTime] = useState(null);
+    const count = 10; // Количество шагов индикатора + 1
+    
 
     useEffect(() => {
         let requestId = null;
-        let startTime = null;
         let duration = loading ? SLOW_CHANGE_DURATION_MS : FAST_CHANGE_DURATION_MS;
 
         const updateProgress = (timestamp) => {
-            if (!startTime) startTime = timestamp;
+            if (startTime === null) {
+                setStartTime(timestamp);
+            }
             const elapsed = timestamp - startTime;
 
             // Рассчитываем новый прогресс на основе прошедшего времени
@@ -27,14 +30,13 @@ const LoaderComp = ({ loading, onFinish }) => {
             if (loading) {
                 // Когда индикатор крутится бесконечно, сбрасываем прогресс после достижения максимума
                 if (newProgress >= count) {
-                    startTime = timestamp; // Сбрасываем время начала
+                    setStartTime(timestamp);
                     newProgress = 0; // Сбрасываем прогресс для бесконечного цикла
                 }
                 setProgress(newProgress);
                 requestId = requestAnimationFrame(updateProgress); // Продолжаем бесконечную анимацию
             } else {
                 // Когда загрузка завершена, плавно доводим до завершения
-                newProgress = Math.min(newProgress, count);
                 setProgress(newProgress);
                 if (newProgress < count) {
                     // Продолжаем анимацию, пока прогресс не достигнет максимума
@@ -42,7 +44,6 @@ const LoaderComp = ({ loading, onFinish }) => {
                 } else {
                     // Завершаем анимацию, когда прогресс достиг максимума
                     setTimeout(onFinish, 0);
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred("success")
                 }
             }
         };
@@ -55,7 +56,7 @@ const LoaderComp = ({ loading, onFinish }) => {
                 cancelAnimationFrame(requestId); // Очищаем анимацию при размонтировании компонента
             }
         };
-    }, [loading, onFinish]);
+    }, [loading, onFinish, startTime]);
 
     // Округляем прогресс, чтобы он мог принимать значения от 0 до count, включая count
     const progressValue = Math.min(Math.round(progress), count);
