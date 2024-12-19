@@ -5,6 +5,7 @@ from sqlalchemy import insert, delete, select, Row, text, exists
 from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
 from src.models.orm.schemas import Address, City, District, Street, Region
 from src.repository.interface import TablesRepositoryInterface
+from tests.common.address import get_addresses
 
 
 class AddressRepo(TablesRepositoryInterface):
@@ -23,7 +24,6 @@ class AddressRepo(TablesRepositoryInterface):
             model: AddressDTO
     ) -> AddressResult:
         async with self.session_getter() as session:
-            # TODO: сделать здесь код более чистым
             # найти айди региона, используя название
             region_search_stmt = select(Region.id).where(Region.name == model.region)
             region_search_result = await session.execute(region_search_stmt)
@@ -80,26 +80,36 @@ class AddressRepo(TablesRepositoryInterface):
                 street_id = street_search_row.id
 
             # проверка, что такой адрес существует
-            address_exists = session.query(exists().where(
-                Address.street_id == street_id,
-                Address.house == model.house,
-                Address.location == model.location
-            )).scalar()
+            point_str = model.location.split(';')[1].split('(')[1].split(')')[0]
+            coordinates = [float(x) for x in point_str.split()]
+            address_exists = await session.execute(
+                text(
+                    f"SELECT EXISTS ("
+                        f"SELECT 1 FROM address "
+                        f"WHERE street_id = {street_id} AND "
+                        f"house = {model.house} AND "
+                        f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
+                    f")"
+                )
+            )
 
             if not address_exists:
-                result = session.execute(
+                address_result = await session.execute(
                     insert(Address).values(
                         street_id=street_id,
                         house=model.house,
                         location=model.location
                     ).returning(Address.id)
                 )
-                address_id = result.scalar()
+                address_id_row: Optional[Row[tuple[int]]] = address_result.first()
+                address_id = int(address_id_row[0])
             else:
-                address_id = session.execute(
+                address_id_res = await session.execute(
                     select(Address.id).where(Address.street_id == street_id).where(Address.house == model.house).where(
                         Address.location == model.location)
                 )
+                address_id_row: Optional[Row[tuple[int]]] = address_id_res.first()
+                address_id = int(address_id_row[0])
             return AddressResult(id=address_id)
         
     async def get(self, address_id: int) -> AddressDTO:
@@ -137,3 +147,12 @@ class AddressRepo(TablesRepositoryInterface):
                 house=house, 
                 location=location
             )
+
+async def main():
+    repo = AddressRepo()
+    res = await repo.add_address(model=get_addresses()[0])
+    print(res.id)
+
+if __name__ == '__main__':
+    import asyncio
+    asyncio.run(main())
