@@ -3,12 +3,13 @@ import prepareRecomForDispl from "./prepareRecomForDispl";
 function sliceAndFill(array, size) {
     const filler = ""
     const sliced = array.slice(0, size);
+    const new_sliced = sliced.map(prepareRecomForDispl).filter(item => item !== null);
 
-    while (sliced.length < size) {
-        sliced.push(filler);
+    while (new_sliced.length < size) {
+        new_sliced.push(filler);
     }
 
-    return sliced.map(prepareRecomForDispl);
+    return new_sliced;
 }
 
 
