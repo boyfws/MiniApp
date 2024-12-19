@@ -46,7 +46,7 @@ const SearchForm = ({setSearchClicked, ChangeValueInMainPage }) => {
     const handleBack = GetHandleBackFromSearch(setSearchClicked, setRestaurants, defaultRestaurants)
 
     return (
-        <div style={{ backgroundColor: 'var(--tgui--bg_color)', width: '100%' }}>
+        <div className='InputWrapper'>
             <Input
                 status="focused"
                 placeholder="Write and clean me"

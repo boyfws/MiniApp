@@ -8,7 +8,7 @@
     gap: var(--gap-betwen-upper-level-el-in-main-page);
     display: flex;
     flex-direction: column; /* Элементы располагаются вертикально */
-    padding: 0; 
+    padding: 0;
 }
   
   

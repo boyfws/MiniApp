@@ -12,7 +12,6 @@
 .profile-avatar, .search-button {
     width: var(--width-of-small-mainpage-buttons) !important;
     height: var(--height-of-clickable-el) !important;
-    padding: 0 0 !important;
     border-radius: 20px !important;
     display: flex !important;
     align-items: center !important;
@@ -50,6 +49,10 @@
     justify-content: center;
     padding: 0 0; /* По желанию: отступы по краям */
   
+}
+
+.search {
+
 }
 
 
