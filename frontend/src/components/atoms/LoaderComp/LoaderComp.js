@@ -6,13 +6,13 @@ import React, {useEffect, useState} from "react";
 import {Steps} from "@telegram-apps/telegram-ui";
 
 const SLOW_CHANGE_DURATION_MS = 1000; // Время для медленной фазы
-const FAST_CHANGE_DURATION_MS = 350; // Время для быстрой фазы
+const FAST_CHANGE_DURATION_MS = 500; // Время для быстрой фазы
 
 const LoaderComp = ({ loading, onFinish }) => {
     const [progress, setProgress] = useState(0);
     const [startTime, setStartTime] = useState(null);
     const count = 10; // Количество шагов индикатора + 1
-    
+
 
     useEffect(() => {
         let requestId = null;
