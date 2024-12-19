@@ -1,5 +1,5 @@
 :root {
-    --padding-for-pages: 10;
+    --padding-for-pages: 4px;
     --height-of-clickable-el: 40px; /* Меньше 24 нельзя */
     --gap-betwen-upper-level-el-in-main-page: 7px;
     --modal-options-height: 50px;
