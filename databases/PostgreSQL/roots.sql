@@ -46,6 +46,8 @@ ON
 TO backend;
 
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO backend;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL PRIVILEGES ON SEQUENCES TO backend;
 
 -- Если мы находимся в тестовой базе, даем доступ бэку на последоавтельности для удобства тестов 
 DO $$
