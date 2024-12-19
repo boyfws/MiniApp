@@ -42,6 +42,7 @@ const LoaderComp = ({ loading, onFinish }) => {
                 } else {
                     // Завершаем анимацию, когда прогресс достиг максимума
                     setTimeout(onFinish, 0);
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred("success")
                 }
             }
         };
