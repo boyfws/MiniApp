@@ -1,7 +1,7 @@
 import GET_query from "./queries/GET_query";
 
 const fetchCategories = async (id) => {
-  const path = "/api/v1/Category/get_all_categories/";
+  const path = `/api/v1/Category/get_all_categories/${id}`;
   const retries = 3;
   const delay = 5;
   const cat_query = await GET_query(path, {}, retries, delay);
