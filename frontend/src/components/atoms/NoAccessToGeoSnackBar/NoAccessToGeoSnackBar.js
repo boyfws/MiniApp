@@ -14,7 +14,7 @@ const NoAccessToGeoSnackBar = ({SetSnackBarOpen}) => {
                 Открыть настройки
             </Snackbar.Button>
         )}>
-            Нет доступа к геолокации
+            Нет доступа к геолокациииииииииииииии
         </Snackbar>
     )
 }
