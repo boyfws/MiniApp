@@ -1,7 +1,10 @@
-import React from 'react';
+// Css
+import './RestaurantPage.css'
+
+// Ext lib
+import React, {useEffect} from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import SearchForm from '../../components/atoms/SearchForm/SearchForm';
 
 const RestaurantPage = () => {
   const history = useHistory();
@@ -11,15 +14,20 @@ const RestaurantPage = () => {
     history.push(`/main`);
   };
 
+  useEffect(() => {
+
+      window.Telegram.WebApp.BackButton.onClick(handleGoBack);
+      window.Telegram.WebApp.BackButton.show()
+
+  }, [])
+
   return (
-    <div 
-    style={
-      {backgroundColor: 'var(--tgui--bg_color)',
-      padding: 'var(--padding-for-pages)', 
-      height: '100vh', 
-      width: '100vw'}}>
+    <div className="RestaurantPage">
+
+
       <h1 style={{ color: 'red', textAlign: 'center' }}>Restaurant Page {id}</h1>
-      <button onClick={handleGoBack}>Go Back</button>
+
+
     </div>
   );
 };

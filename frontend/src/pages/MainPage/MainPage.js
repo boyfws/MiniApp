@@ -76,7 +76,10 @@ const MainPage = () => {
         setDefAddress
     )
 
-    //  По факту будем доставать из session storage
+    useEffect(() => {
+        window.Telegram.WebApp.BackButton.hide()
+    }, [])
+
     useEffect(LoadDefAddress, [InitDataLoaded])
 
 

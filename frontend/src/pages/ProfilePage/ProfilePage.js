@@ -1,12 +1,30 @@
-import React from 'react';
+// Css
+import './ProfilePage.css'
+
+// Ext lib
+import React, {useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
+
 
 const ProfilePage = () => {
+    const history = useHistory();
+
+
+    const handleGoBack = () => {
+        history.push(`/main`);
+    };
+
+
+    useEffect(() => {
+
+        window.Telegram.WebApp.BackButton.onClick(handleGoBack);
+        window.Telegram.WebApp.BackButton.show()
+
+    }, [])
 
   return (
-    <div style={{'padding': 'var(--padding-for-pages)'}}>
-      <h1 style={{ color: 'red', textAlign: 'center' }}>
-        Profile Page
-      </h1>
+    <div className="ProfilePage">
+
     </div>
   );
 };
