@@ -10,12 +10,11 @@ import MainPageModalStore from "../../../state_management/stores/MianPageModalsS
 
 
 // Components
-import NestedModalMainPage from '../NestedModalMainPage/NestedModalMainPage.js'
 import ModalMainPageContent from "../../molecules/ModalMainPageContent/ModalMainPageContent";
 
 
 // Учесть, что ласт адрес хранится в локал сторадж 
-const ModalMainPage = ({modalRef, InnerModalRef}) => {
+const ModalMainPage = ({modalRef}) => {
     const { ModalState } = MainPageModalStore()
 
     return (
@@ -29,9 +28,6 @@ const ModalMainPage = ({modalRef, InnerModalRef}) => {
               >
 
             <ModalMainPageContent/>
-
-            <NestedModalMainPage
-            InnerModalRef={InnerModalRef}/>
 
         </Modal>
     )

@@ -39,9 +39,8 @@ const MainPage = () => {
 
     const [ScrollPositionY, setScrollPositionY] = useState(0);
 
-    const { SetInnerModalState,  setModalState } = MainPageModalStore()
+    const { setModalState } = MainPageModalStore()
     const modalRef = useRef(null);
-    const InnerModalRef = useRef(null)
 
     const { InitDataLoaded } = InitDataStateStore()
 
@@ -61,8 +60,6 @@ const MainPage = () => {
 
     const handleClickOutside = GetHandleClickOutside(
         modalRef,
-        InnerModalRef,
-        SetInnerModalState,
         setModalState)
 
     const LoadAddresses = GetLoadAddresses(
@@ -112,7 +109,6 @@ const MainPage = () => {
 
           <ModalMainPage
             modalRef={modalRef}
-            InnerModalRef={InnerModalRef}
           />
 
       </div>

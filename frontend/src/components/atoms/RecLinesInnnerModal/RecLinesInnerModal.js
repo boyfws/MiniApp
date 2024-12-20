@@ -4,6 +4,7 @@ import './RecLinesInnerModal.css'
 // Ext lib
 import { Cell, Divider, Text } from '@telegram-apps/telegram-ui';
 import React from 'react';
+import { useHistory } from "react-router-dom";
 
 // Stores
 import DefAddressStore from "../../../state_management/stores/DefAddressStore";
@@ -27,11 +28,12 @@ const RECOMM_LENGTH = Math.ceil(targetHeight / blockHeight);
 
 
 const RecLinesInnerModal = ({ recommendations }) => {
-    const { setModalState, SetInnerModalState } = MainPageModalsStore()
+    const { setModalState } = MainPageModalsStore()
+    const history = useHistory();
     const { addAddress } = AddressesStore()
     const { setDefAddress } = DefAddressStore()
 
-    const handleRecClick = GetHandleAddressRecClick(setModalState, SetInnerModalState, addAddress, setDefAddress)
+    const handleRecClick = GetHandleAddressRecClick(setModalState, history, addAddress, setDefAddress)
 
     return (
       <div>

@@ -14,7 +14,6 @@ import AddAddressButton from "../../atoms/AddAddressButton/AddAddressButton";
 
 
 const ModalMainPageContent = ({}) => {
-    const { SetInnerModalState } = MainPageModalsStore()
 
     return (
         <div className="modal-main-page">
@@ -24,7 +23,7 @@ const ModalMainPageContent = ({}) => {
                 className="address-lines-in-modal"
             />
 
-            <AddAddressButton onClick={() => {SetInnerModalState(true)}}/>
+            <AddAddressButton/>
         </div>
     )
 };
