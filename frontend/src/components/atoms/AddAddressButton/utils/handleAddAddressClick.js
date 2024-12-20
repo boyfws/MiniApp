@@ -1,7 +1,7 @@
-const GetHandleAddressClick = (setModalState, history) => () => {
+const GetHandleAddAddressClick = (setModalState, history) => () => {
     setModalState(false);
     history.push("/addAddress")
 
 }
 
-export default GetHandleAddressClick;
+export default GetHandleAddAddressClick;

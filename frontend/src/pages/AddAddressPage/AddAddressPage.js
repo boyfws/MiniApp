@@ -18,7 +18,7 @@ const AddAddressPage = () => {
 
 
     return (
-        <div className="AddRestPage">
+        <div className="AddAddressPage">
 
         </div>
 

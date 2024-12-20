@@ -10,14 +10,14 @@ import { useHistory } from "react-router-dom";
 import MainPageModalsStore from "../../../state_management/stores/MianPageModalsStateStore"
 
 // Utils
-import GetHandleAddressRecClick from "../RecLinesAddAddressPage/utils/handleAddressRecomClick";
+import GetHandleAddAddressClick from "./utils/handleAddAddressClick";
 
 
 const AddAddressButton = () => {
     const { setModalState } = MainPageModalsStore()
     const history = useHistory();
 
-    const handleAddAddressClick = GetHandleAddressRecClick(setModalState, history);
+    const handleAddAddressClick = GetHandleAddAddressClick(setModalState, history);
 
     return (
         <Button
