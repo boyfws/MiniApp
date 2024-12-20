@@ -5,6 +5,8 @@ const GetHandleLocationButtonClick = (SetRecommendations, SetSnackBarOpen) => as
 
     if (geo_manager.isAccessRequested && !geo_manager.isAccessGranted) {
         SetSnackBarOpen(true);
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('error')
+        
     } else {
         try {
 
