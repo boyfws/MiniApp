@@ -12,19 +12,8 @@ import MainPageModalsStore from "../../../state_management/stores/MianPageModals
 import AddressesStore from "../../../state_management/stores/AddressesStore";
 
 // Utils
-import sliceAndFill from "./utils/sliceAndFill";
+import prepareArrayWithRecom from "./utils/PrepareArrayWithRecom";
 import GetHandleAddressRecClick from './utils/handleAddressRecomClick';
-
-const screenHeight = window.innerHeight;
-
-const targetHeight = screenHeight * 0.65;
-  
-const modalOptionsHeight = getComputedStyle(document.documentElement)
-  .getPropertyValue('--modal-options-height');
-  
-const blockHeight = parseFloat(modalOptionsHeight);
-  
-const RECOMM_LENGTH = Math.ceil(targetHeight / blockHeight);
 
 
 const RecLinesAddAddressPage = ({ recommendations }) => {
@@ -37,7 +26,7 @@ const RecLinesAddAddressPage = ({ recommendations }) => {
 
     return (
       <div>
-        {sliceAndFill(recommendations, RECOMM_LENGTH).map((recom, index) => (
+        {prepareArrayWithRecom(recommendations).map((recom, index) => (
           <React.Fragment key={index}>
             <Cell
                 onClick={async () => {await handleRecClick(recom[1])}}
@@ -46,7 +35,7 @@ const RecLinesAddAddressPage = ({ recommendations }) => {
               {recom[0]}
               </Text>
             </Cell>
-            {(index < RECOMM_LENGTH - 1) && (recom[0] !== "")  && <Divider />}
+            {(index < recommendations.length - 1) && <Divider />}
           </React.Fragment>
 
         ))}

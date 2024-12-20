@@ -1,9 +1,8 @@
 import prepareRecomForDispl from "./prepareRecomForDispl";
 
-function sliceAndFill(array, size) {
-    const sliced = array.slice(0, size);
+function prepareArrayWithRecom(array) {
 
-    const array_of_both_values = sliced.map(item => [prepareRecomForDispl(item), item]).filter(item => item[0] !== null);
+    const array_of_both_values = array.map(item => [prepareRecomForDispl(item), item]).filter(item => item[0] !== null);
 
     const res = [];
     const seen = new Set();
@@ -16,13 +15,8 @@ function sliceAndFill(array, size) {
         }
     }
 
-
-    while (res.length < size) {
-        res.push(["", null]);
-    }
-
     return res;
 }
 
 
-export default sliceAndFill;
+export default prepareArrayWithRecom;

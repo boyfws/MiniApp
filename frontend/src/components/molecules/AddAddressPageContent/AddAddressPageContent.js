@@ -28,11 +28,9 @@ const AddAddressPageContent = ({}) => {
     useEffect(LoadAddressRecom, [searchString])
 
 
-
-
     return (
         <div
-            className='NestedModalMainPage'
+            className='AddAddressPageContent'
         >
 
             <AddAddressPageTitle/>
