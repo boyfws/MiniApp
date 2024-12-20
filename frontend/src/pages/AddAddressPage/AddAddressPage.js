@@ -1,9 +1,16 @@
+// Css
 import './AddAddressPage.css'
+
+// Ext lib
 import React, {useEffect} from "react";
+import { useHistory } from "react-router-dom";
 
 
 
 const AddAddressPage = () => {
+    const history = useHistory();
+
+
     const handleGoBack = () => {
         history.push(`/main`);
         window.Telegram.WebApp.BackButton.hide()
