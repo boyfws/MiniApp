@@ -22,7 +22,9 @@ const LocationButton = ({SetRecommendations}) => {
     let tg_version = parseFloat(tg.version);
     const showCondition = tg_version >= 8 && tg.LocationManager.isLocationAvailable
 
-    const HandleLocationButtonClick = GetHandleLocationButtonClick(SetRecommendations, SetSnackBarOpen)
+    const HandleLocationButtonClick = GetHandleLocationButtonClick(
+        SetRecommendations,
+        SetSnackBarOpen)
 
     return (
         <Button 
@@ -32,10 +34,10 @@ const LocationButton = ({SetRecommendations}) => {
         className={`location-button${showCondition ? '' : '-hidden'}`}
         >
             <Icon24LocationOutline/>
-
             {SnackBarOpen && (
                 <NoAccessToGeoSnackBar SetSnackBarOpen={SetSnackBarOpen}/>
             )}
+
         </Button>
     )
 }

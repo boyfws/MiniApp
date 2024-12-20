@@ -1,12 +1,12 @@
 import fetchAddressRecomFromCoords from "../../../../api/fetchAddressRecomFromCoords";
 
-const GetHandleLocationButtonClick = (SetRecommendations, SetSnackBarOpen) => async () => {
+const GetHandleLocationButtonClick = (SetRecommendations,
+                                      SetSnackBarOpen) => async () => {
     const geo_manager = window.Telegram.WebApp.LocationManager;
 
     if (geo_manager.isAccessRequested && !geo_manager.isAccessGranted) {
         SetSnackBarOpen(true);
         window.Telegram.WebApp.HapticFeedback.notificationOccurred('error')
-        
     } else {
         try {
 
