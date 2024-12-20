@@ -19,7 +19,6 @@ const LocationButton = ({SetRecommendations}) => {
 
     const HandleLocationButtonClick = GetHandleLocationButtonClick(SetRecommendations)
 
-    const onClick = () => {}
     return (
         <Button 
         size="m" 
