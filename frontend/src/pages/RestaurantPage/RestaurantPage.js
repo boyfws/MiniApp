@@ -12,6 +12,7 @@ const RestaurantPage = () => {
 
   const handleGoBack = () => {
     history.push(`/main`);
+    window.Telegram.WebApp.BackButton.hide()
   };
 
   useEffect(() => {

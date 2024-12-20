@@ -12,6 +12,7 @@ const ProfilePage = () => {
 
     const handleGoBack = () => {
         history.push(`/main`);
+        window.Telegram.WebApp.BackButton.hide()
     };
 
 

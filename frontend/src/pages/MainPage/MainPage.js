@@ -76,10 +76,6 @@ const MainPage = () => {
         setDefAddress
     )
 
-    useEffect(() => {
-        window.Telegram.WebApp.BackButton.hide()
-    }, [])
-
     useEffect(LoadDefAddress, [InitDataLoaded])
 
 
