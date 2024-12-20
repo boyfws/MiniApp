@@ -5,6 +5,8 @@ import './AddAddressPage.css'
 import React, {useEffect} from "react";
 import { useHistory } from "react-router-dom";
 
+// Comp
+import AddAddressPageContent from '../../components/molecules/AddAddressPageContent/AddAddressPageContent'
 
 
 const AddAddressPage = () => {
@@ -26,7 +28,7 @@ const AddAddressPage = () => {
 
     return (
         <div className="AddAddressPage">
-
+            <AddAddressPageContent/>
         </div>
 
     )

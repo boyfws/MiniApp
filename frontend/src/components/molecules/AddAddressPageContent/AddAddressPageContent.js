@@ -53,4 +53,4 @@ const AddAddressPageContent = ({}) => {
 }
 
 
-export default AddAddressPageContent
+export default AddAddressPageContent;
