@@ -9,7 +9,7 @@ const GetHandleLocationButtonClick = (SetRecommendations,
         window.Telegram.WebApp.HapticFeedback.notificationOccurred('error')
     } else {
         try {
-
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('medium')
             const result = await new Promise((resolve, reject) => {
                 geo_manager.getLocation((result) => {
                     if (result !== null) {
