@@ -1,5 +1,5 @@
 // Css
-import './RecLinesInnerModal.css'
+import './RecLinesAddAddressPage.css'
 
 // Ext lib
 import { Cell, Divider, Text } from '@telegram-apps/telegram-ui';
@@ -27,7 +27,7 @@ const blockHeight = parseFloat(modalOptionsHeight);
 const RECOMM_LENGTH = Math.ceil(targetHeight / blockHeight);
 
 
-const RecLinesInnerModal = ({ recommendations }) => {
+const RecLinesAddAddressPage = ({ recommendations }) => {
     const { setModalState } = MainPageModalsStore()
     const history = useHistory();
     const { addAddress } = AddressesStore()
@@ -54,4 +54,4 @@ const RecLinesInnerModal = ({ recommendations }) => {
     );
   };
   
-  export default RecLinesInnerModal;
+  export default RecLinesAddAddressPage;

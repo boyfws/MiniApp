@@ -1,5 +1,5 @@
 // Css
-import './NestedModalMainPageContent.css'
+import './AddAddressPageContent.css'
 
 // Ext lib
 import React, {useState, useEffect} from "react";
@@ -9,15 +9,15 @@ import DefAddressStore from "../../../state_management/stores/DefAddressStore";
 
 
 // Comp
-import NestedModalMainPageTitle from "../../atoms/NestedModalMainPageTitle/NestedModalMainPageTitle";
+import AddAddressPageTitle from "../../atoms/AddAddressPageTitle/AddAddressPageTitle";
 import LocationButton from "../../atoms/LocationButton/LocationButton";
-import RecLinesInnerModal from "../../atoms/RecLinesInnnerModal/RecLinesInnerModal";
+import RecLinesAddAddressPage from "../../atoms/RecLinesAddAddressPage/RecLinesAddAddressPage";
 import SearchFormAddress from "../../atoms/SearchFormAddress/SearchFormAddress";
 
 // Utils
 import GetLoadAddressRecom from "./utils/LoadAddressRecom";
 
-const NestedModalMainPageContent = ({}) => {
+const AddAddressPageContent = ({}) => {
     const [searchString, SetSearchString] = useState("")
     const [recommendations, SetRecommendations] = useState([])
 
@@ -35,7 +35,7 @@ const NestedModalMainPageContent = ({}) => {
             className='NestedModalMainPage'
         >
 
-            <NestedModalMainPageTitle/>
+            <AddAddressPageTitle/>
 
             <div className='upper_level_wrapper'>
 
@@ -47,10 +47,10 @@ const NestedModalMainPageContent = ({}) => {
 
             </div>
 
-            <RecLinesInnerModal recommendations={recommendations}/>
+            <RecLinesAddAddressPage recommendations={recommendations}/>
         </div>
     )
 }
 
 
-export default NestedModalMainPageContent
+export default AddAddressPageContent
