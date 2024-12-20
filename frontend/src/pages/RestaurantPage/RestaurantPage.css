@@ -1,6 +1,5 @@
 .RestaurantPage{
     min-height:100vh;
-    min-width:100vw;
     padding: var(--padding-for-pages);
     background-color: var(--tgui--bg_color);
 }
