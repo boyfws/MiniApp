@@ -41,7 +41,10 @@ const AddAddressPageContent = ({}) => {
                     ChangeValueInUpperComp={SetSearchString}
                 />
 
-                <LocationButton className='LocationButton'/>
+                <LocationButton
+                    className='LocationButton'
+                    SetRecommendations={SetRecommendations}
+                />
 
             </div>
 
