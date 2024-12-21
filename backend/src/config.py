@@ -56,8 +56,8 @@ class DatabaseConfig:
 
     name: Optional[str] = os.getenv('DBNAME')
     test_name: Optional[str] = os.getenv("TEST_DB_NAME")
-    user: Optional[str] = "backend"
-    password: Optional[str] = os.getenv('BACKEND_PASSWORD', None)
+    user: Optional[str] = 'postgres' #"backend"
+    password: Optional[str] = 'Tosya1253' #os.getenv('BACKEND_PASSWORD', None)
     port: int = 5432
     host: str = 'db'
 
