@@ -1,10 +1,9 @@
 import fetchRestaurants from "../../../api/fetchRestaurants";
 
-const userId = 1 // Мок
 
 const GetLoadRestByAddress = (defAddress, setDefaultRestaurants, RestLoaded, setRestLoaded) => () => {
     const fetchData = async () => {
-
+        const userId = sessionStorage.getItem("userId");
 
 
       const restaurants_query = await fetchRestaurants(userId, defAddress.geometry.coordinates);

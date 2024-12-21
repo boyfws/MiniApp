@@ -1,10 +1,12 @@
-// Заглушка для тестов 
-import fetchRestaurants from "./fetchRestaurants"
+import GET_query from "./queries/GET_query";
 
 
-const fetchRestaurantsSearch = (id, coordinates, searchQuery) => {
-    console.log("Вызван запрос по строчке " + searchQuery)
-    return fetchRestaurants(id, 10)
+const fetchRestaurantsSearch = async (id, coordinates, searchQuery) => {
+    const searchString = encodeURIComponent(searchQuery)
+    const url = `/api/v1/Restaurant/get_by_geo_and_name/${coordinates[0]}/${coordinates[1]}/${searchString}/${id}`
+
+
+    return await GET_query(url, {}, 2, 5)
 }
 
 export default fetchRestaurantsSearch

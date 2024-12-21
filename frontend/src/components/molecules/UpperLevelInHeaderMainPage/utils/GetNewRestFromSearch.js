@@ -1,11 +1,9 @@
 import fetchRestaurantsSearch from "../../../../api/fetchRestaurantsSearch";
 
-const userId = 1 // Мок 
 
-
-// Добавить логику для работы с redux для получения дефолтного адреса 
 const GetLoadRestFromSearch = (defAddress, InputValue, setRestaurants) => () => {
     const fetchData = async () => {
+        const userId = sessionStorage.getItem("userId");
 
         const restaurants_query = await fetchRestaurantsSearch(userId, defAddress.geometry.coordinates, InputValue);
 
