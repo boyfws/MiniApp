@@ -5,6 +5,9 @@ import './RestaurantPage.css'
 import React, {useEffect, useState} from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
+// Comp
+import LoaderWrapperRestPage from "../../components/templates/LoaderWrapperRestPage/LoaderWrapperRestPage";
+
 
 const RestaurantPage = () => {
   const history = useHistory();
@@ -14,6 +17,16 @@ const RestaurantPage = () => {
 
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
+
+
+  if (!showContent) {
+    return (
+        <LoaderWrapperRestPage
+            loading={loading}
+            setShowContent={setShowContent}
+        />
+    )
+  }
 
 
   const handleGoBack = () => {
