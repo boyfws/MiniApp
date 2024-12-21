@@ -5,15 +5,15 @@ import './ProfilePage.css'
 import React, {useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
 
+// Comp
+import GetHandleGoBackProfilePage from "../RestaurantPage/utils/handleGoBack";
+
 
 const ProfilePage = () => {
     const history = useHistory();
 
 
-    const handleGoBack = () => {
-        history.push(`/main`);
-        window.Telegram.WebApp.BackButton.hide()
-    };
+    const handleGoBack = GetHandleGoBackProfilePage(history);
 
 
     useEffect(() => {

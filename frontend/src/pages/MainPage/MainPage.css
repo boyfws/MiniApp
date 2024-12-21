@@ -12,7 +12,7 @@
 
 .main-page-container {
   min-height: 100vh; /* Минимальная высота 100% экрана */
-  background: var(--tgui--bg_color);
+  background-color: var(--tgui--bg_color);
   padding: var(--padding-for-pages);
 }
 
