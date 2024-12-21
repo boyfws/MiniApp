@@ -95,10 +95,10 @@ class RestaurantRepo(TablesRepositoryInterface):
                     "ST_DWithin("
                         "location, "
                         f"ST_SetSRID(ST_MakePoint({model.lon}, {model.lat}), 4326)::geography, "
-                        "10000000000000 " # расстояние в метрах
+                        "15000 " # расстояние в метрах
                     ") "
                 "ORDER BY distance "
-                "LIMIT 10;"
+                "LIMIT 100;"
             )
             result = await session.execute(text(query))
             rest_tuple: Record = result.fetchall()
@@ -110,7 +110,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                     "id": row.id,
                     "name": row.name,
                     "main_photo": row.main_photo,
-                    "distance": row.distance,
+                    "distance": round(row.distance / 1000, 2),
                     "category": row.categories
                 }
 
@@ -134,12 +134,12 @@ class RestaurantRepo(TablesRepositoryInterface):
                     "ST_DWithin("
                         "location, "
                         f"ST_SetSRID(ST_MakePoint({model.point.lon}, {model.point.lat}), 4326)::geography, "
-                        "10000000000000 "  # расстояние в метрах
+                        "15000 "  # расстояние в метрах
                     ") "
                 "AND "
                     f"name % '{model.name_pattern}'"
                 "ORDER BY distance "
-                "LIMIT 10;"
+                "LIMIT 100;"
             )
             result = await session.execute(text(query))
             rest_tuple: Record = result.fetchall()
@@ -189,7 +189,7 @@ class RestaurantRepo(TablesRepositoryInterface):
             response = await session.execute(stmt)
             row: Optional[Row[tuple[str]]] = response.first()
             if not row:
-                raise ValueError('no name returned')
+                raise ValueError(f'No restaurant with id {rest_id}')
             return row[0]
 
     async def change_restaurant_property(self, rest_id: int, key: str, value: Any) -> None:
