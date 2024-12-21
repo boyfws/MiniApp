@@ -51,5 +51,5 @@ class RestaurantGeoSearch(BaseModel):
     name: str
     main_photo: str
     distance: float
-    category: list[str]
+    category: list[int]
 

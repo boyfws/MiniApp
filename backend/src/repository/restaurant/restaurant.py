@@ -104,7 +104,18 @@ class RestaurantRepo(TablesRepositoryInterface):
             rest_tuple: Record = result.fetchall()
             if not rest_tuple:
                 return []
-            return [RestaurantGeoSearch.model_validate(rest, from_attributes=True) for rest in rest_tuple]
+
+            def transform_row(row):
+                return {
+                    "id": row.id,
+                    "name": row.name,
+                    "main_photo": row.main_photo,
+                    "distance": row.distance,
+                    "category": row.categories
+                }
+
+            transformed_data = [transform_row(rest) for rest in rest_tuple]
+            return [RestaurantGeoSearch.model_validate(data, from_attributes=True) for data in transformed_data]
 
     async def get_by_geo_and_name(
             self,
@@ -126,7 +137,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                         "10000000000000 "  # расстояние в метрах
                     ") "
                 "AND "
-                    f"name LIKE '{model.name_pattern}%'"
+                    f"name % '{model.name_pattern}'"
                 "ORDER BY distance "
                 "LIMIT 10;"
             )
@@ -134,7 +145,18 @@ class RestaurantRepo(TablesRepositoryInterface):
             rest_tuple: Record = result.fetchall()
             if not rest_tuple:
                 return []
-            return [RestaurantGeoSearch.model_validate(rest, from_attributes=True) for rest in rest_tuple]
+
+            def transform_row(row):
+                return {
+                    "id": row.id,
+                    "name": row.name,
+                    "main_photo": row.main_photo,
+                    "distance": round(row.distance / 1000, 2),
+                    "category": row.categories
+                }
+
+            transformed_data = [transform_row(rest) for rest in rest_tuple]
+            return [RestaurantGeoSearch.model_validate(data, from_attributes=True) for data in transformed_data]
 
 
     async def get_by_owner(
