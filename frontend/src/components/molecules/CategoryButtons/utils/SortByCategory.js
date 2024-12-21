@@ -5,7 +5,7 @@ const GetSortByCategory = (setFilteredRestaurants, selectedCategories, restauran
     const filtered = selectedCategories.size === 0
         ? restaurants
         : restaurants.filter((restaurant) =>
-            intersection_checker(selectedCategories, restaurant.categories)
+            intersection_checker(selectedCategories, restaurant.category)
         );
 
     setFilteredRestaurants(filtered);

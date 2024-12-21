@@ -11,7 +11,7 @@ const GetLoadRestFromSearch = (defAddress, InputValue, setRestaurants) => () => 
 
             const RestaurnatsData = restaurants_query.data.map(restaurant => ({
                 ...restaurant, 
-                categories: new Set(restaurant.categories) 
+                category: new Set(restaurant.category)
             }));
             setRestaurants(RestaurnatsData);
         }

@@ -11,7 +11,7 @@ const GetLoadRestByAddress = (defAddress, setDefaultRestaurants, RestLoaded, set
   
         const RestaurnatsData = restaurants_query.data.map(restaurant => ({
           ...restaurant, 
-          categories: new Set(restaurant.categories) 
+          category: new Set(restaurant.category)
         }));
   
         setDefaultRestaurants(RestaurnatsData);

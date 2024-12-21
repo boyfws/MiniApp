@@ -17,7 +17,7 @@ const RestaurantCard = memo(({ restaurant, onCardClick }) => (
             <div className="image-container">
                 <img
                     alt={restaurant.name}
-                    src={restaurant.image}
+                    src={restaurant.main_photo}
                     className="restaurant-image"
                 />
             </div>
