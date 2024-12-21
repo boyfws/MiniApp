@@ -1,11 +1,16 @@
+import asyncio
+import json
 from typing import Optional, Any
 
 from asyncpg import Record # type: ignore
 from sqlalchemy import select, insert, delete, update, Row, text
+
+from src.models.dto.category import CategoryDTO
 from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
                                        RestaurantRequestFullModel, RestaurantGeoSearch, Point)
 from src.models.orm.schemas import Restaurant
+from src.repository.category.category import CategoryRepo
 from src.repository.interface import TablesRepositoryInterface
 from src.repository.owner import OwnerRepo
 
@@ -76,6 +81,8 @@ class RestaurantRepo(TablesRepositoryInterface):
             if not rest_tuple:
                 raise ValueError(f"no restaurant with id {model.rest_id}")
             rest_model = dict(zip(names, rest_tuple))
+            cat_repo = CategoryRepo(session_getter=self.session_getter)
+            rest_model['categories'] = [await cat_repo.get_name(int(num)) for num in rest_model['categories']]
             return RestaurantRequestFullModel(**rest_model)
 
     async def get_by_geo(
@@ -105,16 +112,18 @@ class RestaurantRepo(TablesRepositoryInterface):
             if not rest_tuple:
                 return []
 
-            def transform_row(row):
+            cat_repo = CategoryRepo(session_getter=self.session_getter)
+
+            async def transform_row(row):
                 return {
                     "id": row.id,
                     "name": row.name,
                     "main_photo": row.main_photo,
                     "distance": round(row.distance / 1000, 2),
-                    "category": row.categories
+                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories]
                 }
 
-            transformed_data = [transform_row(rest) for rest in rest_tuple]
+            transformed_data = [await transform_row(rest) for rest in rest_tuple]
             return [RestaurantGeoSearch.model_validate(data, from_attributes=True) for data in transformed_data]
 
     async def get_by_geo_and_name(
@@ -146,16 +155,18 @@ class RestaurantRepo(TablesRepositoryInterface):
             if not rest_tuple:
                 return []
 
-            def transform_row(row):
+            cat_repo = CategoryRepo(session_getter=self.session_getter)
+
+            async def transform_row(row):
                 return {
                     "id": row.id,
                     "name": row.name,
                     "main_photo": row.main_photo,
                     "distance": round(row.distance / 1000, 2),
-                    "category": row.categories
+                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories]
                 }
 
-            transformed_data = [transform_row(rest) for rest in rest_tuple]
+            transformed_data = [await transform_row(rest) for rest in rest_tuple]
             return [RestaurantGeoSearch.model_validate(data, from_attributes=True) for data in transformed_data]
 
 
@@ -179,9 +190,29 @@ class RestaurantRepo(TablesRepositoryInterface):
             rest_tuple: Record = response.fetchall()
             if not rest_tuple:
                 return []
-            return [
-                RestaurantRequestFullModel.model_validate(rest, from_attributes=True) for rest in rest_tuple
-            ]
+
+            cat_repo = CategoryRepo(session_getter=self.session_getter)
+
+            transformed_data = []
+            for rest in rest_tuple:
+                rest_dict = {}
+                for col in rest._fields:
+                    value = getattr(rest, col)
+                    if col == 'categories':
+                        rest_dict[col] = [await cat_repo.get_name(cat) for cat in value]
+                    elif col == 'photos':
+                        rest_dict[col] = value if value else []
+                    elif col == 'address':
+                        try:
+                            rest_dict[col] = json.loads(value)
+                        except (json.JSONDecodeError, TypeError):
+                            rest_dict[col] = {}
+                    elif col == 'location':
+                        rest_dict[col] = str(value) if value else None  # handle NULL locations
+                    else:
+                        rest_dict[col] = value
+                transformed_data.append(RestaurantRequestFullModel(**rest_dict))
+            return transformed_data
 
     async def get_name(self, rest_id: int) -> str:
         async with self.session_getter() as session:

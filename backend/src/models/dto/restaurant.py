@@ -36,8 +36,8 @@ class RestaurantRequestFullModel(BaseModel):
     orig_phone: str = Field(..., min_length=11, max_length=11)
     wapp_phone: str = Field(..., min_length=11, max_length=11)
     location: str
-    address: dict[str, Any] = Field(...)  # Using dict instead of JSON, more straightforward
-    categories: List[int]  # Assuming at least one category
+    address: dict[str, Any] = Field(...)
+    categories: List[str]
 
 class RestaurantResponse(BaseModel):
     ...
@@ -51,5 +51,5 @@ class RestaurantGeoSearch(BaseModel):
     name: str
     main_photo: str
     distance: float
-    category: list[int]
+    category: list[str]
 
