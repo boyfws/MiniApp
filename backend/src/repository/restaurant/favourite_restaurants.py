@@ -27,6 +27,10 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             model: FavouriteRestaurantDTO
     ) -> FavouriteRestaurantResponse:
         async with self.session_getter() as session:
+            user_repo = UserRepo(session_getter=self.session_getter)
+            is_user = await user_repo.is_user(model.user_id)
+            if not is_user:
+                await user_repo.create_user(model.user_id)
             stmt = insert(FavRestForUser).values(**model.dict()).returning(FavRestForUser.rest_id)
             response = await session.execute(stmt)
             row: Optional[Row[tuple[int]]] = response.first()
@@ -50,7 +54,7 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             model: AllFavouriteRestaurantsRequest
     ) -> AllFavouriteRestaurantsRequest:
         async with self.session_getter() as session:
-            stmt = select(FavRestForUser).where(FavRestForUser.user_id == model.user_id)
+            stmt = delete(FavRestForUser).where(FavRestForUser.user_id == model.user_id)
             await session.execute(stmt)
             return model
 
