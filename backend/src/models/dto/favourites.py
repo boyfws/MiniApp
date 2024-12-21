@@ -4,11 +4,11 @@ class AllFavouriteCategoriesRequest(BaseModel):
     user_id: int
 
 class FavouriteCategoryResponse(BaseModel):
-    cat_id: int
+    cat_name: str
 
 class FavouriteCategoryDTO(BaseModel):
     user_id: int
-    cat_id: int
+    cat_name: str
 
 class AllFavouriteRestaurantsRequest(BaseModel):
     user_id: int
