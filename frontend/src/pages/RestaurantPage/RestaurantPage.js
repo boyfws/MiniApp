@@ -8,6 +8,10 @@ import { useHistory, useParams } from 'react-router-dom';
 // Comp
 import LoaderWrapperRestPage from "../../components/templates/LoaderWrapperRestPage/LoaderWrapperRestPage";
 
+// Utils
+import GetLoadRestData from "./utils/LoadRestData";
+import GetHandleGoBack from "./utils/handleGoBack";
+
 
 const RestaurantPage = () => {
   const history = useHistory();
@@ -18,6 +22,25 @@ const RestaurantPage = () => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
+  
+  const LoadRestData = GetLoadRestData(
+      setLoading,
+      id,
+      SetRestData
+  );
+
+
+  const handleGoBack = GetHandleGoBack(history);
+
+
+  useEffect(() => {
+      window.Telegram.WebApp.BackButton.onClick(handleGoBack);
+      window.Telegram.WebApp.BackButton.show()
+  }, [])
+
+
+  useEffect(LoadRestData, [])
+
 
   if (!showContent) {
     return (
@@ -27,17 +50,6 @@ const RestaurantPage = () => {
         />
     )
   }
-
-
-  const handleGoBack = () => {
-    history.push(`/main`);
-    window.Telegram.WebApp.BackButton.hide()
-  };
-
-  useEffect(() => {
-      window.Telegram.WebApp.BackButton.onClick(handleGoBack);
-      window.Telegram.WebApp.BackButton.show()
-  }, [])
 
   return (
     <div className="RestaurantPage">
