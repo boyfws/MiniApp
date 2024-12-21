@@ -1,10 +1,15 @@
+// Css
+import './Loading.css'
+
 // Components
 import LoaderComp from "../../atoms/LoaderComp/LoaderComp";
 
 
 const Loader = ({onFinish, loading}) => {
     return (
-        <LoaderComp loading={loading} onFinish={onFinish}/>
+        <div className="loading-wrapper">
+            <LoaderComp loading={loading} onFinish={onFinish}/>
+        </div>
     )
 }
 

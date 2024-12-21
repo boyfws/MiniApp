@@ -76,7 +76,7 @@ CREATE TABLE restaurants (
 
     categories SMALLINT[] NOT NULL, -- Формально массив внешних ключей для id categories
 
-    CONSTRAINT photos_length_check CHECK (array_length(photos, 1) >= 3 AND array_length(photos, 1) <= 8),
+    CONSTRAINT photos_length_check CHECK (array_length(photos, 1) >= 0 AND array_length(photos, 1) <= 8),
     CONSTRAINT check_orig_phone_first_digit CHECK (LEFT(orig_phone, 1) = '7'), -- Стандартизируем хранение номеров
     CONSTRAINT check_wapp_phone_first_digit CHECK (LEFT(wapp_phone, 1) = '7')
 );

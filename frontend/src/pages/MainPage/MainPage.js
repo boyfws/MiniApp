@@ -21,7 +21,7 @@ import GetLoadDefAddress from "./utils/LoadDefAddress";
 
 
 // Comp
-import LoaderWrapper from "../../components/templates/LoaderWrapper/LoaderWrapper.js";
+import LoaderWrapper from "../../components/templates/LoaderWrapperMainPage/LoaderWrapper.js";
 import MainPageTemp from "../../components/templates/MainPageTemp/MainPageTemp";
 import ModalMainPage from '../../components/organisms/ModalMainPage/ModalMainPage';
 import GetHandleClickOutside from "./utils/hadleClickOutside";

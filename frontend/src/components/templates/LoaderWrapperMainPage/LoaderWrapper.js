@@ -8,7 +8,7 @@ import React, {useContext} from "react";
 import {MainPageLoadingContext} from "../../../state_management/context/Contexts/MainPageLoadingContext";
 
 // Handlers
-import GetHandleLoadingFinish from '../../templates/LoaderWrapper/utils/handleLoadingFinish';
+import GetHandleLoadingFinish from './utils/handleLoadingFinish';
 
 //Components
 import Loader from "../../molecules/Loading/Loading";
@@ -21,9 +21,7 @@ const LoaderWrapper = ({setShowContent}) => {
     const onFinish = GetHandleLoadingFinish(setShowContent)
 
     return (
-        <div className='loading-wrapper'>
-            <Loader onFinish={onFinish} loading={loading}/>
-        </div> // Показ сообщения о загрузке, пока данные не получены
+        <Loader onFinish={onFinish} loading={loading}/>
     )
 
 }
