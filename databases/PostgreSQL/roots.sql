@@ -35,6 +35,7 @@ GRANT
     SELECT 
 ON 
     public.restaurants 
+    public.owner
 TO backend;
 
 GRANT 
