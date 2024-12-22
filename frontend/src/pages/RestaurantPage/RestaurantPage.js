@@ -58,7 +58,8 @@ const RestaurantPage = () => {
   if (!showContent) {
     return (
         <LoaderWrapperRestPage
-            loading={RestDataLoading || MenuLoading}
+            RestDataLoading={RestDataLoading}
+            MenuLoading={MenuLoading}
             setShowContent={setShowContent}
         />
     )

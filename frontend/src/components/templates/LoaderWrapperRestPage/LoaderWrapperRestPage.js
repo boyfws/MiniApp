@@ -5,8 +5,10 @@ import Loader from "../../molecules/Loading/Loading";
 import onFinishRestPage from './utils/onFinishRestPage'
 
 
-const LoaderWrapper = ({loading, setShowContent}) => {
+const LoaderWrapper = ({RestDataLoading, MenuLoading, setShowContent}) => {
     const onFinish = onFinishRestPage(setShowContent);
+
+    const loading = RestDataLoading || MenuLoading
 
     return (
         <Loader loading={loading} onFinish={onFinish}/>

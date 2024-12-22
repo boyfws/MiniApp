@@ -26,10 +26,10 @@ const PrepareDataForDispl = (recommendation) => {
         return [null, null]
     }
     else if (house === "" && street === "" && district === "") {
-        return [`г ${city}`, {...res, city: city}];
+        return [`${city}`, {...res, city: city}];
     }
     else if (house === "" && street === "") {
-        return [`г. ${city} ${district}`, {...res, city: city, district: district}];
+        return [`${city} ${district}`, {...res, city: city, district: district}];
     }
     else if (house === "") {
         return [`${city}, ${street}`, {...res, city: city, street: street}];
