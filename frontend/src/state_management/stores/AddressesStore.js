@@ -13,7 +13,7 @@ const AddressesStore =
                             Addresses: [...state.Addresses, address],
                         };
                     }
-                    return state;
+                    return {Addresses: [...state.Addresses]};
                 }),
 
             removeAddress: (address) =>
