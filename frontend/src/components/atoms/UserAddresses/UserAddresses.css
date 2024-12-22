@@ -1,5 +1,6 @@
 .adress-cell, .adress-text {
     margin-right: auto;
+    white-space: normal !important;
 }
 
 .address-cell{

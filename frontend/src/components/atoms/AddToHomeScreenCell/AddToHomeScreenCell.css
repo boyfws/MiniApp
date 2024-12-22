@@ -3,5 +3,5 @@
 }
 
 .addToHomeScreenCell{
-    height: var(--height-of-clickable-el) !important;
+    height: var(--modal-options-height) !important;
 }
