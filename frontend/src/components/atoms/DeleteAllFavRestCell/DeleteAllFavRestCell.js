@@ -17,7 +17,7 @@ const DeleteAllFavRestCell = () => {
     return (
         <Cell
             className="deleteAllFavRestCell"
-            onClick={async () => {await DeleteAllFavRest}}>
+            onClick={async () => {await DeleteAllFavRest()}}>
             Очистить любимые рестораны
         </Cell>)
 }
