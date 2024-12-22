@@ -65,7 +65,7 @@ class GeoCode:
                 address[el['kind']] = el['name']
 
         geometry = Geometry(type='Point', coordinates=[float(lon), float(lat)])
-        properties = AddressProperties(region=address.get("province"), city=address.get('locality'), street=address.get('street'), house=address.get('house'), district=None)
+        properties = AddressProperties(region=address.get("province"), city='Москва', street=address.get('street'), house=address.get('house'), district=None)
         return GeoJson(type="Feature", geometry=geometry, properties=properties)
 
     async def get_address_for_coordinates(self, lon: float, lat: float) -> GeoJson:
