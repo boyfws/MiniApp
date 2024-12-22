@@ -3,10 +3,11 @@ const PrepareDataForDispl = (recommendation) => {
         return recommendation;
     }
     const res = {}
+    res.full_name = recommendation.full_name;
+
 
     if (recommendation?.region) {
         res.region = recommendation.region;
-        res.full_name = recommendation.full_name;
     }
 
     const district = recommendation?.district ?? "";
