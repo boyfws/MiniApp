@@ -1,3 +1,4 @@
 .recom-cell{
     height: var(--modal-options-height) !important;
+    white-space: normal !important;
 } 

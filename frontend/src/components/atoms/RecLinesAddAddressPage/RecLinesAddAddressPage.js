@@ -32,7 +32,7 @@ const RecLinesAddAddressPage = ({ recommendations }) => {
                 onClick={async () => {await handleRecClick(recom[1])}}
                 className="recom-cell">
               <Text className="address-text">
-              {recom[0]}
+              {recom[1].full_name}
               </Text>
             </Cell>
             {(index < recommendations.length - 1) && <Divider />}
