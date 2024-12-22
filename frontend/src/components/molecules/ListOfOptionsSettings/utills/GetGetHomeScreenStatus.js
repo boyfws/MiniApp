@@ -5,7 +5,8 @@ const GetGetHomeScreenStatus = (setShowAddToHomeScreen) => () => {
             (status) => resolve(status))
         ).then(
             status => {
-                setShowAddToHomeScreen((status === 'unknown' || status === 'missed') && tg.isVersionAtLeast(8));
+                console.log(status);
+                setShowAddToHomeScreen((status === 'unknown' || status === 'missed') && parseFloat(tg.version) >= 8);
             }
         )
     }
