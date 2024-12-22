@@ -7,10 +7,12 @@ import { useHistory, useParams } from 'react-router-dom';
 
 // Comp
 import LoaderWrapperRestPage from "../../components/templates/LoaderWrapperRestPage/LoaderWrapperRestPage";
+import RestPageTemp from "../../components/templates/RestPageTemp/RestPageTemp";
 
 // Utils
 import GetLoadRestData from "./utils/LoadRestData";
 import GetHandleGoBack from "./utils/handleGoBack";
+import GetLoadMenu from "./utils/LoadMenu";
 
 
 const RestaurantPage = () => {
@@ -18,19 +20,28 @@ const RestaurantPage = () => {
   const id = useParams().id;
 
   const [RestData, SetRestData] = useState({});
+  const [Menu, setMenu] = useState({});
 
-  const [loading, setLoading] = useState(true);
+  const [RestDataLoading, setRestDataLoading] = useState(true);
+  const [MenuLoading, setMenuLoading] = useState(true);
+
+
   const [showContent, setShowContent] = useState(false);
 
   
   const LoadRestData = GetLoadRestData(
-      setLoading,
+      setRestDataLoading,
       id,
       SetRestData
   );
 
+  const LoadMenu = GetLoadMenu(
+      setMenuLoading,
+      id,
+      setMenu);
 
   const handleGoBack = GetHandleGoBack(history);
+
 
 
   useEffect(() => {
@@ -41,11 +52,13 @@ const RestaurantPage = () => {
 
   useEffect(LoadRestData, [])
 
+  useEffect(LoadMenu, [])
+
 
   if (!showContent) {
     return (
         <LoaderWrapperRestPage
-            loading={loading}
+            loading={RestDataLoading || MenuLoading}
             setShowContent={setShowContent}
         />
     )
@@ -54,8 +67,7 @@ const RestaurantPage = () => {
   return (
     <div className="RestaurantPage">
 
-
-      <h1 style={{ color: 'red', textAlign: 'center' }}>Restaurant Page {id}</h1>
+      <RestPageTemp />
 
 
     </div>
