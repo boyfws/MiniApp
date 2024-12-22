@@ -1,0 +1,7 @@
+.addToHomeScreenCell-hidden{
+    display: none;
+}
+
+.addToHomeScreenCell{
+    height: var(--height-of-clickable-el);
+}

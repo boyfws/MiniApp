@@ -1,0 +1,3 @@
+.deleteAllFavRestCell{
+    height: var(--height-of-clickable-el) !important;
+}

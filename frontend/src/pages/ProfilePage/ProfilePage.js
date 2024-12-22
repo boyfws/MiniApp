@@ -5,7 +5,9 @@ import './ProfilePage.css'
 import React, {useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
 
-// Comp
+import ProfilePageTemp from "../../components/templates/ProfilePageTemp/ProfilePageTemp";
+
+// Utils
 import GetHandleGoBackProfilePage from "../RestaurantPage/utils/handleGoBack";
 
 
@@ -25,7 +27,7 @@ const ProfilePage = () => {
 
   return (
     <div className="ProfilePage">
-
+        <ProfilePageTemp/>
     </div>
   );
 };
