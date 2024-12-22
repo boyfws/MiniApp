@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 import ProfilePageTemp from "../../components/templates/ProfilePageTemp/ProfilePageTemp";
 
 // Utils
-import GetHandleGoBackProfilePage from "../RestaurantPage/utils/handleGoBack";
+import GetHandleGoBackProfilePage from "./utils/handleGoBackProfilePage";
 
 
 const ProfilePage = () => {

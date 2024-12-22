@@ -1,5 +1,5 @@
 // Css
-import '/DeleteFavRestCell.css'
+import './DeleteFavRestCell.css'
 
 // Ext lib
 import {Cell} from "@telegram-apps/telegram-ui";
