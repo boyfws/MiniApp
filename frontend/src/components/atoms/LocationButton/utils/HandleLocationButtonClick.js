@@ -43,7 +43,7 @@ const GetHandleLocationButtonClick = (SetSnackBarOpen,
                         addAddress(rec_query.data)
                         history.push("/main")
                         window.Telegram.WebApp.BackButton.hide()
-                        
+
 
                     } else {
                         ShowThatErrorOccurred(setErrorSnackBarOpen);

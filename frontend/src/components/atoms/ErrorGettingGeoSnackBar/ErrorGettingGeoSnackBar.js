@@ -6,7 +6,7 @@ const ErrorGettingGeoSnackBar = ({setErrorSnackBarOpen}) => {
         onClose={() => setErrorSnackBarOpen(false)}
         onClick={(event) => {event.stopPropagation()}}
         >
-            Возникла ошибка попробуйте снова
+            Возникла ошибка, попробуйте снова
         </Snackbar>
     )
 
