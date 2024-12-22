@@ -13,7 +13,14 @@ const PrepareDataForDispl = (recommendation) => {
     const district = recommendation?.district ?? "";
     const city = recommendation?.city ?? ""
     const street = recommendation?.street ?? ""
-    const house = recommendation?.house ?? ""
+    let house = ""
+
+    if (street === "" || street === "None") {
+         house = ""
+    }
+    else {
+         house = recommendation?.house ?? ""
+    }
 
     if (house === "" && street === "" && city === "" && district === "") {
         return [null, null]
@@ -22,7 +29,7 @@ const PrepareDataForDispl = (recommendation) => {
         return [`г ${city}`, {...res, city: city}];
     }
     else if (house === "" && street === "") {
-        return [`г ${city} ${district}`, {...res, city: city, district: district}];
+        return [`г. ${city} ${district}`, {...res, city: city, district: district}];
     }
     else if (house === "") {
         return [`${city}, ${street}`, {...res, city: city, street: street}];

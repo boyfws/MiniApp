@@ -17,8 +17,7 @@ import GetHandleAddressClick from "./utils/handleAddressClick";
 // Utils
 import formatAddress from "./utils/formatAddress";
 
-// TODO: ПОФИКСИТЬ ПОКАЗ АДРЕСОВ
-const UserAddresses = ({ }) => {
+const UserAddresses = ({}) => {
   const { Addresses } = AddressesStore()
   const { setDefAddress } = defAddressStore();
   const { setModalState } = MainPageModalsStore()

@@ -6,13 +6,13 @@ const prepare_address_for_display = (geojson) => {
     const house = address?.house ?? '';
 
 
-    if (street && house) {
+    if (street && house && (street !== 'None' && street !== 'None')) {
         return `${street} ${house}`;
 
-    } else if (street) {
+    } else if (street && street !== 'None') {
         return `${street}`;
     }
-    else if (district) {
+    else if (district !== 'None') {
         return `${district}`
     }
     else {
