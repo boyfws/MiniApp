@@ -101,3 +101,10 @@ async def get_geojson_from_address_recommendation(
         house=house
     )
     return await geocoder.get_coords_for_geosuggest_address(location=address_data)
+
+@yandex_api_router.get("/get_address_from_coords/{lon}/{lat}")
+async def get_address_from_coords(
+        lon: float,
+        lat: float,
+) -> Optional[AddressPart]:
+    return await geocoder.get_address_for_coordinates(lon, lat)

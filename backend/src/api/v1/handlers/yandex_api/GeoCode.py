@@ -1,5 +1,5 @@
 import aiohttp
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from typing_extensions import TypedDict
 from src.config import configuration
 
@@ -49,6 +49,43 @@ class GeoCode:
                 if address_given.get(conv_key, el["name"]) != el["name"]:
                     return True
         return False
+
+    @staticmethod
+    def get_props(item: dict[str, Any]) -> GeoJson:
+        geo_object = item['GeoObject']
+        point = geo_object['Point']['pos']
+        lon, lat = point.split(" ")
+        area = geo_object['metaDataProperty']['GeocoderMetaData']['AddressDetails']['Country']['AdministrativeArea']
+        region = area['AdministrativeAreaName']
+        locality = area['Locality']
+        city = locality['LocalityName']
+        fare = locality['Thoroughfare']
+        street = fare['ThoroughfareName']
+        premise = fare['Premise']
+        house = premise['PremiseNumber']
+        geometry = Geometry(type='Point', coordinates=[float(lon), float(lat)])
+        properties = AddressProperties(region=region, city=city, street=street, house=house, district=None)
+        return GeoJson(type="Feature", geometry=geometry, properties=properties)
+
+    async def get_address_for_coordinates(self, lon: float, lat: float) -> Optional[GeoJson]:
+            params = self.def_params_for_get_coord_for_loc | {
+                "geocode": f'{lon},{lat}',
+                "results": 5,
+                "kind": ['house', 'street', 'district', 'locality'],
+            }
+            async with self.session.get(self.url, params=params) as response:
+                if response.status != 200:
+                    return None
+                responded_data = await response.json()
+
+                try:
+                    responded_point_data = responded_data['response']["GeoObjectCollection"]["featureMember"][0]
+                except KeyError:
+                    return None
+                return self.get_props(responded_point_data)
+
+
+
 
     async def get_coords_for_geosuggest_address(self, location: AddressPart) -> GeoJson | None:
         params = self.def_params_for_get_coord_for_loc | {
