@@ -11,15 +11,15 @@ import ModalCatManCont from "../../organisms/ModalCategoryManagCont/ModalCatManC
 
 
 const ProfilePageTemp = ({}) => {
-    const { FCModalState } = FavCatModalState();
-    
+    const { FCModalState, setFCModalState } = FavCatModalState();
+
     return (
         <div>
             <SettingsProfilePage/>
 
             <Modal
                 open={FCModalState}
-                onOpenChange={(state) => {console.log(state)}}
+                onOpenChange={(state) => {setFCModalState(state)}}
                 dismissible={true}
             >
                <ModalCatManCont/>

@@ -16,7 +16,7 @@ const ListOfManCat = ({}) => {
             {categories.map((category, index) => (
                 <React.Fragment key={index}>
                     <FavCatCell
-                        category={category}
+                        cat_name={category}
                     />
                     {index < categories.length - 1 && <Divider/>}
                 </React.Fragment>
