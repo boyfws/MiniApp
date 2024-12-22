@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, delete
+from sqlalchemy import select, insert, delete, text
 from src.models.dto.address_for_user import AddressesResponse, AddressForUserDTO, AllAddressesForUser
 from src.models.orm.schemas import AddressesForUser
 from src.repository.interface import TablesRepositoryInterface
@@ -33,8 +33,22 @@ class AddressForUserRepo(TablesRepositoryInterface):
             if not is_user:
                 await user_repo.create_user(user_id)
 
-            stmt = insert(AddressesForUser).values(user_id=user_id, address_id=address_id)
-            await session.execute(stmt)
+            address_exists = await session.execute(
+                text(
+                    f"SELECT EXISTS ("
+                        f"SELECT 1 FROM addresses_for_user "
+                        f"WHERE user_id = {user_id} AND address_id = {address_id}"
+                    f")"
+                )
+            )
+
+            address_exists_result = address_exists.first()
+            exist_flag = int(address_exists_result[0])
+
+            if not exist_flag:
+                stmt = insert(AddressesForUser).values(user_id=user_id, address_id=address_id)
+                await session.execute(stmt)
+
             return AddressesResponse(status=200)
 
     async def get_all_user_addresses(
