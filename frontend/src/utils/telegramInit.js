@@ -16,7 +16,6 @@ const GetinitializeTelegram = (setInitDataLoaded) => () => {
 
         if (tg.initData && !user_verified) {
             const verif_res = await verificateInitData(tg.initData)
-            console.log(verif_res)
             if (!verif_res.error) {
 
                 const queryParams = new URLSearchParams(tg.initData);
