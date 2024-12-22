@@ -3,5 +3,5 @@
 }
 
 .addToHomeScreenCell{
-    height: var(--height-of-clickable-el);
+    height: var(--height-of-clickable-el) !important;
 }
