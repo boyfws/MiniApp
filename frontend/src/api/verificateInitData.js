@@ -1,7 +1,18 @@
 
 // Post запрос к серверу
 const verificateInitData = async (initData) => {
-    return {error: false, data: {access_token: 0, refresh_token: 0}};
+    const url = `/api/v1/jwt/login/?data_check_string=${initData}`
+    try {
+       const data = await fetch(url, {method: 'POST'})
+       const ret = await data.json()
+
+
+       return {error: false, data: ret}
+
+    }
+    catch (error) {
+        return {error: true, data: null}
+    }
 }
 
 
