@@ -65,25 +65,18 @@ class GeoCode:
                 address[el['kind']] = el['name']
 
         geometry = Geometry(type='Point', coordinates=[float(lon), float(lat)])
-        properties = AddressProperties(region=address.get("province"), city='Москва', street=address.get('street'), house=address.get('house'), district=None)
+        properties = AddressProperties(region=address.get("province"), city=address.get('locality'), street=address.get('street'), house=address.get('house'), district=None)
         return GeoJson(type="Feature", geometry=geometry, properties=properties)
 
-    async def get_address_for_coordinates(self, lon: float, lat: float) -> Optional[GeoJson]:
-            params = self.def_params_for_get_coord_for_loc | {
-                "geocode": f'{lon},{lat}',
-                "results": 5,
-                "kind": ['house', 'street', 'district', 'locality'],
-            }
-            async with self.session.get(self.url, params=params) as response:
-                if response.status != 200:
-                    return None
-                responded_data = await response.json()
-
-                try:
-                    responded_point_data = responded_data['response']["GeoObjectCollection"]["featureMember"][0]
-                except KeyError:
-                    return None
-                return self.get_props(responded_point_data)
+    async def get_address_for_coordinates(self, lon: float, lat: float) -> GeoJson:
+        params = self.def_params_for_get_coord_for_loc | {
+            "geocode": f'{lon},{lat}',
+            "results": 10,
+        }
+        async with self.session.get(self.url, params=params) as response:
+            responded_data = await response.json()
+            responded_point_data = responded_data['response']["GeoObjectCollection"]["featureMember"][0]
+            return self.get_props(responded_point_data)
 
 
 
