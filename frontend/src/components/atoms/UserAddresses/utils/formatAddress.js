@@ -7,7 +7,7 @@ const formatAddress = (address) => {
     let formattedAddress = '';
 
     if (city) {
-        formattedAddress += `г.${city} `;
+        formattedAddress += `${city} `;
     }
 
     if (district && !(street || house)) {

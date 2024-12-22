@@ -16,7 +16,7 @@ const prepare_address_for_display = (geojson) => {
         return `${district}`
     }
     else {
-        return `г. ${city}`
+        return `${city}`
     }
 }
 
