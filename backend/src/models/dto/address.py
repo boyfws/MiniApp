@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
 
 class AddressDTO(BaseModel):
     region: Optional[str]
@@ -17,17 +18,17 @@ class AddressResult(BaseModel):
    id: int
 
 class Geometry(BaseModel):
-    type: str
+    type: str = Field("Point")
     coordinates: List[float]
 
 class AddressProperties(BaseModel):
     city: str
     region: Optional[str]
     street: Optional[str]
-    district: Optional[str]
+    district: Optional[str] = Field(None)
     house: Optional[str]
 
 class GeoJson(BaseModel):
-    type: str
+    type: str = Field("Feature")
     geometry: Geometry
     properties: AddressProperties

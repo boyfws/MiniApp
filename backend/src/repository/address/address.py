@@ -82,12 +82,13 @@ class AddressRepo(TablesRepositoryInterface):
             # проверка, что такой адрес существует
             point_str = model.location.split(';')[1].split('(')[1].split(')')[0]
             coordinates = [float(x) for x in point_str.split()]
+            house_string = f"house = {model.house} AND " if model.house else ""
             address_exists = await session.execute(
                 text(
                     f"SELECT EXISTS ("
                         f"SELECT 1 FROM address "
                         f"WHERE street_id = {street_id} AND "
-                        f"house = {int(model.house)} AND "
+                        f"{house_string}"
                         f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
                     f")"
                 )
@@ -99,7 +100,7 @@ class AddressRepo(TablesRepositoryInterface):
                 address_result = await session.execute(
                     insert(Address).values(
                         street_id=street_id,
-                        house=int(model.house),
+                        house=model.house,
                         location=model.location
                     ).returning(Address.id)
                 )
@@ -109,7 +110,7 @@ class AddressRepo(TablesRepositoryInterface):
                 address_stmt = (
                     f"SELECT id FROM address "
                     f"WHERE street_id = {street_id} AND "
-                    f"house = {int(model.house)} AND "
+                    f"{house_string}"
                     f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
                 )
                 address_id_res = await session.execute(text(address_stmt))
@@ -152,12 +153,3 @@ class AddressRepo(TablesRepositoryInterface):
                 house=str(house),
                 location=location
             )
-
-async def main():
-    repo = AddressRepo()
-    res = await repo.add_address(model=get_addresses()[0])
-    print(res.id)
-
-if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())

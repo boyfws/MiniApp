@@ -18,7 +18,7 @@ def transform_to_dto(model: GeoJson) -> AddressDTO:
     result = AddressDTO(
         location=location,
         region=props.get('region'),
-        city=props.get('street'),
+        city=props.get('city'),
         district=props.get('district'),
         street=props.get('street'),
         house=props.get('house')
