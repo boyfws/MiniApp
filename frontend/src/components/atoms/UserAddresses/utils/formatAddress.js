@@ -16,12 +16,12 @@ const formatAddress = (address) => {
 
     }
 
-    if (street) {
+    if (street && street !== "None") {
         formattedAddress += 'ул.';
         formattedAddress += street;
     }
 
-    if (house) {
+    if (house && house !== "None") {
         formattedAddress += ' д.';
         formattedAddress += house;
     }

@@ -9,7 +9,7 @@ const prepare_address_for_display = (geojson) => {
     if (street) {
         return `${street} ${house}`;
     }
-    else  if (district) {
+    else if (district) {
         return `${district}`
     }
     else {
