@@ -36,7 +36,14 @@ class RestaurantRepo(TablesRepositoryInterface):
             if not is_user:
                 await user_repo.create_owner(model.owner_id)
 
-            stmt = insert(Restaurant).values(**model.model_dump()).returning(Restaurant.id)
+            cat_repo = CategoryRepo(session_getter=self.session_getter)
+            category_list = [(await cat_repo.get(CategoryDTO(name=name))).cat_id for name in model.categories]
+
+            model_copy = model.model_dump()
+
+            model_copy['categories'] = category_list
+
+            stmt = insert(Restaurant).values(**model_copy).returning(Restaurant.id)
             result = await session.execute(stmt)
             row: Optional[Row[tuple[int]]] = result.first()
             if not row:
