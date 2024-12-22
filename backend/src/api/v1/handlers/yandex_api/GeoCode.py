@@ -55,16 +55,17 @@ class GeoCode:
         geo_object = item['GeoObject']
         point = geo_object['Point']['pos']
         lon, lat = point.split(" ")
-        area = geo_object['metaDataProperty']['GeocoderMetaData']['AddressDetails']['Country']['AdministrativeArea']
-        region = area['AdministrativeAreaName']
-        locality = area['Locality']
-        city = locality['LocalityName']
-        fare = locality['Thoroughfare']
-        street = fare.get('ThoroughfareName')
-        premise = fare['Premise']
-        house = premise.get('PremiseNumber')
+
+        component = geo_object['metaDataProperty']['GeocoderMetaData']['Address']['Components']
+
+        allowed = ['province', 'locality', 'street', 'house']
+        address = {}
+        for el in component:
+            if el['kind'] in allowed:
+                address[el['kind']] = el['name']
+
         geometry = Geometry(type='Point', coordinates=[float(lon), float(lat)])
-        properties = AddressProperties(region=region, city=city, street=street, house=house, district=None)
+        properties = AddressProperties(region=address.get("province"), city=address.get('locality'), street=address.get('street'), house=address.get('house'), district=None)
         return GeoJson(type="Feature", geometry=geometry, properties=properties)
 
     async def get_address_for_coordinates(self, lon: float, lat: float) -> Optional[GeoJson]:
@@ -94,20 +95,20 @@ class GeoCode:
         }
 
         async with self.session.get(self.url, params=params) as response:
-            if response.status != 200:
-                return None
+            # if response.status != 200:
+            #     return None
 
             responded_data = await response.json()
 
-            try:
-                responded_point_data = responded_data['response']["GeoObjectCollection"]["featureMember"][0]['GeoObject']
-                responded_point_address = responded_point_data["metaDataProperty"]["GeocoderMetaData"]["Address"]["Components"]
-            except KeyError:
-                return None
+            # try:
+            responded_point_data = responded_data['response']["GeoObjectCollection"]["featureMember"][0]['GeoObject']
+            responded_point_address = responded_point_data["metaDataProperty"]["GeocoderMetaData"]["Address"]["Components"]
+            # except KeyError:
+            #     return None
 
-            if self._verification_for_get_coord_for_loc(responded_point_address,
-                                                     location):
-                return None
+            # if self._verification_for_get_coord_for_loc(responded_point_address,
+            #                                          location):
+            #     return None
 
             x, y = tuple(float(el) for el in responded_point_data["Point"]["pos"].split(" "))
 

@@ -91,7 +91,7 @@ async def get_geojson_from_address_recommendation(
     street: Optional[str] = Query(None, description="Улица"),
     district: Optional[str] = Query(None, description="Район"),
     house: Optional[str] = Query(None, description="Дом"),
-) -> Optional[GeoJson]:
+) -> GeoJson:
     address_data = AddressPart(
         full_name=full_name,
         city=city,
