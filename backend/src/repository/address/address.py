@@ -123,22 +123,23 @@ class AddressRepo(TablesRepositoryInterface):
             # address_stmt = select(Address.street_id, Address.house, Address.location).where(Address.id == address_id)
             address_stmt = f"SELECT street_id, house, ST_AsEWKT(location) AS location FROM address WHERE id = {address_id}::BIGINT"
             address_result = await session.execute(text(address_stmt))
-            street_id, house, location = address_result.first()[0]
+            address_row = address_result.first()
+            street_id, house, location = address_row.street_id, address_row.house, address_row.location
             
             # select street
             street_stmt = select(Street.name, Street.district_id).where(Street.id == street_id)
             street_result = await session.execute(street_stmt)
-            street, district_id = street_result.first()[0]
+            street, district_id = street_result.first()
             
             # select district
             district_stmt = select(District.name, District.city_id).where(District.id == district_id)
             district_result = await session.execute(district_stmt)
-            district, city_id = district_result.first()[0]
+            district, city_id = district_result.first()
             
             # select city
             city_stmt = select(City.name, City.region_id).where(City.id == city_id)
             city_result = await session.execute(city_stmt)
-            city, region_id = city_result.first()[0]
+            city, region_id = city_result.first()
             
             # select region
             region_stmt = select(Region.name).where(Region.id == region_id)

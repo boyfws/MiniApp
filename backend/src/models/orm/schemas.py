@@ -141,7 +141,7 @@ class Address(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     street_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    house: Mapped[int] = mapped_column(SmallInteger)
+    house: Mapped[str] = mapped_column(String)
     location: Mapped[Geometry] = mapped_column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
 
 
