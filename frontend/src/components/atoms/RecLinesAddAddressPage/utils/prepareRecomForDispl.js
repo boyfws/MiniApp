@@ -2,21 +2,31 @@ const PrepareDataForDispl = (recommendation) => {
     if (typeof recommendation === "string") {
         return recommendation;
     }
+    const res = {}
 
+    if (recommendation?.region) {
+        res.region = recommendation.region;
+        res.full_name = recommendation.full_name;
+    }
+
+    const district = recommendation?.district ?? "";
     const city = recommendation?.city ?? ""
     const street = recommendation?.street ?? ""
     const house = recommendation?.house ?? ""
 
-    if (house === "" && street === "" && city === "") {
-        return null
+    if (house === "" && street === "" && city === "" && district === "") {
+        return [null, null]
+    }
+    else if (house === "" && street === "" && district === "") {
+        return [`г ${city}`, {...res, city: city}];
     }
     else if (house === "" && street === "") {
-        return city
+        return [`г ${city} ${district}`, {...res, city: city, district: district}];
     }
     else if (house === "") {
-        return `${city}, ${street}`
+        return [`${city}, ${street}`, {...res, city: city, street: street}];
     }
-    return `${city}, ${street}, ${house}`
+    return [`${city}, ${street}, ${house}`, {...res, city: city, street: street, house: house}];
 }
 
 export default PrepareDataForDispl

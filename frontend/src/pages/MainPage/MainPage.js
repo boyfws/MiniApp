@@ -31,7 +31,7 @@ const MainPage = () => {
 
     const { setRestaurants, defaultRestaurants, setDefaultRestaurants } = RestStore()
     const { DefAddress, setDefAddress } =  DefAddressStore();
-    const { SetAddresses } = AddressesStore();
+    const { addAddress } = AddressesStore();
 
     // Сейты связанные с загрузкой
     const [showContent, setShowContent] = useState(false); // Чтобы рендерить контент после того как все данные загружены
@@ -65,7 +65,7 @@ const MainPage = () => {
     const LoadAddresses = GetLoadAddresses(
         InitDataLoaded,
         setAddressesLoaded,
-        SetAddresses
+        addAddress
     )
 
     const LoadDefAddress = GetLoadDefAddress(
