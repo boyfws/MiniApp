@@ -15,6 +15,7 @@ class RestaurantRequestUsingOwner(BaseModel):
 
 class RestaurantRequestUsingID(BaseModel):
     rest_id: int
+    user_id: int
 
 class RestaurantRequestFullModel(BaseModel):
     owner_id: int = Field(..., ge=1)  # Assuming owner ID is always greater than 0
@@ -39,8 +40,7 @@ class RestaurantRequestFullModel(BaseModel):
     address: dict[str, Any] = Field(...)
     categories: List[str]
 
-class RestaurantResponse(BaseModel):
-    ...
+    favourite_flag: bool
 
 class RestaurantResult(BaseModel):
     rest_id: int
@@ -52,4 +52,5 @@ class RestaurantGeoSearch(BaseModel):
     main_photo: str
     distance: float
     category: list[str]
+    favourite_flag: bool
 

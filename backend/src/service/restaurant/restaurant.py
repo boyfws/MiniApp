@@ -47,15 +47,17 @@ class RestaurantService:
 
     async def get_by_geo(
             self,
+            user_id: int,
             model: Point
     ) -> list[RestaurantGeoSearch]:
-        return await self.repo.get_by_geo(model)
+        return await self.repo.get_by_geo(model=model, user_id=user_id)
 
     async def get_by_geo_and_name(
             self,
+            user_id: int,
             model: RestaurantRequestUsingGeoPointAndName
     ) -> list[RestaurantGeoSearch]:
-        return await self.repo.get_by_geo_and_name(model)
+        return await self.repo.get_by_geo_and_name(model=model, user_id=user_id)
 
     async def get_name(self, rest_id: int) -> str:
         return await self.repo.get_name(rest_id)
