@@ -12,7 +12,6 @@ const formatAddress = (address) => {
 
     if (district && !(street || house)) {
         formattedAddress += district;
-        formattedAddress += ' райн. ';
 
     }
 
