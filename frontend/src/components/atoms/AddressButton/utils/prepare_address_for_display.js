@@ -12,7 +12,7 @@ const prepare_address_for_display = (geojson) => {
     } else if (street && street !== 'None') {
         return `${street}`;
     }
-    else if (district !== 'None') {
+    else if (district !== 'None' && district !== "") {
         return `${district}`
     }
     else {
