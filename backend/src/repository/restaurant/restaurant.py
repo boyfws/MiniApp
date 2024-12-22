@@ -8,7 +8,7 @@ from sqlalchemy import select, insert, delete, update, Row, text
 from src.models.dto.category import CategoryDTO
 from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
-                                       RestaurantRequestFullModel, RestaurantGeoSearch, Point)
+                                       RestaurantRequestFullModel, RestaurantGeoSearch, Point, RestaurantDTO)
 from src.models.orm.schemas import Restaurant
 from src.repository.category.category import CategoryRepo
 from src.repository.interface import TablesRepositoryInterface
@@ -64,7 +64,7 @@ class RestaurantRepo(TablesRepositoryInterface):
     async def get(
             self,
             model: RestaurantRequestUsingID
-    ) -> RestaurantRequestFullModel:
+    ) -> RestaurantDTO:
         async with self.session_getter() as session:
             query = (
                  "SELECT "
@@ -88,7 +88,7 @@ class RestaurantRepo(TablesRepositoryInterface):
 
             rest_model['favourite_flag'] = await fav_rest_repo.is_favourite(model.rest_id, model.user_id)
             rest_model['categories'] = [await cat_repo.get_name(int(num)) for num in rest_model['categories']]
-            return RestaurantRequestFullModel(**rest_model)
+            return RestaurantDTO(**rest_model)
 
     async def get_by_geo(
             self,
@@ -184,7 +184,7 @@ class RestaurantRepo(TablesRepositoryInterface):
     async def get_by_owner(
             self,
             model: RestaurantRequestUsingOwner
-    ) -> list[RestaurantRequestFullModel]:
+    ) -> list[RestaurantDTO]:
         async with self.session_getter() as session:
             query = (
                 "SELECT "
@@ -223,7 +223,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                     else:
                         rest_dict[col] = value
                 rest_dict['favourite_flag'] = True
-                transformed_data.append(RestaurantRequestFullModel(**rest_dict))
+                transformed_data.append(RestaurantDTO(**rest_dict))
             return transformed_data
 
     async def get_name(self, rest_id: int) -> str:

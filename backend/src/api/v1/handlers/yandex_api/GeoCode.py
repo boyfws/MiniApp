@@ -60,9 +60,9 @@ class GeoCode:
         locality = area['Locality']
         city = locality['LocalityName']
         fare = locality['Thoroughfare']
-        street = fare['ThoroughfareName']
+        street = fare.get('ThoroughfareName')
         premise = fare['Premise']
-        house = premise['PremiseNumber']
+        house = premise.get('PremiseNumber')
         geometry = Geometry(type='Point', coordinates=[float(lon), float(lat)])
         properties = AddressProperties(region=region, city=city, street=street, house=house, district=None)
         return GeoJson(type="Feature", geometry=geometry, properties=properties)

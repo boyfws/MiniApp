@@ -40,7 +40,9 @@ class RestaurantRequestFullModel(BaseModel):
     address: dict[str, Any] = Field(...)
     categories: List[str]
 
+class RestaurantDTO(RestaurantRequestFullModel):
     favourite_flag: bool
+
 
 class RestaurantResult(BaseModel):
     rest_id: int
