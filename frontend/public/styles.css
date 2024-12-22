@@ -7,3 +7,7 @@
     --width-of-small-mainpage-buttons: 50px;
     --height-for-addresses: 70px
 }
+
+body {
+    overflow-x: hidden;
+}
