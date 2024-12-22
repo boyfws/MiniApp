@@ -38,12 +38,12 @@ def decode_jwt(
     token: str,
     public_key: str = settings.auth_jwt.public_key_path.read_text(),
     algorithm: str = settings.auth_jwt.algorithm,
-) -> dict[str, Any]:
+) -> str:
     decoded = jwt.decode(
         token,
         public_key,
         algorithms=[algorithm],
-    )
+    ).get('sub')
     return decoded
 
 def is_valid_telegram_request(init_data: str) -> bool:
