@@ -18,7 +18,7 @@ const AddToHomeScreenCell = ({show}) => {
             className={`addToHomeScreenCell${show ? "" : "-hidden"}`}
             onClick={AddToHomeScreen}
         >
-            Добавить мини приложение на главный экран
+            Добавить на главный экран
         </Cell>
     )
 
