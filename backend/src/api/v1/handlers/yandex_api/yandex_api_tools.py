@@ -106,5 +106,5 @@ async def get_geojson_from_address_recommendation(
 async def get_address_from_coords(
         lon: float,
         lat: float,
-) -> Optional[AddressPart]:
+) -> Optional[GeoJson]:
     return await geocoder.get_address_for_coordinates(lon, lat)
