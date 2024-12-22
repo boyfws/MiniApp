@@ -17,7 +17,7 @@ async def get_menu_by_rest_id(
         rest_id: int,
         service: MenuService = Depends(get_menu_service)
 ) -> Optional[MenuDTO]:
-    return await service.get_menu_by_rest_id(RestaurantRequestUsingID(rest_id=rest_id))
+    return await service.get_menu_by_rest_id(RestaurantRequestUsingID(rest_id=rest_id, user_id=1))
 
 @menu_router.post('/update_menu_by_rest_id/')
 async def update_menu_by_rest_id(
@@ -31,4 +31,4 @@ async def delete_menu_by_rest_id(
         rest_id: int,
         service: MenuService = Depends(get_menu_service)
 ) -> bool:
-    return await service.delete_menu_by_rest_id(RestaurantRequestUsingID(rest_id=rest_id))
+    return await service.delete_menu_by_rest_id(RestaurantRequestUsingID(rest_id=rest_id, user_id=1))
