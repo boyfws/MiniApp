@@ -10,7 +10,8 @@ const ShowThatErrorOccurred = (setErrorSnackBarOpen) => {
 const GetHandleLocationButtonClick = (SetSnackBarOpen,
                                       setDefAddress,
                                       addAddress,
-                                      setErrorSnackBarOpen) => async () => {
+                                      setErrorSnackBarOpen,
+                                      history) => async () => {
     const geo_manager = window.Telegram.WebApp.LocationManager;
 
     if (geo_manager.isAccessRequested && !geo_manager.isAccessGranted) {
@@ -36,10 +37,11 @@ const GetHandleLocationButtonClick = (SetSnackBarOpen,
 
                 if (!rec_query.error) {
                     const user_id = sessionStorage.getItem("userId");
-                    const add_address_promise = sendAddAddress(rec_query.data, user_id);
+                    const add_address_promise = await sendAddAddress(rec_query.data, user_id);
                     if (!add_address_promise.error) {
                         setDefAddress(rec_query.data)
                         addAddress(rec_query.data)
+                        history.push("/main")
 
                     } else {
                         ShowThatErrorOccurred(setErrorSnackBarOpen);

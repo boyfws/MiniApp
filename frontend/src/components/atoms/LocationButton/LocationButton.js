@@ -4,6 +4,7 @@ import "./LocationButton.css"
 // Ext lib
 import React, { useState } from 'react';
 import { Button } from '@telegram-apps/telegram-ui';
+import {useHistory} from "react-router-dom";
 
 // States
 import DefAddressStore from "../../../state_management/stores/DefAddressStore";
@@ -24,6 +25,7 @@ import Icon24LocationOutline from '../../_icons/Icon24LocationOutline';
 const LocationButton = ({}) => {
     const { setDefAddress } = DefAddressStore()
     const { addAddress } = AddressesStore()
+    const history = useHistory()
 
     const [SnackBarOpen,  SetSnackBarOpen] = useState(false);
     const [ErrorSnackBarOpen, setErrorSnackBarOpen] = useState(false);
@@ -36,7 +38,8 @@ const LocationButton = ({}) => {
         SetSnackBarOpen,
         setDefAddress,
         addAddress,
-        setErrorSnackBarOpen)
+        setErrorSnackBarOpen,
+        history)
 
     return (
         <Button 
