@@ -15,7 +15,7 @@ import ModalMainPageContent from "../../molecules/ModalMainPageContent/ModalMain
 
 // Учесть, что ласт адрес хранится в локал сторадж 
 const ModalMainPage = ({modalRef}) => {
-    const { ModalState } = MainPageModalStore()
+    const { ModalState, setModalState } = MainPageModalStore()
 
     return (
         
@@ -23,9 +23,10 @@ const ModalMainPage = ({modalRef}) => {
             header={<Modal.Header/>}
             open={ModalState}
             ref={modalRef}
-            dismissible={false}
-            nested={true}
-              >
+            dismissible={true}
+            nested={false}
+            onOpenChange={(state) => {setModalState(state)}}
+        >
 
             <ModalMainPageContent/>
 

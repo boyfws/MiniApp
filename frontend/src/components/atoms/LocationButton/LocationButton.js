@@ -5,26 +5,38 @@ import "./LocationButton.css"
 import React, { useState } from 'react';
 import { Button } from '@telegram-apps/telegram-ui';
 
-// Icon
-import Icon24LocationOutline from '../../_icons/Icon24LocationOutline';
+// States
+import DefAddressStore from "../../../state_management/stores/DefAddressStore";
+import AddressesStore from "../../../state_management/stores/AddressesStore";
+
 
 // Handlers
 import GetHandleLocationButtonClick from "./utils/HandleLocationButtonClick";
 
 // Components
 import NoAccessToGeoSnackBar from "../NoAccessToGeoSnackBar/NoAccessToGeoSnackBar";
+import ErrorGettingGeoSnackBar from "../ErrorGettingGeoSnackBar/ErrorGettingGeoSnackBar";
+
+// Icon
+import Icon24LocationOutline from '../../_icons/Icon24LocationOutline';
 
 
-const LocationButton = ({SetRecommendations}) => {
+const LocationButton = ({}) => {
+    const { setDefAddress } = DefAddressStore()
+    const { addAddress } = AddressesStore()
+
     const [SnackBarOpen,  SetSnackBarOpen] = useState(false);
+    const [ErrorSnackBarOpen, setErrorSnackBarOpen] = useState(false);
 
     let tg = window.Telegram.WebApp
     let tg_version = parseFloat(tg.version);
     const showCondition = tg_version >= 8 && tg.LocationManager.isLocationAvailable
 
     const HandleLocationButtonClick = GetHandleLocationButtonClick(
-        SetRecommendations,
-        SetSnackBarOpen)
+        SetSnackBarOpen,
+        setDefAddress,
+        addAddress,
+        setErrorSnackBarOpen)
 
     return (
         <Button 
@@ -34,8 +46,13 @@ const LocationButton = ({SetRecommendations}) => {
         className={`location-button${showCondition ? '' : '-hidden'}`}
         >
             <Icon24LocationOutline/>
+
             {SnackBarOpen && (
                 <NoAccessToGeoSnackBar SetSnackBarOpen={SetSnackBarOpen}/>
+            )}
+
+            {ErrorSnackBarOpen && (
+                <ErrorGettingGeoSnackBar setErrorSnackBarOpen={setErrorSnackBarOpen}/>
             )}
 
         </Button>

@@ -1,7 +1,16 @@
-import fetchAddressRecomFromCoords from "../../../../api/fetchAddressRecomFromCoords";
+import fetchDefAddressFromCoords from "../../../../api/fetchDefAddressFromCoords";
+import sendAddAddress from "../../../../api/sendAddAddress";
 
-const GetHandleLocationButtonClick = (SetRecommendations,
-                                      SetSnackBarOpen) => async () => {
+const ShowThatErrorOccurred = (setErrorSnackBarOpen) => {
+    setErrorSnackBarOpen(true);
+    window.Telegram.WebApp.HapticFeedback.notificationOccurred('error')
+
+}
+
+const GetHandleLocationButtonClick = (SetSnackBarOpen,
+                                      setDefAddress,
+                                      addAddress,
+                                      setErrorSnackBarOpen) => async () => {
     const geo_manager = window.Telegram.WebApp.LocationManager;
 
     if (geo_manager.isAccessRequested && !geo_manager.isAccessGranted) {
@@ -23,13 +32,24 @@ const GetHandleLocationButtonClick = (SetRecommendations,
             const {latitude: lat, longitude: long} = result;
 
             if (lat !== undefined && long !== undefined) {
-                const rec_query = await fetchAddressRecomFromCoords(long, lat);
+                const rec_query = await fetchDefAddressFromCoords(long, lat);
 
                 if (!rec_query.error) {
-                    SetRecommendations(rec_query.data);
-                }
-            }
+                    const user_id = sessionStorage.getItem("userId");
+                    const add_address_promise = sendAddAddress(rec_query.data, user_id);
+                    if (!add_address_promise.error) {
+                        setDefAddress(rec_query.data)
+                        addAddress(rec_query.data)
 
+                    } else {
+                        ShowThatErrorOccurred(setErrorSnackBarOpen);
+                    }
+                } else {
+                    ShowThatErrorOccurred(setErrorSnackBarOpen);
+                }
+            } else {
+                ShowThatErrorOccurred(setErrorSnackBarOpen);
+            }
         }
         catch (error) {
             console.error('Возникла ошибка получения гео');

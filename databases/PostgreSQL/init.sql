@@ -140,7 +140,7 @@ CREATE TABLE address (
     street_id BIGINT 
               REFERENCES street(id)
               NOT NULL,
-    house SMALLINT,
+    house VARCHAR(5),
 
     location GEOGRAPHY(POINT, 4326) --lon lat
              NOT NULL 

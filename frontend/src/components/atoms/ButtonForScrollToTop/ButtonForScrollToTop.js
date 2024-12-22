@@ -8,6 +8,7 @@ import React from "react";
 // Icon
 import Icon24ChevronUp from '../../_icons/Icon24ChevronUp'
 
+// TODO: Добавить вибрацию
 
 const ButtonForScrollToTop = ({ onClick }) => {
     return (

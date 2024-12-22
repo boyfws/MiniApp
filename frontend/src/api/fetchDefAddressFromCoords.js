@@ -1,7 +1,7 @@
-const fetchAddressRecomFromCoords = async (long, lat) => {
+const fetchDefAddressFromCoords = async (long, lat) => {
     const data = ["Это тестовая строчка", "И это тоже"]
     return {"error": false, "data": data}
 
 }
 
-export default fetchAddressRecomFromCoords;
+export default fetchDefAddressFromCoords;

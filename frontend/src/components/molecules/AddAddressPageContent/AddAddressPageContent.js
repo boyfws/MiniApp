@@ -43,7 +43,6 @@ const AddAddressPageContent = ({}) => {
 
                 <LocationButton
                     className='LocationButton'
-                    SetRecommendations={SetRecommendations}
                 />
 
             </div>

@@ -1,3 +1,5 @@
+// Css
+import './ModalCatManCont.css'
 
 // Comp
 import ManageCatTitle from "../../atoms/ManageCatTitle/ManageCatTitle";
