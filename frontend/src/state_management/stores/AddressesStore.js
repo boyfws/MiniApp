@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-
+import deepEqual from "../utils/deepEqual";
 
 const AddressesStore =
     // TODO: Добавть хендл ситуации с дублированием адресов
@@ -8,12 +8,14 @@ const AddressesStore =
             SetAddresses: addresses => set({ Addresses: addresses }),
             addAddress: (address) =>
                 set((state) => {
-                    if (!state.Addresses.some(item => item.properties === address.properties)) {
+                    if (!state.Addresses.some(item =>  deepEqual(item.properties, address.properties)) ) {
                         return {
                             Addresses: [...state.Addresses, address],
                         };
                     }
-                    return {Addresses: [...state.Addresses]};
+                    return {
+                        Addresses: [...state.Addresses]
+                    };
                 }),
 
             removeAddress: (address) =>
