@@ -4,5 +4,5 @@
 }
 
 .address-cell{
-    height: var(--modal-options-height) !important;
+    height: var(--height-for-addresses) !important;
 }
