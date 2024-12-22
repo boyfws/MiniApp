@@ -6,7 +6,7 @@ const prepare_address_for_display = (geojson) => {
     const house = address?.house ?? '';
 
 
-    if (street && house && (street !== 'None' && street !== 'None')) {
+    if (street && house && (street !== 'None' && house !== 'None')) {
         return `${street} ${house}`;
 
     } else if (street && street !== 'None') {
