@@ -12,8 +12,8 @@ const verificateInitData = async (initData) => {
     }
     catch (error) {
         return {error: true, data: null}
-    }
-}
+    };
+};
 
 
-export default verificateInitData
+export default verificateInitData;

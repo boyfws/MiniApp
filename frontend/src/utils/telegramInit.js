@@ -9,13 +9,14 @@ const GetinitializeTelegram = (setInitDataLoaded) => () => {
         console.log("Начали верифицировать юзера")
 
         let user_verified = (
-            sessionStorage.getItem('userId') !== null &&
-            sessionStorage.getItem('access_token') !== null &&
-            sessionStorage.getItem('refresh_token') !== null
+            sessionStorage.getItem('userId') &&
+            sessionStorage.getItem('access_token') &&
+            sessionStorage.getItem('refresh_token')
         )
 
         if (tg.initData && !user_verified) {
             const verif_res = await verificateInitData(tg.initData)
+            console.log(verif_res)
             if (!verif_res.error) {
 
                 const queryParams = new URLSearchParams(tg.initData);
