@@ -15,7 +15,7 @@ import GetGetHomeScreenStatus from './utills/GetGetHomeScreenStatus'
 const ListOfOptionsSettings = () => {
     const [showAddToHomeScreen, setShowAddToHomeScreen] = useState(false)
 
-    const GetHomeScreenStatus = GetGetHomeScreenStatus(showAddToHomeScreen)
+    const GetHomeScreenStatus = GetGetHomeScreenStatus(setShowAddToHomeScreen)
 
     useEffect(GetHomeScreenStatus, [])
 
