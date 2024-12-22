@@ -13,6 +13,7 @@ from src.models.orm.schemas import Restaurant
 from src.repository.category.category import CategoryRepo
 from src.repository.interface import TablesRepositoryInterface
 from src.repository.owner import OwnerRepo
+from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
 
 names = ['owner_id', 'name', 'main_photo', 'photos',
          'ext_serv_link_1', 'ext_serv_link_2', 'ext_serv_link_3',
@@ -81,12 +82,17 @@ class RestaurantRepo(TablesRepositoryInterface):
             if not rest_tuple:
                 raise ValueError(f"no restaurant with id {model.rest_id}")
             rest_model = dict(zip(names, rest_tuple))
+
             cat_repo = CategoryRepo(session_getter=self.session_getter)
+            fav_rest_repo = FavouriteRestaurantRepo(session_getter=self.session_getter)
+
+            rest_model['favourite_flag'] = await fav_rest_repo.is_favourite(model.rest_id, model.user_id)
             rest_model['categories'] = [await cat_repo.get_name(int(num)) for num in rest_model['categories']]
             return RestaurantRequestFullModel(**rest_model)
 
     async def get_by_geo(
             self,
+            user_id: int,
             model: Point
     ) -> list[RestaurantGeoSearch]:
         async with self.session_getter() as session:
@@ -113,6 +119,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                 return []
 
             cat_repo = CategoryRepo(session_getter=self.session_getter)
+            fav_rest_repo = FavouriteRestaurantRepo(session_getter=self.session_getter)
 
             async def transform_row(row):
                 return {
@@ -120,6 +127,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                     "name": row.name,
                     "main_photo": row.main_photo,
                     "distance": round(row.distance / 1000, 2),
+                    'favourite_flag': await fav_rest_repo.is_favourite(user_id=user_id, rest_id=row.id),
                     "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories]
                 }
 
@@ -128,6 +136,7 @@ class RestaurantRepo(TablesRepositoryInterface):
 
     async def get_by_geo_and_name(
             self,
+            user_id: int,
             model: RestaurantRequestUsingGeoPointAndName
     ) -> list[RestaurantGeoSearch]:
         async with self.session_getter() as session:
@@ -156,6 +165,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                 return []
 
             cat_repo = CategoryRepo(session_getter=self.session_getter)
+            fav_rest_repo = FavouriteRestaurantRepo(session_getter=self.session_getter)
 
             async def transform_row(row):
                 return {
@@ -163,6 +173,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                     "name": row.name,
                     "main_photo": row.main_photo,
                     "distance": round(row.distance / 1000, 2),
+                    'favourite_flag': await fav_rest_repo.is_favourite(row.id, user_id),
                     "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories]
                 }
 
@@ -211,6 +222,7 @@ class RestaurantRepo(TablesRepositoryInterface):
                         rest_dict[col] = str(value) if value else None  # handle NULL locations
                     else:
                         rest_dict[col] = value
+                rest_dict['favourite_flag'] = True
                 transformed_data.append(RestaurantRequestFullModel(**rest_dict))
             return transformed_data
 
