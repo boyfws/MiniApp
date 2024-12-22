@@ -121,7 +121,7 @@ class AddressRepo(TablesRepositoryInterface):
     async def get(self, address_id: int) -> AddressDTO:
         async with self.session_getter() as session:
             # address_stmt = select(Address.street_id, Address.house, Address.location).where(Address.id == address_id)
-            address_stmt = f"SELECT street_id, house, ST_AsEWKT(location) AS location FROM address WHERE id == {address_id}::BIGINT"
+            address_stmt = f"SELECT street_id, house, ST_AsEWKT(location) AS location FROM address WHERE id = {address_id}::BIGINT"
             address_result = await session.execute(text(address_stmt))
             street_id, house, location = address_result.first()[0]
             
