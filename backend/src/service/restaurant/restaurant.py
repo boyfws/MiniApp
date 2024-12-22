@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.sql_session import get_session
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, \
-    RestaurantGeoSearch, Point
+    RestaurantGeoSearch, Point, RestaurantDTO
 from src.repository.restaurant.restaurant import RestaurantRepo
 
 
@@ -36,13 +36,13 @@ class RestaurantService:
     async def get(
             self,
             model: RestaurantRequestUsingID
-    ) -> RestaurantRequestFullModel:
+    ) -> RestaurantDTO:
         return await self.repo.get(model)
 
     async def get_by_owner(
             self,
             model: RestaurantRequestUsingOwner
-    ) -> list[RestaurantRequestFullModel]:
+    ) -> list[RestaurantDTO]:
         return await self.repo.get_by_owner(model)
 
     async def get_by_geo(
