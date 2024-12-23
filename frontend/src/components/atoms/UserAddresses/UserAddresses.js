@@ -3,7 +3,7 @@ import './UserAddresses.css';
 
 // Ext lib
 import React from 'react';
-import { Cell, Divider, Text } from '@telegram-apps/telegram-ui';
+import {Button, Cell, Divider, Text} from '@telegram-apps/telegram-ui';
 
 // State
 import AddressesStore from "../../../state_management/stores/AddressesStore";
@@ -12,6 +12,8 @@ import MainPageModalsStore from "../../../state_management/stores/MianPageModals
 
 // Handlers
 import GetHandleAddressClick from "./utils/handleAddressClick";
+
+import Icon24Trash from "../../_icons/Icon24Trash";
 
 
 // Utils
@@ -41,12 +43,27 @@ const UserAddresses = ({}) => {
     <div>
       {Addresses.map((address, index) => (
         <React.Fragment key={index}>
-          <Cell onClick={() => {handleAddressClick(address)}} className="address-cell">
+
+          <Cell
+              onClick={() => {handleAddressClick(address)}}
+              className="address-cell"
+              after={
+            <Button
+                mode={"plain"}
+                onClick={() => {console.log("Нажата кнопка")}}
+            >
+              <Icon24Trash className="address-icon"/>
+            </Button>
+              }
+          >
+
             <Text className="address-text">
-            {formatAddress(address)}
+              {formatAddress(address)}
             </Text>
+
           </Cell>
           {index < Addresses.length - 1 && <Divider />}
+
         </React.Fragment>
       ))}
     </div>

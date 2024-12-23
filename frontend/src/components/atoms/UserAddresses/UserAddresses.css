@@ -6,3 +6,7 @@
 .address-cell{
     height: var(--height-for-addresses) !important;
 }
+
+.address-icon{
+    color: var(--tgui--destructive_text_color)
+}
