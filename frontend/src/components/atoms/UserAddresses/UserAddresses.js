@@ -50,7 +50,11 @@ const UserAddresses = ({}) => {
               after={
             <Button
                 mode={"plain"}
-                onClick={() => {console.log("Нажата кнопка")}}
+                onClick={(event) => {
+                  console.log("Нажата кнопка");
+                  event.stopPropagation();
+                }
+            }
             >
               <Icon24Trash className="address-icon"/>
             </Button>
