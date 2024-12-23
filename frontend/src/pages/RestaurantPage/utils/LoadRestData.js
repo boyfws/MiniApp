@@ -2,7 +2,8 @@ import fetchRestaurnatInfo from "../../../api/fetchRestaurnatInfo";
 
 const GetLoadRestData = (setLoading, id, setRestData) => () =>  {
     async function fetchData() {
-        const rest_data_query =  await fetchRestaurnatInfo(id)
+        const user_id = sessionStorage.getItem("userId");
+        const rest_data_query =  await fetchRestaurnatInfo(id, user_id)
 
         if (!rest_data_query.error) {
             setRestData(rest_data_query.error);
