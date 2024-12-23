@@ -1,3 +1,8 @@
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
 const fetchRestaurnatInfo = async (id) => {
     const data = {
         "owner_id": 1,
@@ -26,6 +31,8 @@ const fetchRestaurnatInfo = async (id) => {
             0
         ]
     }
+
+    await sleep(5000);
     return {error: false, data: data}
 
 }
