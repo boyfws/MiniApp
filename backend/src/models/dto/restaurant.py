@@ -55,4 +55,5 @@ class RestaurantGeoSearch(BaseModel):
     distance: float
     category: list[str]
     favourite_flag: bool
+    rating: float
 
