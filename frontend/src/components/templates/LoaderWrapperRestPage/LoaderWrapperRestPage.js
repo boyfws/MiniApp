@@ -96,12 +96,8 @@ const Loader____ = ({onFinish, loading, key}) => {
 
 const LoaderWrapperRestPage = ({RestDataLoading, MenuLoading, setShowContent}) => {
     const onFinish = onFinishRestPage(setShowContent);
-    const [loading, setLoading] = useState(true);
 
-
-    useEffect(() => {
-        setLoading(RestDataLoading || MenuLoading);
-    }, [RestDataLoading, MenuLoading]);
+    const loading = RestDataLoading || MenuLoading
 
 
     return (
