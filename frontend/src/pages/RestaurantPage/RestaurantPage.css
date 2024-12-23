@@ -19,7 +19,9 @@
 .raiting{
     pointer-events: none !important;
 }
-
+.raiting input[type="radio"] {
+    pointer-events: none !important;
+}
 
 .header{
     padding-bottom: 10px; /* Отступ снизу */
@@ -27,5 +29,4 @@
 
 .subheadline{
     padding-bottom: 10px !important; /* Отступ снизу */
-
 }

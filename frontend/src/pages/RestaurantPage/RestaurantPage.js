@@ -90,7 +90,8 @@ const RestaurantPage = () => {
       <Divider/>
 
       <div className="raiting-wrapper">
-        <Cell className="raiting-cell" onClick={() => (window.Telegram.WebApp.openLink(RestData.ext_serv_link_1))}>
+        <Cell className="raiting-cell"
+              onClick={() => (window.Telegram.WebApp.openLink(RestData.ext_serv_link_1))}>
           <Text
               className="raiting-cell-text"
           >
@@ -103,7 +104,7 @@ const RestaurantPage = () => {
               precision={0.1}
               value={RestData.ext_serv_rank_1}
               onChange={() => {}}
-              className={"raiting"}
+              className="raiting"
           />
 
         </Cell>
