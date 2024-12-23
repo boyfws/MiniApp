@@ -6,7 +6,7 @@ const GetLoadRestData = (setLoading, id, setRestData) => () =>  {
         const rest_data_query =  await fetchRestaurnatInfo(id, user_id)
         console.log(rest_data_query)
         if (!rest_data_query.error) {
-            setRestData(rest_data_query.error);
+            setRestData(rest_data_query.data);
             setLoading(false);
             console.log("Подняли флаг для рестов")
         }
