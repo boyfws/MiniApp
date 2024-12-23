@@ -13,7 +13,7 @@ import RestPageTemp from "../../components/templates/RestPageTemp/RestPageTemp";
 import GetLoadRestData from "./utils/LoadRestData";
 import GetHandleGoBack from "./utils/handleGoBack";
 import GetLoadMenu from "./utils/LoadMenu";
-import {Cell, Rating, Subheadline, Title, Text} from "@telegram-apps/telegram-ui";
+import {Cell, Rating, Subheadline, Title, Text, Divider} from "@telegram-apps/telegram-ui";
 import PreapareGeoJsonForDisplay from "../../components/atoms/RestAddressTitle/utils/PrepareGeoJsonForDisplay";
 
 
@@ -79,11 +79,15 @@ const RestaurantPage = () => {
           {PreapareGeoJsonForDisplay(RestData.address)}
         </Subheadline>
 
+        <Divider/>
+
       </div>
 
       <div className="photos">
         Тут типа будут фотки (сори решили сделать хоть как то, так как красиво не успели)
       </div>
+
+      <Divider/>
 
       <div className="raiting">
         <Cell className="raiting-cell" onClick={() => (window.Telegram.WebApp.openLink(RestData.ext_serv_link_1))}>
@@ -103,6 +107,9 @@ const RestaurantPage = () => {
 
         </Cell>
       </div>
+
+      <Divider/>
+
 
 
     </div>
