@@ -12,6 +12,7 @@ import MainPageModalsStore from "../../../state_management/stores/MianPageModals
 
 // Handlers
 import GetHandleAddressClick from "./utils/handleAddressClick";
+import GetDeleteAddress from "./utils/GetDeleteAddress";
 
 import Icon24Trash from "../../_icons/Icon24Trash";
 
@@ -20,11 +21,12 @@ import Icon24Trash from "../../_icons/Icon24Trash";
 import formatAddress from "./utils/formatAddress";
 
 const UserAddresses = ({}) => {
-  const { Addresses } = AddressesStore()
+  const { Addresses, removeAddress } = AddressesStore()
   const { setDefAddress } = defAddressStore();
   const { setModalState } = MainPageModalsStore()
 
   const handleAddressClick = GetHandleAddressClick(setModalState, setDefAddress);
+  const DeleteAddress = GetDeleteAddress(removeAddress);
 
   // Возможно под замену
   if (Addresses.length === 0) {
@@ -50,9 +52,10 @@ const UserAddresses = ({}) => {
               after={
             <Button
                 mode={"plain"}
-                onClick={(event) => {
+                onClick={async (event) => {
                   console.log("Нажата кнопка");
                   event.stopPropagation();
+                  await DeleteAddress(address)
                 }
             }
             >
