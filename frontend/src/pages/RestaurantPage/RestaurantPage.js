@@ -92,7 +92,7 @@ const RestaurantPage = () => {
       </Title>
 
       <div className={"about_rest"}>
-        <Text>
+        <Text weight={3}>
           {Menu.restaurant_description}
         </Text>
 

@@ -30,6 +30,7 @@ const ScrollToTopButton = () => {
   }, [toggleVisibility]);
 
   const scrollToTop = () => {
+    window.Telegram.WebApp.HapticFeedback.impactOccurred("medium")
     window.scrollTo({
       top: 0,
       behavior: 'smooth',

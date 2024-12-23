@@ -1,5 +1,11 @@
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .ProfilePage{
     min-height:100vh;
     padding: var(--padding-for-pages);
     background-color: var(--tgui--bg_color);
+    animation: fadeIn 0.28s ease-in-out;
 }
