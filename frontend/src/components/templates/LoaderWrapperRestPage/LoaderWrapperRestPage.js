@@ -94,7 +94,7 @@ const Loader____ = ({onFinish, loading, key}) => {
 
 
 
-const LoaderWrapper = ({RestDataLoading, MenuLoading, setShowContent}) => {
+const LoaderWrapperRestPage = ({RestDataLoading, MenuLoading, setShowContent}) => {
     const onFinish = onFinishRestPage(setShowContent);
     const [loading, setLoading] = useState(true);
 
@@ -109,4 +109,4 @@ const LoaderWrapper = ({RestDataLoading, MenuLoading, setShowContent}) => {
     )
 }
 
-export default LoaderWrapper;
+export default LoaderWrapperRestPage;
