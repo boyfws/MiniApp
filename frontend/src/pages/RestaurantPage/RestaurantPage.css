@@ -3,3 +3,11 @@
     padding: var(--padding-for-pages);
     background-color: var(--tgui--bg_color);
 }
+
+
+.photos {
+    height: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

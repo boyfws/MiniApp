@@ -13,6 +13,8 @@ import RestPageTemp from "../../components/templates/RestPageTemp/RestPageTemp";
 import GetLoadRestData from "./utils/LoadRestData";
 import GetHandleGoBack from "./utils/handleGoBack";
 import GetLoadMenu from "./utils/LoadMenu";
+import {Subheadline} from "@telegram-apps/telegram-ui";
+import PreapareGeoJsonForDisplay from "../../components/atoms/RestAddressTitle/utils/PrepareGeoJsonForDisplay";
 
 
 const RestaurantPage = () => {
@@ -67,8 +69,15 @@ const RestaurantPage = () => {
 
   return (
     <div className="RestaurantPage">
-
-      <RestPageTemp />
+      <Title>
+        {RestData.name}
+      </Title>
+      <Subheadline>
+        {PreapareGeoJsonForDisplay(RestData.address)}
+      </Subheadline>
+      <div className="photos">
+        Тут типа будут фотки (сори решили сделать хоть как то, так как красиво не успели)
+      </div>
 
 
     </div>
