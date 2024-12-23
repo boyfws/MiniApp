@@ -11,3 +11,16 @@
     justify-content: center;
     align-items: center;
 }
+
+.raiting-cell{
+    height: var(--height-for-addresses) !important;
+    display: flex !important; /* Включаем Flexbox */
+    flex-direction: row !important; /* Элементы располагаются в строку */
+    justify-content: flex-start !important; /* Выравнивание по горизонтали (по умолчанию) */
+    align-items: center !important; /* Выравнивание по вертикали */
+}
+
+.raiting-cell-text{
+    padding: 0 !important;
+    margin-left: auto !important;
+}

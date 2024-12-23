@@ -13,7 +13,7 @@ import RestPageTemp from "../../components/templates/RestPageTemp/RestPageTemp";
 import GetLoadRestData from "./utils/LoadRestData";
 import GetHandleGoBack from "./utils/handleGoBack";
 import GetLoadMenu from "./utils/LoadMenu";
-import {Subheadline} from "@telegram-apps/telegram-ui";
+import {Cell, Rating, Subheadline, Title, Text} from "@telegram-apps/telegram-ui";
 import PreapareGeoJsonForDisplay from "../../components/atoms/RestAddressTitle/utils/PrepareGeoJsonForDisplay";
 
 
@@ -77,6 +77,24 @@ const RestaurantPage = () => {
       </Subheadline>
       <div className="photos">
         Тут типа будут фотки (сори решили сделать хоть как то, так как красиво не успели)
+      </div>
+      <div className="raiting">
+        <Cell className="raiting-cell" onClick={() => (window.Telegram.WebApp.openLink(RestData.ext_serv_link_1))}>
+          <Text
+              className="raiting-cell-text"
+          >
+            Яндекс карты
+
+          </Text>
+
+          <Rating
+              max={5}
+              precision={0.1}
+              value={RestData.ext_serv_rank_1}
+              onChange={() => {}}
+          />
+
+        </Cell>
       </div>
 
 
