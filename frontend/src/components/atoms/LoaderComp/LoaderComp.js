@@ -63,6 +63,7 @@ const LoaderComp = ({ loading, onFinish, key }) => {
 
     return (
         <Steps
+            key={key}
             count={count}
             progress={progressValue}
             className="loading-indicator"
