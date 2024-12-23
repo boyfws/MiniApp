@@ -21,7 +21,7 @@ const LoaderWrapper = ({setShowContent}) => {
     const onFinish = GetHandleLoadingFinish(setShowContent)
 
     return (
-        <Loader onFinish={onFinish} loading={loading}/>
+        <Loader onFinish={onFinish} loading={loading} key={1}/>
     )
 
 }

@@ -19,7 +19,7 @@ const LoaderWrapper = ({RestDataLoading, MenuLoading, setShowContent}) => {
 
 
     return (
-        <Loader loading={loading} onFinish={onFinish}/>
+        <Loader loading={loading} onFinish={onFinish} key={2}/>
     )
 }
 

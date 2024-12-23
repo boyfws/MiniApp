@@ -5,7 +5,7 @@ import './Loading.css'
 import LoaderComp from "../../atoms/LoaderComp/LoaderComp";
 
 
-const Loader = ({onFinish, loading}) => {
+const Loader = ({onFinish, loading, key}) => {
     return (
         <div className="loading-wrapper">
             <LoaderComp loading={loading} onFinish={onFinish}/>
