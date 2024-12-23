@@ -105,7 +105,7 @@ class RestaurantRepo(TablesRepositoryInterface):
         async with self.session_getter() as session:
             query = (
                 "SELECT "
-                    "id, name, main_photo, categories, "
+                    "id, name, main_photo, categories, ext_serv_rank_1, "
                     "ST_Distance("
                         "location, "
                         f"ST_SetSRID(ST_MakePoint({model.lon}, {model.lat}), 4326)::geography"
@@ -135,7 +135,8 @@ class RestaurantRepo(TablesRepositoryInterface):
                     "main_photo": row.main_photo,
                     "distance": round(row.distance / 1000, 2),
                     'favourite_flag': await fav_rest_repo.is_favourite(user_id=user_id, rest_id=row.id),
-                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories]
+                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories],
+                    'rating': row.ext_serv_rank_1 if row.ext_serv_rank_1 else 0
                 }
 
             transformed_data = [await transform_row(rest) for rest in rest_tuple]
@@ -149,7 +150,7 @@ class RestaurantRepo(TablesRepositoryInterface):
         async with self.session_getter() as session:
             query = (
                 "SELECT "
-                    "id, name, main_photo, categories, "
+                    "id, name, main_photo, categories, ext_serv_rank_1, "
                     "ST_Distance("
                         "location, "
                         f"ST_SetSRID(ST_MakePoint({model.point.lon}, {model.point.lat}), 4326)::geography"
@@ -181,7 +182,8 @@ class RestaurantRepo(TablesRepositoryInterface):
                     "main_photo": row.main_photo,
                     "distance": round(row.distance / 1000, 2),
                     'favourite_flag': await fav_rest_repo.is_favourite(row.id, user_id),
-                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories]
+                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories],
+                    'rating': row.ext_serv_rank_1 if row.ext_serv_rank_1 else 0
                 }
 
             transformed_data = [await transform_row(rest) for rest in rest_tuple]
