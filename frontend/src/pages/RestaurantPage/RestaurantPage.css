@@ -30,3 +30,7 @@
 .subheadline{
     padding-bottom: 10px !important; /* Отступ снизу */
 }
+
+.tgui-0487bdb4329cd879{
+    pointer-events: none !important;
+}
