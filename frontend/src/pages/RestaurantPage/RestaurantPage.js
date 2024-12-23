@@ -75,7 +75,7 @@ const RestaurantPage = () => {
           {RestData.name}
         </Title>
 
-        <Subheadline>
+        <Subheadline className="subheadline">
           {PreapareGeoJsonForDisplay(RestData.address)}
         </Subheadline>
 
@@ -89,7 +89,7 @@ const RestaurantPage = () => {
 
       <Divider/>
 
-      <div className="raiting">
+      <div className="raiting-wrapper">
         <Cell className="raiting-cell" onClick={() => (window.Telegram.WebApp.openLink(RestData.ext_serv_link_1))}>
           <Text
               className="raiting-cell-text"

@@ -22,5 +22,10 @@
 
 
 .header{
-    padding-bottom: 20px; /* Отступ снизу */
+    padding-bottom: 10px; /* Отступ снизу */
+}
+
+.subheadline{
+    padding-bottom: 10px !important; /* Отступ снизу */
+
 }
