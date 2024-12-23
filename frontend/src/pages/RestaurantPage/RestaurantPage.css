@@ -16,14 +16,8 @@
 
 }
 
-.raiting-cell{
-    height: var(--height-for-addresses) !important;
-    display: flex !important; /* Включаем Flexbox */
-    flex-direction: row !important; /* Элементы располагаются в строку */
-    justify-content: flex-start !important; /* Выравнивание по горизонтали (по умолчанию) */
-    align-items: center !important; /* Выравнивание по вертикали */
-    padding-bottom: 20px !important; /* Отступ снизу */
-
+.raiting{
+    pointer-events: none !important;
 }
 
 

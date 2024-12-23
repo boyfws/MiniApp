@@ -103,6 +103,7 @@ const RestaurantPage = () => {
               precision={0.1}
               value={RestData.ext_serv_rank_1}
               onChange={() => {}}
+              className={"raiting"}
           />
 
         </Cell>
