@@ -87,9 +87,23 @@ const RestaurantPage = () => {
         Тут типа будут фотки (сори решили сделать хоть как то, так как красиво не успели)
       </div>
 
-      <Divider/>
+      <Title level="3" weight="1" plain={false} style={{padding: 0}}>
+        О ресторане
+      </Title>
+
+      <div className={"about_rest"}>
+        <Text>
+          {Menu.restaurant_description}
+        </Text>
+
+      </div>
+
+      <Title level="3" weight="1" plain={false} style={{padding: 0}}>
+        Рейтинги
+      </Title>
 
       <div className="raiting-wrapper">
+
         <Cell className="raiting-cell"
               onClick={() => (window.Telegram.WebApp.openLink(RestData.ext_serv_link_1))}>
           <Text
@@ -109,6 +123,8 @@ const RestaurantPage = () => {
           />
 
         </Cell>
+
+
       </div>
 
       <Divider/>
