@@ -105,7 +105,7 @@ const LoaderWrapperRestPage = ({RestDataLoading, MenuLoading, setShowContent}) =
 
 
     return (
-        <Loader____ loading={loading} onFinish={onFinish} key={Date.now()}/>
+        <Loader____ loading={loading} onFinish={onFinish} key={2}/>
     )
 }
 
