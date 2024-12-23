@@ -6,6 +6,7 @@ const GetLoadMenu = (setMenuLoading, id, setMenu) => () => {
         if (!menu_query.error) {
             setMenu(menu_query.data);
             setMenuLoading(false);
+            console.log("Подняли флаг о загрузке меню");
 
         }
 

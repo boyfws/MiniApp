@@ -12,13 +12,11 @@ import {Steps} from "@telegram-apps/telegram-ui";
 import onFinishRestPage from './utils/onFinishRestPage'
 
 
-// Ext lib
-
 
 const SLOW_CHANGE_DURATION_MS = 1000; // Время для медленной фазы
 const FAST_CHANGE_DURATION_MS = 500; // Время для быстрой фазы
 
-const LoaderComp = ({ loading, onFinish, key }) => {
+const LoaderComp____ = ({ loading, onFinish, key }) => {
     const [progress, setProgress] = useState(0);
     const [startTime, setStartTime] = useState(null);
     const count = 10; // Количество шагов индикатора + 1
@@ -84,10 +82,10 @@ const LoaderComp = ({ loading, onFinish, key }) => {
 
 
 
-const Loader = ({onFinish, loading, key}) => {
+const Loader____ = ({onFinish, loading, key}) => {
     return (
         <div className="loading-wrapper">
-            <LoaderComp loading={loading} onFinish={onFinish} key={key}/>
+            <LoaderComp____ loading={loading} onFinish={onFinish} key={key}/>
         </div>
     )
 }
@@ -107,7 +105,7 @@ const LoaderWrapper = ({RestDataLoading, MenuLoading, setShowContent}) => {
 
 
     return (
-        <Loader loading={loading} onFinish={onFinish} key={2}/>
+        <Loader____ loading={loading} onFinish={onFinish} key={Date.now()}/>
     )
 }
 

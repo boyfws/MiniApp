@@ -7,6 +7,7 @@ const GetLoadRestData = (setLoading, id, setRestData) => () =>  {
         if (!rest_data_query.error) {
             setRestData(rest_data_query.error);
             setLoading(false);
+            console.log("Подняли флаг для рестов")
         }
 
     }
