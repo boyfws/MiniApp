@@ -10,6 +10,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    border: 2px solid red; /* Красная обводка */
+    padding: var(--padding-for-pages);
 }
 
 .raiting-cell{

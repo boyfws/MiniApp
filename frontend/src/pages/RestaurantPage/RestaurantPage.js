@@ -69,7 +69,7 @@ const RestaurantPage = () => {
 
   return (
     <div className="RestaurantPage">
-      <Title>
+      <Title level="2" weight="1" plain={false} style={{padding: 0}}>
         {RestData.name}
       </Title>
       <Subheadline>
