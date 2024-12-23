@@ -12,6 +12,8 @@
     align-items: center;
     border: 2px solid red; /* Красная обводка */
     padding: var(--padding-for-pages);
+    padding-bottom: 20px; /* Отступ снизу */
+
 }
 
 .raiting-cell{
@@ -20,9 +22,15 @@
     flex-direction: row !important; /* Элементы располагаются в строку */
     justify-content: flex-start !important; /* Выравнивание по горизонтали (по умолчанию) */
     align-items: center !important; /* Выравнивание по вертикали */
+    padding-bottom: 20px !important; /* Отступ снизу */
+
 }
 
 .raiting-cell-text{
     padding: 0 !important;
     margin-left: auto !important;
+}
+
+.header{
+    padding-bottom: 20px; /* Отступ снизу */
 }

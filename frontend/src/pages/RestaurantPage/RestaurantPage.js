@@ -69,15 +69,22 @@ const RestaurantPage = () => {
 
   return (
     <div className="RestaurantPage">
-      <Title level="2" weight="1" plain={false} style={{padding: 0}}>
-        {RestData.name}
-      </Title>
-      <Subheadline>
-        {PreapareGeoJsonForDisplay(RestData.address)}
-      </Subheadline>
+      <div className={"header"}>
+
+        <Title level="2" weight="1" plain={false} style={{padding: 0}}>
+          {RestData.name}
+        </Title>
+
+        <Subheadline>
+          {PreapareGeoJsonForDisplay(RestData.address)}
+        </Subheadline>
+
+      </div>
+
       <div className="photos">
         Тут типа будут фотки (сори решили сделать хоть как то, так как красиво не успели)
       </div>
+
       <div className="raiting">
         <Cell className="raiting-cell" onClick={() => (window.Telegram.WebApp.openLink(RestData.ext_serv_link_1))}>
           <Text
