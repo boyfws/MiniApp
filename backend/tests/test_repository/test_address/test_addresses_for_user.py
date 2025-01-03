@@ -11,6 +11,11 @@ from src.repository.user import UserRepo
 from tests.conftest import get_session_test
 from tests.common.address import get_addresses
 
+ad_repo = AddressRepo(session_getter=get_session_test)
+user_repo = UserRepo(session_getter=get_session_test)
+ad_user_repo = AddressForUserRepo(session_getter=get_session_test)
+
+
 @pytest.fixture()
 async def truncate_db():
     try:
@@ -25,35 +30,33 @@ async def truncate_db():
 
 @pytest.fixture(scope="function")
 async def create_db_values_1():
-    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[1])
-    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[2])
-    await UserRepo(session_getter=get_session_test).create_user(1)
+    await ad_repo.add_address(get_addresses()[1])
+    await ad_repo.add_address(get_addresses()[2])
+    await user_repo.create_user(1)
 
 @pytest.fixture(scope='function')
 async def create_db_values_2():
     # добавили пару различных адресов в базу
-    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[1])
-    await AddressRepo(session_getter=get_session_test).add_address(get_addresses()[2])
+    await ad_repo.add_address(get_addresses()[1])
+    await ad_repo.add_address(get_addresses()[2])
 
     # добавили одного юзера в базу с номером 1
-    await UserRepo(session_getter=get_session_test).create_user(1)
+    await user_repo.create_user(1)
 
     # добавили адреса для юзера номера 1
-    model1 = AddressForUserDTO(user_id=1, address_id=1)
-    model2 = AddressForUserDTO(user_id=1, address_id=2)
-    await AddressForUserRepo(session_getter=get_session_test).create(model1)
-    await AddressForUserRepo(session_getter=get_session_test).create(model2)
+    await ad_user_repo.create(1, 1)
+    await ad_user_repo.create(1, 2)
 
 @pytest.mark.parametrize(
-    "model, expected_status, expectation",
+    "user_id, address_id, expected_status, expectation",
     [
-        (AddressForUserDTO(user_id=1, address_id=1), 200, does_not_raise()),
-        (AddressForUserDTO(user_id=1, address_id=2), 200, does_not_raise())
+        (1, 1, 200, does_not_raise()),
+        (1, 2, 200, does_not_raise())
     ]
 )
-async def test_create(model: AddressForUserDTO, expected_status: int, expectation: AbstractContextManager, create_db_values_1, truncate_db):
+async def test_create(user_id: int, address_id: int, expected_status: int, expectation: AbstractContextManager, create_db_values_1, truncate_db):
     async with expectation:
-        result = await AddressForUserRepo(session_getter=get_session_test).create(model)
+        result = await ad_user_repo.create(user_id, address_id)
         assert expected_status == result.status
 
 @pytest.mark.parametrize(
@@ -65,7 +68,7 @@ async def test_create(model: AddressForUserDTO, expected_status: int, expectatio
 )
 async def test_delete(model: AddressForUserDTO, expected_status: int, expectation: AbstractContextManager, create_db_values_1, truncate_db):
     async with expectation:
-        result = await AddressForUserRepo(session_getter=get_session_test).delete(model)
+        result = await ad_user_repo.delete(model)
         assert expected_status == result.status
 
 @pytest.mark.parametrize(
@@ -77,7 +80,7 @@ async def test_delete(model: AddressForUserDTO, expected_status: int, expectatio
 )
 async def test_get_all_user_addresses(model: AllAddressesForUser, expected_list_result: list[AddressForUserDTO], expectation: AbstractContextManager, create_db_values_2, truncate_db):
     async with expectation:
-        result = await AddressForUserRepo(session_getter=get_session_test).get_all_user_addresses(model)
+        result = await ad_user_repo.get_all_user_addresses(model)
         assert expected_list_result == result
 
 @pytest.mark.parametrize(
@@ -89,5 +92,5 @@ async def test_get_all_user_addresses(model: AllAddressesForUser, expected_list_
 )
 async def test_drop_all_user_addresses(model: AllAddressesForUser, expected_status: int, expectation: AbstractContextManager, create_db_values_2, truncate_db):
     async with expectation:
-        result = await AddressForUserRepo(session_getter=get_session_test).drop_all_user_addresses(model)
+        result = await ad_user_repo.drop_all_user_addresses(model)
         assert expected_status == result.status

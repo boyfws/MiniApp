@@ -34,8 +34,8 @@ class TestAddressRepo:
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
         [
-            (get_addresses()[4], 5, does_not_raise()),
-            (get_addresses()[5], 6, does_not_raise())
+            (get_addresses()[2], 3, does_not_raise()),
+            (get_addresses()[5], 5, does_not_raise())
         ]
     )
     async def test_add_address_same_city_and_district(self, model: AddressDTO, expected_id: int, expectation: AbstractContextManager):
