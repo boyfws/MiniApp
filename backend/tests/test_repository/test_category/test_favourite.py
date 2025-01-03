@@ -1,15 +1,21 @@
 from sqlalchemy import text
 
-from src.models.dto.category import CategoryDTO
 from src.models.dto.favourites import FavouriteCategoryDTO, AllFavouriteCategoriesRequest, FavouriteCategoryResponse
 import pytest
 from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
-from src.models.dto.user import UserRequest
-from src.repository.category.category import CategoryRepo
 from src.repository.category.favourite_categories import FavouriteCategoryRepo
 from src.repository.user import UserRepo
 from tests.conftest import get_session_test, cleanup
+
+user_repo = UserRepo(session_getter=get_session_test)
+
+fav_cat_repo = FavouriteCategoryRepo(session_getter=get_session_test)
+
+burgers_1 = FavouriteCategoryDTO(user_id=1, cat_name="Бургеры")
+sushi_1 = FavouriteCategoryDTO(user_id=1, cat_name="Суши")
+pizza_2 = FavouriteCategoryDTO(user_id=2, cat_name="Пицца")
+burgers_2 = FavouriteCategoryDTO(user_id=2, cat_name="Бургеры")
 
 @pytest.fixture(scope="function")
 async def truncate_db():
@@ -25,53 +31,53 @@ async def truncate_db():
 
 @pytest.fixture(scope="function")
 async def create_db_values_categories():
-    await UserRepo(session_getter=get_session_test).create_user(1)
-    await UserRepo(session_getter=get_session_test).create_user(2)
+    await user_repo.create_user(1)
+    await user_repo.create_user(2)
 
 @pytest.fixture(scope="function")
 async def create_db_values_all_categories(create_db_values_categories):
-    await FavouriteCategoryRepo(session_getter=get_session_test).create(FavouriteCategoryDTO(user_id=1, cat_id=1))
-    await FavouriteCategoryRepo(session_getter=get_session_test).create(FavouriteCategoryDTO(user_id=1, cat_id=2))
-    await FavouriteCategoryRepo(session_getter=get_session_test).create(FavouriteCategoryDTO(user_id=2, cat_id=1))
+    await fav_cat_repo.create(burgers_1)
+    await fav_cat_repo.create(sushi_1)
+    await fav_cat_repo.create(burgers_2)
 
 
 @pytest.mark.parametrize(
-    "model, expected_cat_id, expectation",
+    "model, expected_cat_name, expectation",
     [
-        (FavouriteCategoryDTO(user_id=1, cat_id=1), 1, does_not_raise()),
-        (FavouriteCategoryDTO(user_id=1, cat_id=2), 2, does_not_raise()),
-        (FavouriteCategoryDTO(user_id=2, cat_id=1), 1, does_not_raise())
+        (burgers_1, "Бургеры", does_not_raise()),
+        (sushi_1, "Суши", does_not_raise()),
+        (pizza_2, "Пицца", does_not_raise())
     ]
 )
 async def test_create(
         model: FavouriteCategoryDTO,
-        expected_cat_id: int,
+        expected_cat_name: str,
         expectation: AbstractContextManager,
         create_db_values_categories,
         truncate_db
 ):
     async with expectation:
-        result = await FavouriteCategoryRepo(session_getter=get_session_test).create(model)
-        assert result.cat_id == expected_cat_id
+        result = await fav_cat_repo.create(model)
+        assert result.cat_name == expected_cat_name
 
 @pytest.mark.parametrize(
-    "model, expected_cat_id, expectation",
+    "model, expected_cat_name, expectation",
     [
-        (FavouriteCategoryDTO(user_id=1, cat_id=1), 1, does_not_raise()),
-        (FavouriteCategoryDTO(user_id=1, cat_id=2), 2, does_not_raise()),
-        (FavouriteCategoryDTO(user_id=2, cat_id=1), 1, does_not_raise())
+        (burgers_1, "Бургеры", does_not_raise()),
+        (sushi_1, "Суши", does_not_raise()),
+        (burgers_2, "Бургеры", does_not_raise())
     ]
 )
 async def test_delete(
         model: FavouriteCategoryDTO,
-        expected_cat_id: int,
+        expected_cat_name: str,
         expectation: AbstractContextManager,
         create_db_values_categories,
         truncate_db
 ):
     async with expectation:
-        result = await FavouriteCategoryRepo(session_getter=get_session_test).delete(model)
-        assert result.cat_id == expected_cat_id
+        result = await fav_cat_repo.delete(model)
+        assert result.cat_name == expected_cat_name
 
 @pytest.mark.parametrize(
     "model, expected_list_cat, expectation",
@@ -80,10 +86,10 @@ async def test_delete(
          [],
          does_not_raise()),
         (AllFavouriteCategoriesRequest(user_id=1),
-         [FavouriteCategoryResponse(cat_id=1), FavouriteCategoryResponse(cat_id=2)],
+         [FavouriteCategoryResponse(cat_name="Бургеры"), FavouriteCategoryResponse(cat_name="Суши")],
          does_not_raise()),
         (AllFavouriteCategoriesRequest(user_id=2),
-         [FavouriteCategoryResponse(cat_id=1)],
+         [FavouriteCategoryResponse(cat_name="Бургеры")],
          does_not_raise())
     ]
 )
@@ -95,7 +101,7 @@ async def test_get_all_user_fav_categories(
         truncate_db
 ):
     async with expectation:
-        result = await FavouriteCategoryRepo(session_getter=get_session_test).get_all_user_fav_categories(model)
+        result = await fav_cat_repo.get_all_user_fav_categories(model)
         assert result == expected_list_cat
 
 @pytest.mark.parametrize(
@@ -113,5 +119,5 @@ async def test_drop_all_user_fav_categories(
         truncate_db
 ):
     async with expectation:
-        result = await FavouriteCategoryRepo(session_getter=get_session_test).drop_all_user_fav_categories(model)
+        result = await fav_cat_repo.drop_all_user_fav_categories(model)
         assert expected_user_id == result.user_id
