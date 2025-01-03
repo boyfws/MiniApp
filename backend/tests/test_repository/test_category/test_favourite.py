@@ -6,16 +6,12 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
 from src.repository.category.favourite_categories import FavouriteCategoryRepo
 from src.repository.user import UserRepo
+from tests.common.category import burgers_1, sushi_1, burgers_2, pizza_2
 from tests.conftest import get_session_test, cleanup
 
 user_repo = UserRepo(session_getter=get_session_test)
 
 fav_cat_repo = FavouriteCategoryRepo(session_getter=get_session_test)
-
-burgers_1 = FavouriteCategoryDTO(user_id=1, cat_name="Бургеры")
-sushi_1 = FavouriteCategoryDTO(user_id=1, cat_name="Суши")
-pizza_2 = FavouriteCategoryDTO(user_id=2, cat_name="Пицца")
-burgers_2 = FavouriteCategoryDTO(user_id=2, cat_name="Бургеры")
 
 @pytest.fixture(scope="function")
 async def truncate_db():
