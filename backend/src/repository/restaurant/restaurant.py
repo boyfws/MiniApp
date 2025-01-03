@@ -65,7 +65,13 @@ class RestaurantRepo(TablesRepositoryInterface):
             model: RestaurantRequestFullModel
     ) -> None:
         async with self.session_getter() as session:
-            stmt = update(Restaurant).where(Restaurant.id == rest_id).values(**model.model_dump())
+            cat_repo = CategoryRepo(session_getter=self.session_getter)
+            category_list = [(await cat_repo.get(CategoryDTO(name=name))).cat_id for name in model.categories]
+
+            model_copy = model.model_dump()
+
+            model_copy['categories'] = category_list
+            stmt = update(Restaurant).where(Restaurant.id == rest_id).values(**model_copy)
             await session.execute(stmt)
 
     async def get(

@@ -16,7 +16,7 @@ def restaurants() -> tuple[RestaurantRequestFullModel, RestaurantRequestFullMode
                       "coordinates": [125.6, 10.1]},
                  "properties":
                      {"name": "Dinagat Islands"}},
-        categories=[1, 2]
+        categories=["Суши", "Пицца"]
     )
     rest2 = RestaurantRequestFullModel(
         owner_id=1,
@@ -32,13 +32,13 @@ def restaurants() -> tuple[RestaurantRequestFullModel, RestaurantRequestFullMode
                       "coordinates": [145.6, 80.1]},
                  "properties":
                      {"name": "Dinagat Islands"}},
-        categories=[1]
+        categories=["Суши"]
     )
     return rest1, rest2
 
 def get_search_result():
     return [
-        RestaurantGeoSearch(id=1, name='kfc', main_photo='photo.jpg', distance=9350589.51547688),
-        RestaurantGeoSearch(id=2, name='kfc', main_photo='photo.jpg', distance=9350589.51547688),
-        RestaurantGeoSearch(id=3, name='kfc', main_photo='photo.jpg', distance=9350589.51547688),
+        RestaurantGeoSearch(id=1, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=0),
+        RestaurantGeoSearch(id=2, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=0),
+        RestaurantGeoSearch(id=3, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=0),
     ]
