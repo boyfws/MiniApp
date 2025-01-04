@@ -1,11 +1,10 @@
-from typing import no_type_check, Optional
-
-from sqlalchemy import insert, delete, select, Row, text, exists
+from sqlalchemy import insert, delete, select, text
 
 from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
 from src.models.orm.schemas import Address, City, District, Street, Region
+from src.repository import get_item_from_stmt, get_row
+from src.repository.address import check_address_exists, get_point_str, get_coordinates, get_house_string
 from src.repository.interface import TablesRepositoryInterface
-from tests.common.address import get_addresses
 
 
 class AddressRepo(TablesRepositoryInterface):
@@ -26,86 +25,38 @@ class AddressRepo(TablesRepositoryInterface):
         async with self.session_getter() as session:
             # найти айди региона, используя название
             region_search_stmt = select(Region.id).where(Region.name == model.region)
-            region_search_result = await session.execute(region_search_stmt)
-            region_search_row: Optional[Row[tuple[int]]] = region_search_result.first()
-            if not region_search_row:
-                region_stmt = insert(Region).values(name=model.region).returning(Region.id)
-                region_result = await session.execute(region_stmt)
-                region_row: Optional[Row[tuple[int]]] = region_result.first()
-                if region_row is None: raise ValueError("No region ID returned from the database")
-                region_id = int(region_row[0])
-            else:
-                region_id = int(region_search_row[0])
+            region_stmt = insert(Region).values(name=model.region).returning(Region.id)
+            region_id = await get_item_from_stmt(session, region_search_stmt, region_stmt)
 
             # найти айди города, используя название
-            city_search_stmt = select(City.id).where(City.name == model.city).where(City.region_id == region_id)
-            city_search_result = await session.execute(city_search_stmt)
-            city_search_row: Optional[Row[tuple[int]]] = city_search_result.first()
-            if not city_search_row:  # если города нет в базе, то добавим
-                city_stmt = insert(City).values(name=model.city, region_id=region_id).returning(City.id)
-                city_result = await session.execute(city_stmt)
-                city_row: Optional[Row[tuple[int]]] = city_result.first()
-                if city_row is None: raise ValueError("No city ID returned from the database")
-                city_id = int(city_row[0])
-            else:
-                city_id = int(city_search_row[0])
+            city_search_stmt = select(City.id).where(City.region_id == region_id).where(City.name == model.city)
+            city_stmt = insert(City).values(name=model.city, region_id=region_id).returning(City.id)
+            city_id = await get_item_from_stmt(session, city_search_stmt, city_stmt)
 
             # найти айди района, используя айди города и название
             district_search_stmt = select(District.id).where(District.city_id == city_id).where(
                 District.name == model.district)
-            district_search_result = await session.execute(district_search_stmt)
-            district_search_row: Optional[Row[tuple[int]]] = district_search_result.first()
-            if not district_search_row:  # если района данного города нет, то добавим
-                district_stmt = insert(District).values(name=model.district, city_id=city_id).returning(District.id)
-                district_result = await session.execute(district_stmt)
-                district_row: Optional[Row[tuple[int]]] = district_result.first()
-                if district_row is None: raise ValueError("No district ID returned from the database")
-                district_id = int(district_row[0])
-            else:
-                district_id = int(district_search_row[0])
+            district_stmt = insert(District).values(name=model.district, city_id=city_id).returning(District.id)
+            district_id = await get_item_from_stmt(session, district_search_stmt, district_stmt)
 
-            # найти айди улицы, зная район
+            # найти айди улицы, используя район
             street_search_stmt = select(Street.id).where(Street.district_id == district_id).where(
                 Street.name == model.street)
-            street_search_result = await session.execute(street_search_stmt)
-            street_search_row = street_search_result.first()
-            if not street_search_row:
-                street_stmt = insert(Street).values(name=model.street, district_id=district_id).returning(Street.id)
-                street_result = await session.execute(street_stmt)
-                street_row: Optional[Row[tuple[int]]] = street_result.first()
-                if street_row is None:
-                    raise ValueError("No street ID returned from the database")
-                street_id = int(street_row[0])
-            else:
-                street_id = street_search_row.id
+            street_stmt = insert(Street).values(name=model.street, district_id=district_id).returning(Street.id)
+            street_id = await get_item_from_stmt(session, street_search_stmt, street_stmt)
 
-            # проверка, что такой адрес существует
-            point_str = model.location.split(';')[1].split('(')[1].split(')')[0]
-            coordinates = [float(x) for x in point_str.split()]
-            house_string = f"house = '{model.house}' AND " if model.house else ""
-            address_exists = await session.execute(
-                text(
-                    f"SELECT EXISTS ("
-                        f"SELECT 1 FROM address "
-                        f"WHERE street_id = {street_id} AND "
-                        f"{house_string}"
-                        f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
-                    f")"
-                )
-            )
-            address_exists_result = address_exists.first()
-            exist_flag = int(address_exists_result[0])
+            point_str = get_point_str(model.location)
+            coordinates = get_coordinates(point_str)
+            house_string = get_house_string(model.house)
+            exist_flag = await check_address_exists(session, model.location, model.house, street_id)
 
             if not exist_flag:
-                address_result = await session.execute(
-                    insert(Address).values(
+                address_insert_stmt = insert(Address).values(
                         street_id=street_id,
                         house=model.house,
                         location=model.location
                     ).returning(Address.id)
-                )
-                address_id_row: Optional[Row[tuple[int]]] = address_result.first()
-                address_id = int(address_id_row[0])
+                address_id = await get_row(session, address_insert_stmt)
             else:
                 address_stmt = (
                     f"SELECT id FROM address "
@@ -113,9 +64,7 @@ class AddressRepo(TablesRepositoryInterface):
                     f"{house_string}"
                     f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
                 )
-                address_id_res = await session.execute(text(address_stmt))
-                address_id_row: Optional[Row[tuple[int]]] = address_id_res.first()
-                address_id = int(address_id_row[0])
+                address_id = await get_row(session, text(address_stmt))
             return AddressResult(id=address_id)
         
     async def get(self, address_id: int) -> AddressDTO:
