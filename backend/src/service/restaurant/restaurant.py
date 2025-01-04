@@ -63,7 +63,7 @@ class RestaurantService:
         return await self.repo.get_name(rest_id)
 
     async def get_available_properties(self, rest_id: int) -> dict[str, bool]:
-        rest_properties: RestaurantRequestFullModel = await self.get(RestaurantRequestUsingID(rest_id=rest_id))
+        rest_properties: RestaurantRequestFullModel = await self.get(RestaurantRequestUsingID(rest_id=rest_id, user_id=1))
         list_properties = list(RestaurantRequestFullModel.__dict__['__annotations__'].keys())
         field_status = {}
         for field in list_properties:

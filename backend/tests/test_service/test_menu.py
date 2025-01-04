@@ -22,15 +22,15 @@ async def test_update_menu(model: MenuDTO, expected_id: int):
     "model, expected_dto",
     [
         (
-            RestaurantRequestUsingID(rest_id=1),
+            RestaurantRequestUsingID(rest_id=1, user_id=1),
             get_menus()[0]
         ),
         (
-            RestaurantRequestUsingID(rest_id=2),
+            RestaurantRequestUsingID(rest_id=2, user_id=1),
             get_menus()[1]
         ),
         (
-            RestaurantRequestUsingID(rest_id=4000),
+            RestaurantRequestUsingID(rest_id=4000, user_id=1),
             None
         )
     ]
@@ -45,9 +45,9 @@ async def test_get_menu_by_rest_id(
 @pytest.mark.parametrize(
     "model, expectation",
     [
-        (RestaurantRequestUsingID(rest_id=1), does_not_raise()),
-        (RestaurantRequestUsingID(rest_id=4), pytest.raises(AssertionError)),
-        (RestaurantRequestUsingID(rest_id=2), does_not_raise())
+        (RestaurantRequestUsingID(rest_id=1, user_id=1), does_not_raise()),
+        (RestaurantRequestUsingID(rest_id=4, user_id=1), pytest.raises(AssertionError)),
+        (RestaurantRequestUsingID(rest_id=2, user_id=1), does_not_raise())
     ]
 )
 async def test_delete_menu_by_rest_id(
