@@ -2,8 +2,9 @@ from sqlalchemy import insert, delete, select, text
 
 from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
 from src.models.orm.schemas import Address, City, District, Street, Region
-from src.repository import get_item_from_stmt, get_row
-from src.repository.address import check_address_exists, get_point_str, get_coordinates, get_house_string
+from src.repository import get_row
+from src.repository.address import check_address_exists, get_point_str, get_coordinates, get_house_string, \
+    _get_or_create_region, _get_or_create_city, _get_or_create_district, _get_or_create_street
 from src.repository.interface import TablesRepositoryInterface
 
 
@@ -23,27 +24,10 @@ class AddressRepo(TablesRepositoryInterface):
             model: AddressDTO
     ) -> AddressResult:
         async with self.session_getter() as session:
-            # найти айди региона, используя название
-            region_search_stmt = select(Region.id).where(Region.name == model.region)
-            region_stmt = insert(Region).values(name=model.region).returning(Region.id)
-            region_id = await get_item_from_stmt(session, region_search_stmt, region_stmt)
-
-            # найти айди города, используя название
-            city_search_stmt = select(City.id).where(City.region_id == region_id).where(City.name == model.city)
-            city_stmt = insert(City).values(name=model.city, region_id=region_id).returning(City.id)
-            city_id = await get_item_from_stmt(session, city_search_stmt, city_stmt)
-
-            # найти айди района, используя айди города и название
-            district_search_stmt = select(District.id).where(District.city_id == city_id).where(
-                District.name == model.district)
-            district_stmt = insert(District).values(name=model.district, city_id=city_id).returning(District.id)
-            district_id = await get_item_from_stmt(session, district_search_stmt, district_stmt)
-
-            # найти айди улицы, используя район
-            street_search_stmt = select(Street.id).where(Street.district_id == district_id).where(
-                Street.name == model.street)
-            street_stmt = insert(Street).values(name=model.street, district_id=district_id).returning(Street.id)
-            street_id = await get_item_from_stmt(session, street_search_stmt, street_stmt)
+            region_id = await _get_or_create_region(session, model.region)
+            city_id = await _get_or_create_city(session, model.city, region_id)
+            district_id = await _get_or_create_district(session, model.district, city_id)
+            street_id = await _get_or_create_street(session, model.street, district_id)
 
             point_str = get_point_str(model.location)
             coordinates = get_coordinates(point_str)
@@ -52,19 +36,20 @@ class AddressRepo(TablesRepositoryInterface):
 
             if not exist_flag:
                 address_insert_stmt = insert(Address).values(
-                        street_id=street_id,
-                        house=model.house,
-                        location=model.location
-                    ).returning(Address.id)
+                    street_id=street_id,
+                    house=model.house,
+                    location=model.location
+                ).returning(Address.id)
                 address_id = await get_row(session, address_insert_stmt)
             else:
-                address_stmt = (
+                address_stmt = text(
                     f"SELECT id FROM address "
                     f"WHERE street_id = {street_id} AND "
                     f"{house_string}"
                     f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
                 )
-                address_id = await get_row(session, text(address_stmt))
+                address_id = await get_row(session, address_stmt)
+
             return AddressResult(id=address_id)
         
     async def get(self, address_id: int) -> AddressDTO:
