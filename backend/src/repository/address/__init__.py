@@ -1,3 +1,5 @@
+from typing import NamedTuple, Any
+
 from sqlalchemy import text, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -73,3 +75,58 @@ async def _get_or_create_street(session: AsyncSession, street_name: str, distric
         street_name,
         district_id
     )
+
+class AddressData(NamedTuple):
+    street_id: int
+    house: str
+    location: str
+
+class StreetData(NamedTuple):
+    name: str
+    district_id: int
+
+class DistrictData(NamedTuple):
+    name: str
+    city_id: int
+
+class CityData(NamedTuple):
+    name: str
+    region_id: int
+
+class RegionData(NamedTuple):
+    name: str
+
+async def _execute_and_fetch_first(session: AsyncSession, stmt: Any, error_message: str) -> Any:
+    """Executes a statement and returns the first result or raises an exception."""
+    result = await session.execute(stmt)
+    row = result.first()
+    if not row:
+        raise Exception(error_message)
+    return row
+
+async def _get_address_data(session: AsyncSession, address_id: int) -> AddressData:
+    address_stmt = text(
+        f"SELECT street_id, house, ST_AsEWKT(location) AS location FROM address WHERE id = {address_id}::BIGINT"
+    )
+    address_row = await _execute_and_fetch_first(session, address_stmt, "Address not found")
+    return AddressData(address_row.street_id, address_row.house, address_row.location)
+
+async def _get_street_data(session: AsyncSession, street_id: int) -> StreetData:
+    street_stmt = select(Street.name, Street.district_id).where(Street.id == street_id)
+    street_row = await _execute_and_fetch_first(session, street_stmt, "Street not found")
+    return StreetData(street_row.name, street_row.district_id)
+
+async def _get_district_data(session: AsyncSession, district_id: int) -> DistrictData:
+    district_stmt = select(District.name, District.city_id).where(District.id == district_id)
+    district_row = await _execute_and_fetch_first(session, district_stmt, "District not found")
+    return DistrictData(district_row.name, district_row.city_id)
+
+async def _get_city_data(session: AsyncSession, city_id: int) -> CityData:
+    city_stmt = select(City.name, City.region_id).where(City.id == city_id)
+    city_row = await _execute_and_fetch_first(session, city_stmt, "City not found")
+    return CityData(city_row.name, city_row.region_id)
+
+async def _get_region_data(session: AsyncSession, region_id: int) -> RegionData:
+    region_stmt = select(Region.name).where(Region.id == region_id)
+    region_row = await _execute_and_fetch_first(session, region_stmt, "Region not found")
+    return RegionData(region_row[0])

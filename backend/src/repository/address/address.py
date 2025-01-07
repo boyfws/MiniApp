@@ -4,7 +4,8 @@ from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
 from src.models.orm.schemas import Address, City, District, Street, Region
 from src.repository import get_row
 from src.repository.address import check_address_exists, get_point_str, get_coordinates, get_house_string, \
-    _get_or_create_region, _get_or_create_city, _get_or_create_district, _get_or_create_street
+    _get_or_create_region, _get_or_create_city, _get_or_create_district, _get_or_create_street, _get_address_data, \
+    _get_street_data, _get_district_data, _get_city_data, _get_region_data
 from src.repository.interface import TablesRepositoryInterface
 
 
@@ -54,37 +55,17 @@ class AddressRepo(TablesRepositoryInterface):
         
     async def get(self, address_id: int) -> AddressDTO:
         async with self.session_getter() as session:
-            # address_stmt = select(Address.street_id, Address.house, Address.location).where(Address.id == address_id)
-            address_stmt = f"SELECT street_id, house, ST_AsEWKT(location) AS location FROM address WHERE id = {address_id}::BIGINT"
-            address_result = await session.execute(text(address_stmt))
-            address_row = address_result.first()
-            street_id, house, location = address_row.street_id, address_row.house, address_row.location
-            
-            # select street
-            street_stmt = select(Street.name, Street.district_id).where(Street.id == street_id)
-            street_result = await session.execute(street_stmt)
-            street, district_id = street_result.first()
-            
-            # select district
-            district_stmt = select(District.name, District.city_id).where(District.id == district_id)
-            district_result = await session.execute(district_stmt)
-            district, city_id = district_result.first()
-            
-            # select city
-            city_stmt = select(City.name, City.region_id).where(City.id == city_id)
-            city_result = await session.execute(city_stmt)
-            city, region_id = city_result.first()
-            
-            # select region
-            region_stmt = select(Region.name).where(Region.id == region_id)
-            region_result = await session.execute(region_stmt)
-            region = region_result.first()[0]
-            
+            address_data = await _get_address_data(session, address_id)
+            street_data = await _get_street_data(session, address_data.street_id)
+            district_data = await _get_district_data(session, street_data.district_id)
+            city_data = await _get_city_data(session, district_data.city_id)
+            region_data = await _get_region_data(session, city_data.region_id)
+
             return AddressDTO(
-                region=region, 
-                city=city, 
-                district=district,
-                street=street, 
-                house=str(house),
-                location=location
+                region=region_data.name,
+                city=city_data.name,
+                district=district_data.name,
+                street=street_data.name,
+                house=str(address_data.house),
+                location=address_data.location
             )
