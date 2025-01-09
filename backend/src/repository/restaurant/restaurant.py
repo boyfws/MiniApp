@@ -1,4 +1,3 @@
-import json
 from typing import Any, Sequence
 
 from asyncpg import Record # type: ignore
@@ -9,12 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
-                                       RestaurantGeoSearch, Point, RestaurantDTO,
+                                       RestaurantGeoSearch, Point,
                                        RestaurantRequestUpdateModel, GeoSearchResult)
 from src.models.orm.schemas import Restaurant
-from src.repository.category.category import CategoryRepo
 from src.repository.interface import TablesRepositoryInterface
-from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
 from src.repository.utils import _execute_and_fetch_first, create_owner_if_does_not_exist
 
 names = ['owner_id', 'name', 'main_photo', 'photos',
@@ -104,34 +101,6 @@ class RestaurantRepo(TablesRepositoryInterface):
                     from_attributes=True
                 ) for rest in await self._execute_select_stmt(session, self._get_by_owner_stmt(model))
             ]
-            # response = await session.execute(self._get_by_owner_stmt(model))
-            # rest_tuple: Record = response.fetchall()
-            # if not rest_tuple:
-            #     return []
-            #
-            # cat_repo = CategoryRepo(session_getter=self.session_getter)
-            #
-            # transformed_data = []
-            # for rest in rest_tuple:
-            #     rest_dict = {}
-            #     for col in rest._fields:
-            #         value = getattr(rest, col)
-            #         if col == 'categories':
-            #             rest_dict[col] = [await cat_repo.get_name(cat) for cat in value]
-            #         elif col == 'photos':
-            #             rest_dict[col] = value if value else []
-            #         elif col == 'address':
-            #             try:
-            #                 rest_dict[col] = json.loads(value)
-            #             except (json.JSONDecodeError, TypeError):
-            #                 rest_dict[col] = {}
-            #         elif col == 'location':
-            #             rest_dict[col] = str(value) if value else None  # handle NULL locations
-            #         else:
-            #             rest_dict[col] = value
-            #     rest_dict['favourite_flag'] = True
-            #     transformed_data.append(RestaurantDTO(**rest_dict))
-            # return transformed_data
 
     async def get_name(self, rest_id: int) -> str:
         async with self.session_getter() as session:
@@ -141,46 +110,12 @@ class RestaurantRepo(TablesRepositoryInterface):
 
     async def change_restaurant_property(self, rest_id: int, key: str, value: Any) -> None:
         async with self.session_getter() as session:
-            if key == "location":
-                stmt = (
-                    "UPDATE restaurants "
-                    f"SET {key} = {value} "
-                    f"WHERE id = {rest_id};"
-                )
-                await session.execute(text(stmt))
-            if isinstance(value, list):
-                stmt = (
-                    "UPDATE restaurants "
-                    f'SET {key} = ARRAY{value} '
-                    f"WHERE id = {rest_id};"
-                )
-            elif isinstance(value, str):
-                stmt = (
-                    "UPDATE restaurants "
-                    f"SET {key} = '{value}' "
-                    f"WHERE id = {rest_id};"
-                )
-            elif isinstance(value, dict):
-                ddd = {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [34, 34]
-                    },
-                    "properties": {
-                        "city": "Saint Petersburg",
-                        "street": "Nevsky Prospect",
-                        "house": "28",
-                    }
-                }
-                stmt = (
-                    "UPDATE restaurants "
-                    f'SET {key} = {ddd}::JSONB '
-                    f"WHERE id = {rest_id};"
-                )
-            else:
-                raise ValueError("введите правильный тип (str, dict, list)")
-            await session.execute(text(stmt))
+            await self._execute_update(rest_id, key, value, session)
+
+    @staticmethod
+    async def _execute_update(rest_id: int, key: str, value: Any, session: AsyncSession) -> None:
+        stmt = update(Restaurant).where(Restaurant.id == rest_id).values(**{key: value})
+        await session.execute(stmt)
 
     @staticmethod
     def _get_search_stmt(model) -> Select:
