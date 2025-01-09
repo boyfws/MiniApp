@@ -22,20 +22,8 @@ class RestaurantService:
             self,
             model: RestaurantRequestFullModel
     ) -> RestaurantResult:
-        model_data = model.model_dump()
-        category_ids = await self._get_category_ids(model.categories)
-        model_data['categories'] = category_ids
-        return await self.restaurant_repo.create(
-            RestaurantRequestUpdateModel.model_validate(model_data, from_attributes=True)
-        )
-
-    async def _get_category_ids(self, category_names: List[str]) -> List[int]:
-         category_ids = []
-         for name in category_names:
-            category_dto = CategoryDTO(name=name)
-            category = await self.cat_repo.get(category_dto)
-            category_ids.append(category.cat_id)
-         return category_ids
+        update_model = await self._get_update_model(model)
+        return await self.restaurant_repo.create(update_model)
 
     async def delete(
             self,
@@ -48,7 +36,8 @@ class RestaurantService:
             rest_id: int,
             model: RestaurantRequestFullModel
     ) -> None:
-        await self.restaurant_repo.update(rest_id=rest_id, model=model)
+        update_model = await self._get_update_model(model)
+        await self.restaurant_repo.update(rest_id=rest_id, model=update_model)
 
     async def get(
             self,
@@ -92,3 +81,16 @@ class RestaurantService:
     async def change_restaurant_property(self, rest_id: int, key: str, value: str) -> None:
         await self.restaurant_repo.change_restaurant_property(rest_id, key, value)
 
+    async def _get_category_ids(self, category_names: List[str]) -> List[int]:
+         category_ids = []
+         for name in category_names:
+            category_dto = CategoryDTO(name=name)
+            category = await self.cat_repo.get(category_dto)
+            category_ids.append(category.cat_id)
+         return category_ids
+
+    async def _get_update_model(self, model: RestaurantRequestFullModel) -> RestaurantRequestUpdateModel:
+        model_data = model.model_dump()
+        category_ids = await self._get_category_ids(model.categories)
+        model_data['categories'] = category_ids
+        return RestaurantRequestUpdateModel.model_validate(model_data, from_attributes=True)

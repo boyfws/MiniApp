@@ -63,7 +63,7 @@ async def test_update(create_categories_and_owner, truncate_db):
         # создать ресторан
         inserted_id = await rest_repo.create(create()[0])
         # обновить его
-        await rest_repo.update(inserted_id.rest_id, restaurants()[1])
+        await rest_repo.update(inserted_id.rest_id, create()[1])
 
 async def test_get(create_categories_and_owner, truncate_db):
     with does_not_raise():
