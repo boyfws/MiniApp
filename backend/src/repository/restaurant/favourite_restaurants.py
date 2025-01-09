@@ -4,7 +4,7 @@ from sqlalchemy import select, insert, delete, Row, exists
 from src.models.dto.favourites import (FavouriteRestaurantResponse, FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest)
 from src.models.orm.schemas import FavRestForUser
 from src.repository.interface import TablesRepositoryInterface
-from src.repository.user import UserRepo
+from src.repository.utils import create_user_if_does_not_exist, _execute_and_fetch_first
 
 
 class FavouriteRestaurantRepo(TablesRepositoryInterface):
@@ -27,15 +27,9 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
             model: FavouriteRestaurantDTO
     ) -> FavouriteRestaurantResponse:
         async with self.session_getter() as session:
-            user_repo = UserRepo(session_getter=self.session_getter)
-            is_user = await user_repo.is_user(model.user_id)
-            if not is_user:
-                await user_repo.create_user(model.user_id)
+            await create_user_if_does_not_exist(session_getter=self.session_getter, user_id=model.user_id)
             stmt = insert(FavRestForUser).values(**model.dict()).returning(FavRestForUser.rest_id)
-            response = await session.execute(stmt)
-            row: Optional[Row[tuple[int]]] = response.first()
-            if row is None:
-                raise ValueError("No restaurant ID returned from the database")
+            row = await _execute_and_fetch_first(session, stmt, "No restaurant created")
             return FavouriteRestaurantResponse(rest_id=int(row[0]))
 
     async def get_all_user_fav_restaurants(
@@ -60,18 +54,9 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
 
     async def is_favourite(self, user_id: int, rest_id: int) -> bool:
         async with (self.session_getter() as session):
-
-            # если юзера раньше не было в базе, то добавим
-            user_repo = UserRepo(session_getter=self.session_getter)
-            is_user = await user_repo.is_user(user_id)
-            if not is_user:
-                await user_repo.create_user(user_id)
-
+            await create_user_if_does_not_exist(session_getter=self.session_getter, user_id=user_id)
             stmt = select(exists().where(
                 FavRestForUser.user_id == user_id, FavRestForUser.rest_id == rest_id
             ))
-            result = await session.execute(stmt)
-            row: Optional[Row[tuple[int]]] = result.first()
-            if row is None:
-                raise ValueError("Nothing returned from the db")
+            row = await _execute_and_fetch_first(session, stmt, "Something went wrong")
             return row[0]
