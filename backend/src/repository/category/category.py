@@ -1,10 +1,9 @@
-from typing import Optional
-
 from src.models.dto.category import CategoryDTO, CategoryResult
 from src.models.orm.schemas import Category
-from sqlalchemy import select, insert, Row
+from sqlalchemy import select
 
 from src.repository.interface import TablesRepositoryInterface
+from src.repository.utils import _execute_and_fetch_first
 
 
 class CategoryRepo(TablesRepositoryInterface):
@@ -15,10 +14,7 @@ class CategoryRepo(TablesRepositoryInterface):
     ) -> CategoryResult:
         async with self.session_getter() as session:
             stmt = select(Category.id).where(Category.name == model.name)
-            cat = await session.execute(stmt)
-            row: Optional[Row[tuple[int]]] = cat.first()
-            if row is None:
-                raise ValueError("No category ID returned from the database")
+            row = await _execute_and_fetch_first(session, stmt,"No category found")
             return CategoryResult(cat_id=int(row[0]))
 
     async def get_name(
@@ -27,10 +23,7 @@ class CategoryRepo(TablesRepositoryInterface):
     ) -> str:
         async with self.session_getter() as session:
             stmt = select(Category.name).where(Category.id == cat_id)
-            cat_name = await session.execute(stmt)
-            row: Optional[Row[tuple[int]]] = cat_name.first()
-            if row is None:
-                raise ValueError("No category name returned from the databases")
+            row = await _execute_and_fetch_first(session, stmt, "No category name found")
             return row[0]
 
     async def get_all(self) -> list[CategoryDTO]:

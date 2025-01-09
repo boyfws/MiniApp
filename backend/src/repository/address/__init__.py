@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.orm.schemas import Region, City, District, Street
 from src.repository import get_or_create_item
+from src.repository.utils import _execute_and_fetch_first
 
 
 def get_point_str(location: str) -> str:
@@ -95,14 +96,6 @@ class CityData(NamedTuple):
 
 class RegionData(NamedTuple):
     name: str
-
-async def _execute_and_fetch_first(session: AsyncSession, stmt: Any, error_message: str) -> Any:
-    """Executes a statement and returns the first result or raises an exception."""
-    result = await session.execute(stmt)
-    row = result.first()
-    if not row:
-        raise Exception(error_message)
-    return row
 
 async def _get_address_data(session: AsyncSession, address_id: int) -> AddressData:
     address_stmt = text(
