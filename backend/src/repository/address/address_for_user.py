@@ -34,18 +34,13 @@ class AddressForUserRepo(TablesRepositoryInterface):
                 await user_repo.create_user(user_id)
 
             address_exists = await session.execute(
-                text(
-                    f"SELECT EXISTS ("
-                        f"SELECT 1 FROM addresses_for_user "
-                        f"WHERE user_id = {user_id} AND address_id = {address_id}"
-                    f")"
-                )
+                select(AddressesForUser)
+                .where(AddressesForUser.user_id == user_id)
+                .where(AddressesForUser.address_id == address_id)
             )
+            address_exists_result = address_exists.scalar_one_or_none()
 
-            address_exists_result = address_exists.first()
-            exist_flag = int(address_exists_result[0])
-
-            if not exist_flag:
+            if not address_exists_result:
                 stmt = insert(AddressesForUser).values(user_id=user_id, address_id=address_id)
                 await session.execute(stmt)
 
