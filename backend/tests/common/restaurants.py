@@ -1,4 +1,5 @@
-from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantGeoSearch, RestaurantRequestUpdateModel
+from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantGeoSearch, RestaurantRequestUpdateModel, \
+    GeoSearchResult
 
 
 def create() -> tuple[RestaurantRequestUpdateModel, RestaurantRequestUpdateModel]:
@@ -71,9 +72,16 @@ def restaurants() -> tuple[RestaurantRequestFullModel, RestaurantRequestFullMode
     )
     return rest1, rest2
 
+def get_search_result_from_repo():
+    return [
+        GeoSearchResult(id=1, name='kfc', main_photo='photo.jpg', distance=0, category=[2, 3], rating=None),
+        GeoSearchResult(id=2, name='kfc', main_photo='photo.jpg', distance=0, category=[2, 3], rating=None),
+        GeoSearchResult(id=3, name='kfc', main_photo='photo.jpg', distance=0, category=[2, 3], rating=None)
+    ]
+
 def get_search_result():
     return [
-        RestaurantGeoSearch(id=1, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=0),
-        RestaurantGeoSearch(id=2, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=0),
-        RestaurantGeoSearch(id=3, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=0),
+        RestaurantGeoSearch(id=1, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=None),
+        RestaurantGeoSearch(id=2, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=None),
+        RestaurantGeoSearch(id=3, name='kfc', main_photo='photo.jpg', distance=0, category=["Суши", "Пицца"], favourite_flag=False, rating=None),
     ]

@@ -8,7 +8,7 @@ from src.repository.restaurant.restaurant import RestaurantRepo
 import pytest
 from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
-from tests.common.restaurants import restaurants, get_search_result, create
+from tests.common.restaurants import restaurants, get_search_result, create, get_search_result_from_repo
 from tests.sql_connector import get_session_test
 
 rest_repo = RestaurantRepo(session_getter=get_session_test)
@@ -70,9 +70,7 @@ async def test_get(create_categories_and_owner, truncate_db):
         # создать ресторан
         inserted_id = await rest_repo.create(create()[0])
         rest = await rest_repo.get(RestaurantRequestUsingID(rest_id=inserted_id.rest_id, user_id=1))
-        expected = restaurants()[0].model_dump()
-        expected["favourite_flag"] = False
-        assert rest.model_dump() == expected # возвращенная схема должна быть равна той, что вставили
+        assert rest == create()[0] # возвращенная схема должна быть равна той, что вставили
 
 async def test_get_by_geo(create_categories_and_owner, truncate_db):
     with does_not_raise():
@@ -81,8 +79,15 @@ async def test_get_by_geo(create_categories_and_owner, truncate_db):
         await rest_repo.create(create()[0])
         await rest_repo.create(create()[0])
         # получить список ресторанов 125.6, 10.1
-        rest_list = await rest_repo.get_by_geo(model=Point(lon=125.6, lat=10.1), user_id=1)
-        assert rest_list == get_search_result()
+        rest_list = await rest_repo.get_by_geo(model=Point(lon=125.6, lat=10.1))
+        assert rest_list == get_search_result_from_repo()
+
+async def test_get_by_geo_empty(create_categories_and_owner, truncate_db):
+    with does_not_raise():
+        # создали 3 ресторана
+        await rest_repo.create(create()[1])
+        rest_list = await rest_repo.get_by_geo(model=Point(lon=125.6, lat=10.1))
+        assert rest_list == []
 
 async def test_get_by_geo_and_name(create_categories_and_owner, truncate_db):
     with does_not_raise():
@@ -92,10 +97,9 @@ async def test_get_by_geo_and_name(create_categories_and_owner, truncate_db):
         await rest_repo.create(create()[0])
         # получить список ресторанов
         rest_list = await RestaurantRepo(session_getter=get_session_test).get_by_geo_and_name(
-            model=RestaurantRequestUsingGeoPointAndName(point=Point(lon=125.6, lat=10.1), name_pattern='kf'),
-            user_id=1
+            model=RestaurantRequestUsingGeoPointAndName(point=Point(lon=125.6, lat=10.1), name_pattern='kf')
         )
-        assert rest_list == get_search_result()
+        assert rest_list == get_search_result_from_repo()
 
 # async def test_get_by_owner(create_categories_and_owner, truncate_db):
 #     with does_not_raise():

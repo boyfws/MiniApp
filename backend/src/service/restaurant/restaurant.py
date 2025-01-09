@@ -7,8 +7,9 @@ from src.database.sql_session import get_session
 from src.models.dto.category import CategoryDTO
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, \
-    RestaurantGeoSearch, Point, RestaurantDTO, RestaurantRequestUpdateModel
+    RestaurantGeoSearch, Point, RestaurantDTO, RestaurantRequestUpdateModel, GeoSearchResult
 from src.repository.category import CategoryRepo
+from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
 from src.repository.restaurant.restaurant import RestaurantRepo
 
 
@@ -16,6 +17,7 @@ class RestaurantService:
     def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]] = get_session) -> None:
         self.restaurant_repo = RestaurantRepo(session_getter=session_getter)
         self.cat_repo = CategoryRepo(session_getter=session_getter)
+        self.fav_rest_repo = FavouriteRestaurantRepo(session_getter=session_getter)
 
 
     async def create(
@@ -43,7 +45,12 @@ class RestaurantService:
             self,
             model: RestaurantRequestUsingID
     ) -> RestaurantDTO:
-        return await self.restaurant_repo.get(model)
+        data_from_repo = await self.restaurant_repo.get(model)
+        # добавляем бизнес логики
+        data = data_from_repo.model_dump()
+        data['favourite_flag'] = await self.fav_rest_repo.is_favourite(model.rest_id, model.user_id)
+        data['categories'] = await self._get_category_names(data_from_repo.categories)
+        return RestaurantDTO.model_validate(data, from_attributes=True)
 
     async def get_by_owner(
             self,
@@ -56,14 +63,26 @@ class RestaurantService:
             user_id: int,
             model: Point
     ) -> list[RestaurantGeoSearch]:
-        return await self.restaurant_repo.get_by_geo(model=model, user_id=user_id)
+        data_from_repo = await self.restaurant_repo.get_by_geo(model=model)
+        return [
+            RestaurantGeoSearch.model_validate(
+                await self._get_transformed_search_result(data, user_id),
+                from_attributes=True
+            ) for data in data_from_repo
+        ]
 
     async def get_by_geo_and_name(
             self,
             user_id: int,
             model: RestaurantRequestUsingGeoPointAndName
     ) -> list[RestaurantGeoSearch]:
-        return await self.restaurant_repo.get_by_geo_and_name(model=model, user_id=user_id)
+        data_from_repo = await self.restaurant_repo.get_by_geo_and_name(model=model)
+        return [
+            RestaurantGeoSearch.model_validate(
+                await self._get_transformed_search_result(data, user_id),
+                from_attributes=True
+            ) for data in data_from_repo
+        ]
 
     async def get_name(self, rest_id: int) -> str:
         return await self.restaurant_repo.get_name(rest_id)
@@ -89,8 +108,26 @@ class RestaurantService:
             category_ids.append(category.cat_id)
          return category_ids
 
+    async def _get_category_names(self, category_ids: List[int]) -> List[str]:
+        category_names = []
+        for num in category_ids:
+            name = await self.cat_repo.get_name(int(num))
+            category_names.append(name)
+        return category_names
+
     async def _get_update_model(self, model: RestaurantRequestFullModel) -> RestaurantRequestUpdateModel:
         model_data = model.model_dump()
         category_ids = await self._get_category_ids(model.categories)
         model_data['categories'] = category_ids
         return RestaurantRequestUpdateModel.model_validate(model_data, from_attributes=True)
+
+    async def _get_transformed_search_result(self, model: GeoSearchResult, user_id: int) -> RestaurantGeoSearch:
+        return RestaurantGeoSearch(
+            id=model.id,
+            name=model.name,
+            main_photo=model.main_photo,
+            distance=round(model.distance / 1000, 2),
+            favourite_flag=await self.fav_rest_repo.is_favourite(user_id=user_id, rest_id=model.id),
+            category=await self._get_category_names(model.category),
+            rating=model.rating
+        )

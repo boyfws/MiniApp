@@ -1,19 +1,18 @@
-import asyncio
 import json
-from typing import Optional, Any
+from typing import Any
 
 from asyncpg import Record # type: ignore
-from sqlalchemy import select, insert, delete, update, Row, text
+from geoalchemy2 import Geography
+from geoalchemy2.functions import ST_SetSRID, ST_MakePoint
+from sqlalchemy import select, insert, delete, update, Row, text, func, cast
 
-from src.models.dto.category import CategoryDTO
 from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
-                                       RestaurantRequestFullModel, RestaurantGeoSearch, Point, RestaurantDTO,
-                                       RestaurantRequestUpdateModel)
+                                       RestaurantGeoSearch, Point, RestaurantDTO,
+                                       RestaurantRequestUpdateModel, GeoSearchResult)
 from src.models.orm.schemas import Restaurant
 from src.repository.category.category import CategoryRepo
 from src.repository.interface import TablesRepositoryInterface
-from src.repository.owner import OwnerRepo
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
 from src.repository.utils import _execute_and_fetch_first, create_owner_if_does_not_exist
 
@@ -23,6 +22,10 @@ names = ['owner_id', 'name', 'main_photo', 'photos',
          'ext_serv_reviews_1', 'ext_serv_reviews_2', 'ext_serv_reviews_3',
          'tg_link', 'inst_link', 'vk_link', 'orig_phone', 'wapp_phone',
          'location', 'address', 'categories']
+
+names_search = [
+    'id', 'name', 'main_photo', 'category', 'rating', 'distance'
+]
 
 class RestaurantRepo(TablesRepositoryInterface):
 
@@ -57,123 +60,85 @@ class RestaurantRepo(TablesRepositoryInterface):
     async def get(
             self,
             model: RestaurantRequestUsingID
-    ) -> RestaurantDTO:
+    ) -> RestaurantRequestUpdateModel:
         async with self.session_getter() as session:
-            query = (
-                 "SELECT "
-                 "owner_id, name, main_photo, photos, "
-                 "ext_serv_link_1, ext_serv_link_2, ext_serv_link_3,"
-                 "ext_serv_rank_1, ext_serv_rank_2, ext_serv_rank_3,"
-                 "ext_serv_reviews_1, ext_serv_reviews_2, ext_serv_reviews_3,"
-                 "tg_link, inst_link, vk_link, orig_phone, wapp_phone, "
-                 "ST_AsEWKT(location) AS location, "
-                 "address, categories "
-                 f"FROM restaurants WHERE id = {model.rest_id}"
-            )
-            response = await session.execute(text(query))
-            rest_tuple: Record = response.first()
-            if not rest_tuple:
-                raise ValueError(f"no restaurant with id {model.rest_id}")
-            rest_model = dict(zip(names, rest_tuple))
-
-            cat_repo = CategoryRepo(session_getter=self.session_getter)
-            fav_rest_repo = FavouriteRestaurantRepo(session_getter=self.session_getter)
-
-            rest_model['favourite_flag'] = await fav_rest_repo.is_favourite(model.rest_id, model.user_id)
-            rest_model['categories'] = [await cat_repo.get_name(int(num)) for num in rest_model['categories']]
-            return RestaurantDTO(**rest_model)
+            stmt = select(
+                Restaurant.owner_id,
+                Restaurant.name,
+                Restaurant.main_photo,
+                Restaurant.photos,
+                Restaurant.ext_serv_link_1,
+                Restaurant.ext_serv_link_2,
+                Restaurant.ext_serv_link_3,
+                Restaurant.ext_serv_rank_1,
+                Restaurant.ext_serv_rank_2,
+                Restaurant.ext_serv_rank_3,
+                Restaurant.ext_serv_reviews_1,
+                Restaurant.ext_serv_reviews_2,
+                Restaurant.ext_serv_reviews_3,
+                Restaurant.tg_link,
+                Restaurant.inst_link,
+                Restaurant.vk_link,
+                Restaurant.orig_phone,
+                Restaurant.wapp_phone,
+                func.ST_AsEWKT(Restaurant.location).label("location"),
+                Restaurant.address,
+                Restaurant.categories,
+            ).where(Restaurant.id == model.rest_id)
+            row = await _execute_and_fetch_first(session, stmt, "No restaurant with such id")
+            rest_model = dict(zip(names, row))
+            return RestaurantRequestUpdateModel.model_validate(rest_model, from_attributes=True)
 
     async def get_by_geo(
             self,
-            user_id: int,
             model: Point
-    ) -> list[RestaurantGeoSearch]:
+    ) -> list[GeoSearchResult]:
         async with self.session_getter() as session:
-            query = (
-                "SELECT "
-                    "id, name, main_photo, categories, ext_serv_rank_1, "
-                    "ST_Distance("
-                        "location, "
-                        f"ST_SetSRID(ST_MakePoint({model.lon}, {model.lat}), 4326)::geography"
-                    ") AS distance "
-                "FROM restaurants "
-                "WHERE "
-                    "ST_DWithin("
-                        "location, "
-                        f"ST_SetSRID(ST_MakePoint({model.lon}, {model.lat}), 4326)::geography, "
-                        "15000 " # расстояние в метрах
-                    ") "
-                "ORDER BY distance "
-                "LIMIT 100;"
+            point = ST_SetSRID(ST_MakePoint(model.lon, model.lat), 4326)
+            distance = func.ST_Distance(Restaurant.location, cast(point, Geography)).label("distance")
+            stmt = (
+                select(
+                    Restaurant.id, Restaurant.name, Restaurant.main_photo,
+                    Restaurant.categories, Restaurant.ext_serv_rank_1, distance,
+                )
+                .where(func.ST_DWithin(Restaurant.location, cast(point, Geography), 15000))
+                .order_by(distance)
+                .limit(100)
             )
-            result = await session.execute(text(query))
+            result = await session.execute(stmt)
             rest_tuple: Record = result.fetchall()
-            if not rest_tuple:
-                return []
-
-            cat_repo = CategoryRepo(session_getter=self.session_getter)
-            fav_rest_repo = FavouriteRestaurantRepo(session_getter=self.session_getter)
-
-            async def transform_row(row):
-                return {
-                    "id": row.id,
-                    "name": row.name,
-                    "main_photo": row.main_photo,
-                    "distance": round(row.distance / 1000, 2),
-                    'favourite_flag': await fav_rest_repo.is_favourite(user_id=user_id, rest_id=row.id),
-                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories],
-                    'rating': row.ext_serv_rank_1 if row.ext_serv_rank_1 else 0
-                }
-
-            transformed_data = [await transform_row(rest) for rest in rest_tuple]
-            return [RestaurantGeoSearch.model_validate(data, from_attributes=True) for data in transformed_data]
+            return [
+                GeoSearchResult.model_validate(
+                    dict(zip(names_search, rest)),
+                    from_attributes=True
+                ) for rest in rest_tuple
+            ]
 
     async def get_by_geo_and_name(
             self,
-            user_id: int,
             model: RestaurantRequestUsingGeoPointAndName
     ) -> list[RestaurantGeoSearch]:
         async with self.session_getter() as session:
-            query = (
-                "SELECT "
-                    "id, name, main_photo, categories, ext_serv_rank_1, "
-                    "ST_Distance("
-                        "location, "
-                        f"ST_SetSRID(ST_MakePoint({model.point.lon}, {model.point.lat}), 4326)::geography"
-                    ") AS distance "
-                "FROM restaurants "
-                "WHERE "
-                    "ST_DWithin("
-                        "location, "
-                        f"ST_SetSRID(ST_MakePoint({model.point.lon}, {model.point.lat}), 4326)::geography, "
-                        "15000 "  # расстояние в метрах
-                    ") "
-                "AND "
-                    f"name % '{model.name_pattern}'"
-                "ORDER BY distance "
-                "LIMIT 100;"
+            point = ST_SetSRID(ST_MakePoint(model.point.lon, model.point.lat), 4326)
+            distance = func.ST_Distance(Restaurant.location, cast(point, Geography)).label("distance")
+            stmt = (
+                select(
+                    Restaurant.id, Restaurant.name, Restaurant.main_photo,
+                    Restaurant.categories, Restaurant.ext_serv_rank_1, distance,
+                )
+                .where(func.ST_DWithin(Restaurant.location, cast(point, Geography), 15000))
+                .where(text(f"name % '{model.name_pattern}'"))
+                .order_by(distance)
+                .limit(100)
             )
-            result = await session.execute(text(query))
+            result = await session.execute(stmt)
             rest_tuple: Record = result.fetchall()
-            if not rest_tuple:
-                return []
-
-            cat_repo = CategoryRepo(session_getter=self.session_getter)
-            fav_rest_repo = FavouriteRestaurantRepo(session_getter=self.session_getter)
-
-            async def transform_row(row):
-                return {
-                    "id": row.id,
-                    "name": row.name,
-                    "main_photo": row.main_photo,
-                    "distance": round(row.distance / 1000, 2),
-                    'favourite_flag': await fav_rest_repo.is_favourite(row.id, user_id),
-                    "category": [await cat_repo.get_name(cat_id=int(cat)) for cat in row.categories],
-                    'rating': row.ext_serv_rank_1 if row.ext_serv_rank_1 else 0
-                }
-
-            transformed_data = [await transform_row(rest) for rest in rest_tuple]
-            return [RestaurantGeoSearch.model_validate(data, from_attributes=True) for data in transformed_data]
+            return [
+                GeoSearchResult.model_validate(
+                    dict(zip(names_search, rest)),
+                    from_attributes=True
+                ) for rest in rest_tuple
+            ]
 
 
     async def get_by_owner(

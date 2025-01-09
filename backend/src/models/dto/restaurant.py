@@ -56,12 +56,17 @@ class RestaurantResult(BaseModel):
     rest_id: int
 
 
-class RestaurantGeoSearch(BaseModel):
+class RestaurantGeoDTO(BaseModel):
     id: int
     name: str
     main_photo: str
     distance: float
+    rating: Optional[float] = Field(None, ge=0, le=10)
+
+class GeoSearchResult(RestaurantGeoDTO):
+    category: list[int]
+
+
+class RestaurantGeoSearch(RestaurantGeoDTO):
     category: list[str]
     favourite_flag: bool
-    rating: float
-
