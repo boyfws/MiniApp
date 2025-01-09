@@ -2,6 +2,7 @@ from typing import Any, Callable
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.repository.owner import OwnerRepo
 from src.repository.user import UserRepo
 
 
@@ -19,3 +20,10 @@ async def create_user_if_does_not_exist(session_getter: Callable[[], AsyncSessio
     is_user = await user_repo.is_user(user_id)
     if not is_user:
         await user_repo.create_user(user_id)
+
+async def create_owner_if_does_not_exist(session_getter: Callable[[], AsyncSession], owner_id: int) -> None:
+    # если владельца раньше не было в базе, то добавим
+    user_repo = OwnerRepo(session_getter=session_getter)
+    is_user = await user_repo.is_owner(owner_id)
+    if not is_user:
+        await user_repo.create_owner(owner_id)

@@ -12,6 +12,7 @@ from src.repository.owner import OwnerRepo
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
 from src.repository.restaurant.restaurant import RestaurantRepo
 from src.repository.user import UserRepo
+from tests.common.restaurants import create
 from tests.sql_connector import get_session_test
 from tests.test_repository.restaurants.test_restaurant import restaurants
 
@@ -34,7 +35,7 @@ async def truncate_db_rest():
 
 @pytest.fixture(scope="function")
 async def create_db_values_restaurants():
-    rest_1, rest_2 = restaurants()
+    rest_1, rest_2 = create()
     await OwnerRepo(session_getter=get_session_test).create_owner(1)
     await user_repo.create_user(1)
     await user_repo.create_user(2)

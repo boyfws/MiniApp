@@ -17,7 +17,7 @@ class RestaurantRequestUsingID(BaseModel):
     rest_id: int
     user_id: int
 
-class RestaurantRequestFullModel(BaseModel):
+class RestaurantRequestBaseModel(BaseModel):
     owner_id: int = Field(..., ge=1)  # Assuming owner ID is always greater than 0
     name: str = Field(..., min_length=1, max_length=100)
     main_photo: str = Field(..., min_length=1, max_length=1000)
@@ -38,7 +38,15 @@ class RestaurantRequestFullModel(BaseModel):
     wapp_phone: str = Field(..., min_length=11, max_length=11)
     location: str
     address: dict[str, Any] = Field(...)
+
+
+class RestaurantRequestFullModel(RestaurantRequestBaseModel):
     categories: List[str]
+
+
+class RestaurantRequestUpdateModel(RestaurantRequestBaseModel):
+    categories: List[int]
+
 
 class RestaurantDTO(RestaurantRequestFullModel):
     favourite_flag: bool

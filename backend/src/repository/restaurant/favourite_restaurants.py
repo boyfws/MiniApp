@@ -28,7 +28,7 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
     ) -> FavouriteRestaurantResponse:
         async with self.session_getter() as session:
             await create_user_if_does_not_exist(session_getter=self.session_getter, user_id=model.user_id)
-            stmt = insert(FavRestForUser).values(**model.dict()).returning(FavRestForUser.rest_id)
+            stmt = insert(FavRestForUser).values(**model.model_dump()).returning(FavRestForUser.rest_id)
             row = await _execute_and_fetch_first(session, stmt, "No restaurant created")
             return FavouriteRestaurantResponse(rest_id=int(row[0]))
 

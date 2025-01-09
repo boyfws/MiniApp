@@ -8,12 +8,14 @@ from sqlalchemy import select, insert, delete, update, Row, text
 from src.models.dto.category import CategoryDTO
 from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
-                                       RestaurantRequestFullModel, RestaurantGeoSearch, Point, RestaurantDTO)
+                                       RestaurantRequestFullModel, RestaurantGeoSearch, Point, RestaurantDTO,
+                                       RestaurantRequestUpdateModel)
 from src.models.orm.schemas import Restaurant
 from src.repository.category.category import CategoryRepo
 from src.repository.interface import TablesRepositoryInterface
 from src.repository.owner import OwnerRepo
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
+from src.repository.utils import _execute_and_fetch_first, create_owner_if_does_not_exist
 
 names = ['owner_id', 'name', 'main_photo', 'photos',
          'ext_serv_link_1', 'ext_serv_link_2', 'ext_serv_link_3',
@@ -26,28 +28,12 @@ class RestaurantRepo(TablesRepositoryInterface):
 
     async def create(
             self,
-            model: RestaurantRequestFullModel
+            model: RestaurantRequestUpdateModel
     ) -> RestaurantResult:
         async with self.session_getter() as session:
-
-            # если владельца раньше не было в базе, то добавим
-            user_repo = OwnerRepo(session_getter=self.session_getter)
-            is_user = await user_repo.is_owner(model.owner_id)
-            if not is_user:
-                await user_repo.create_owner(model.owner_id)
-
-            cat_repo = CategoryRepo(session_getter=self.session_getter)
-            category_list = [(await cat_repo.get(CategoryDTO(name=name))).cat_id for name in model.categories]
-
-            model_copy = model.model_dump()
-
-            model_copy['categories'] = category_list
-
-            stmt = insert(Restaurant).values(**model_copy).returning(Restaurant.id)
-            result = await session.execute(stmt)
-            row: Optional[Row[tuple[int]]] = result.first()
-            if not row:
-                raise ValueError('no id returned')
+            await create_owner_if_does_not_exist(self.session_getter, model.owner_id)
+            stmt = insert(Restaurant).values(**model.model_dump()).returning(Restaurant.id)
+            row = await _execute_and_fetch_first(session, stmt, "Something went wrong")
             return RestaurantResult(rest_id=int(row[0]))
 
     async def delete(
@@ -244,10 +230,7 @@ class RestaurantRepo(TablesRepositoryInterface):
     async def get_name(self, rest_id: int) -> str:
         async with self.session_getter() as session:
             stmt = select(Restaurant.name).where(Restaurant.id == rest_id)
-            response = await session.execute(stmt)
-            row: Optional[Row[tuple[str]]] = response.first()
-            if not row:
-                raise ValueError(f'No restaurant with id {rest_id}')
+            row = await _execute_and_fetch_first(session, stmt, "No restaurant with such id")
             return row[0]
 
     async def change_restaurant_property(self, rest_id: int, key: str, value: Any) -> None:
