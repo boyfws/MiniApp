@@ -14,7 +14,6 @@ from src.repository.restaurant.restaurant import RestaurantRepo
 from src.repository.user import UserRepo
 from tests.common.restaurants import create
 from tests.sql_connector import get_session_test
-from tests.test_repository.restaurants.test_restaurant import restaurants
 
 rest_repo = RestaurantRepo(session_getter=get_session_test)
 user_repo = UserRepo(session_getter=get_session_test)

@@ -1,11 +1,10 @@
 import pytest
 
-from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantRequestUsingID, Point, \
-    RestaurantRequestUsingGeoPointAndName, RestaurantRequestUsingOwner
+from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantRequestUsingID, Point
 from src.service.restaurant.restaurant import RestaurantService
 from tests.common.restaurants import restaurants, get_search_result
 from tests.sql_connector import get_session_test
-from tests.test_repository.restaurants.test_restaurant import  truncate_db, create_categories_and_owner
+from tests.test_repository.test_restaurants.test_restaurants import  truncate_db, create_categories_and_owner
 
 restaurant_service = RestaurantService(session_getter=get_session_test)
 

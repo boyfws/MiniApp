@@ -1,10 +1,11 @@
 import json
-from typing import Any
+from typing import Any, Sequence
 
 from asyncpg import Record # type: ignore
 from geoalchemy2 import Geography
 from geoalchemy2.functions import ST_SetSRID, ST_MakePoint
-from sqlalchemy import select, insert, delete, update, Row, text, func, cast
+from sqlalchemy import select, insert, delete, update, Row, text, func, cast, Select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
                                        RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
@@ -62,56 +63,21 @@ class RestaurantRepo(TablesRepositoryInterface):
             model: RestaurantRequestUsingID
     ) -> RestaurantRequestUpdateModel:
         async with self.session_getter() as session:
-            stmt = select(
-                Restaurant.owner_id,
-                Restaurant.name,
-                Restaurant.main_photo,
-                Restaurant.photos,
-                Restaurant.ext_serv_link_1,
-                Restaurant.ext_serv_link_2,
-                Restaurant.ext_serv_link_3,
-                Restaurant.ext_serv_rank_1,
-                Restaurant.ext_serv_rank_2,
-                Restaurant.ext_serv_rank_3,
-                Restaurant.ext_serv_reviews_1,
-                Restaurant.ext_serv_reviews_2,
-                Restaurant.ext_serv_reviews_3,
-                Restaurant.tg_link,
-                Restaurant.inst_link,
-                Restaurant.vk_link,
-                Restaurant.orig_phone,
-                Restaurant.wapp_phone,
-                func.ST_AsEWKT(Restaurant.location).label("location"),
-                Restaurant.address,
-                Restaurant.categories,
-            ).where(Restaurant.id == model.rest_id)
-            row = await _execute_and_fetch_first(session, stmt, "No restaurant with such id")
-            rest_model = dict(zip(names, row))
-            return RestaurantRequestUpdateModel.model_validate(rest_model, from_attributes=True)
+            return RestaurantRequestUpdateModel.model_validate(
+                await self._execute_get(session, model),
+                from_attributes=True
+            )
 
     async def get_by_geo(
             self,
             model: Point
     ) -> list[GeoSearchResult]:
         async with self.session_getter() as session:
-            point = ST_SetSRID(ST_MakePoint(model.lon, model.lat), 4326)
-            distance = func.ST_Distance(Restaurant.location, cast(point, Geography)).label("distance")
-            stmt = (
-                select(
-                    Restaurant.id, Restaurant.name, Restaurant.main_photo,
-                    Restaurant.categories, Restaurant.ext_serv_rank_1, distance,
-                )
-                .where(func.ST_DWithin(Restaurant.location, cast(point, Geography), 15000))
-                .order_by(distance)
-                .limit(100)
-            )
-            result = await session.execute(stmt)
-            rest_tuple: Record = result.fetchall()
             return [
                 GeoSearchResult.model_validate(
                     dict(zip(names_search, rest)),
                     from_attributes=True
-                ) for rest in rest_tuple
+                ) for rest in await self._execute_select_stmt(session, self._get_search_stmt(model))
             ]
 
     async def get_by_geo_and_name(
@@ -119,72 +85,53 @@ class RestaurantRepo(TablesRepositoryInterface):
             model: RestaurantRequestUsingGeoPointAndName
     ) -> list[RestaurantGeoSearch]:
         async with self.session_getter() as session:
-            point = ST_SetSRID(ST_MakePoint(model.point.lon, model.point.lat), 4326)
-            distance = func.ST_Distance(Restaurant.location, cast(point, Geography)).label("distance")
-            stmt = (
-                select(
-                    Restaurant.id, Restaurant.name, Restaurant.main_photo,
-                    Restaurant.categories, Restaurant.ext_serv_rank_1, distance,
-                )
-                .where(func.ST_DWithin(Restaurant.location, cast(point, Geography), 15000))
-                .where(text(f"name % '{model.name_pattern}'"))
-                .order_by(distance)
-                .limit(100)
-            )
-            result = await session.execute(stmt)
-            rest_tuple: Record = result.fetchall()
             return [
                 GeoSearchResult.model_validate(
                     dict(zip(names_search, rest)),
                     from_attributes=True
-                ) for rest in rest_tuple
+                ) for rest in await self._execute_select_stmt(session, self._get_text_search_stmt(model))
             ]
 
 
     async def get_by_owner(
             self,
             model: RestaurantRequestUsingOwner
-    ) -> list[RestaurantDTO]:
+    ) -> list[RestaurantRequestUpdateModel]:
         async with self.session_getter() as session:
-            query = (
-                "SELECT "
-                "owner_id, name, main_photo, photos, "
-                "ext_serv_link_1, ext_serv_link_2, ext_serv_link_3,"
-                "ext_serv_rank_1, ext_serv_rank_2, ext_serv_rank_3,"
-                "ext_serv_reviews_1, ext_serv_reviews_2, ext_serv_reviews_3,"
-                "tg_link, inst_link, vk_link, orig_phone, wapp_phone, "
-                "ST_AsEWKT(location) AS location, "
-                "address, categories "
-                f"FROM restaurants WHERE owner_id = {model.owner_id}"
-            )
-            response = await session.execute(text(query))
-            rest_tuple: Record = response.fetchall()
-            if not rest_tuple:
-                return []
-
-            cat_repo = CategoryRepo(session_getter=self.session_getter)
-
-            transformed_data = []
-            for rest in rest_tuple:
-                rest_dict = {}
-                for col in rest._fields:
-                    value = getattr(rest, col)
-                    if col == 'categories':
-                        rest_dict[col] = [await cat_repo.get_name(cat) for cat in value]
-                    elif col == 'photos':
-                        rest_dict[col] = value if value else []
-                    elif col == 'address':
-                        try:
-                            rest_dict[col] = json.loads(value)
-                        except (json.JSONDecodeError, TypeError):
-                            rest_dict[col] = {}
-                    elif col == 'location':
-                        rest_dict[col] = str(value) if value else None  # handle NULL locations
-                    else:
-                        rest_dict[col] = value
-                rest_dict['favourite_flag'] = True
-                transformed_data.append(RestaurantDTO(**rest_dict))
-            return transformed_data
+            return [
+                RestaurantRequestUpdateModel.model_validate(
+                    rest,
+                    from_attributes=True
+                ) for rest in await self._execute_select_stmt(session, self._get_by_owner_stmt(model))
+            ]
+            # response = await session.execute(self._get_by_owner_stmt(model))
+            # rest_tuple: Record = response.fetchall()
+            # if not rest_tuple:
+            #     return []
+            #
+            # cat_repo = CategoryRepo(session_getter=self.session_getter)
+            #
+            # transformed_data = []
+            # for rest in rest_tuple:
+            #     rest_dict = {}
+            #     for col in rest._fields:
+            #         value = getattr(rest, col)
+            #         if col == 'categories':
+            #             rest_dict[col] = [await cat_repo.get_name(cat) for cat in value]
+            #         elif col == 'photos':
+            #             rest_dict[col] = value if value else []
+            #         elif col == 'address':
+            #             try:
+            #                 rest_dict[col] = json.loads(value)
+            #             except (json.JSONDecodeError, TypeError):
+            #                 rest_dict[col] = {}
+            #         elif col == 'location':
+            #             rest_dict[col] = str(value) if value else None  # handle NULL locations
+            #         else:
+            #             rest_dict[col] = value
+            #     rest_dict['favourite_flag'] = True
+            #     transformed_data.append(RestaurantDTO(**rest_dict))
+            # return transformed_data
 
     async def get_name(self, rest_id: int) -> str:
         async with self.session_getter() as session:
@@ -234,3 +181,77 @@ class RestaurantRepo(TablesRepositoryInterface):
             else:
                 raise ValueError("введите правильный тип (str, dict, list)")
             await session.execute(text(stmt))
+
+    @staticmethod
+    def _get_search_stmt(model) -> Select:
+        point = ST_SetSRID(ST_MakePoint(model.lon, model.lat), 4326)
+        distance = func.ST_Distance(Restaurant.location, cast(point, Geography)).label("distance")
+        return (
+            select(
+                Restaurant.id, Restaurant.name, Restaurant.main_photo,
+                Restaurant.categories, Restaurant.ext_serv_rank_1, distance,
+            )
+            .where(func.ST_DWithin(Restaurant.location, cast(point, Geography), 15000))
+            .order_by(distance)
+            .limit(100)
+        )
+
+    @staticmethod
+    def _get_text_search_stmt(model) -> Select:
+        point = ST_SetSRID(ST_MakePoint(model.point.lon, model.point.lat), 4326)
+        distance = func.ST_Distance(Restaurant.location, cast(point, Geography)).label("distance")
+        return (
+            select(
+                Restaurant.id, Restaurant.name, Restaurant.main_photo,
+                Restaurant.categories, Restaurant.ext_serv_rank_1, distance,
+            )
+            .where(func.ST_DWithin(Restaurant.location, cast(point, Geography), 15000))
+            .where(text(f"name % '{model.name_pattern}'"))
+            .order_by(distance)
+            .limit(100)
+        )
+
+    @staticmethod
+    async def _execute_select_stmt(session: AsyncSession, stmt: Select) -> Sequence[Row]:
+        response = await session.execute(stmt)
+        return response.fetchall()
+
+    @staticmethod
+    def _get_all_fields() -> Select:
+        return select(
+            Restaurant.owner_id,
+            Restaurant.name,
+            Restaurant.main_photo,
+            Restaurant.photos,
+            Restaurant.ext_serv_link_1,
+            Restaurant.ext_serv_link_2,
+            Restaurant.ext_serv_link_3,
+            Restaurant.ext_serv_rank_1,
+            Restaurant.ext_serv_rank_2,
+            Restaurant.ext_serv_rank_3,
+            Restaurant.ext_serv_reviews_1,
+            Restaurant.ext_serv_reviews_2,
+            Restaurant.ext_serv_reviews_3,
+            Restaurant.tg_link,
+            Restaurant.inst_link,
+            Restaurant.vk_link,
+            Restaurant.orig_phone,
+            Restaurant.wapp_phone,
+            func.ST_AsEWKT(Restaurant.location).label("location"),
+            Restaurant.address,
+            Restaurant.categories,
+        )
+
+    def _get_base_get_stmt(self, model: RestaurantRequestUsingID) -> Select:
+        return self._get_all_fields().where(Restaurant.id == model.rest_id)
+
+    async def _execute_get(self, session: AsyncSession, model: RestaurantRequestUsingID) -> dict[str, Any]:
+        row = await _execute_and_fetch_first(
+            session,
+            self._get_base_get_stmt(model),
+            "No restaurant with such id"
+        )
+        return dict(zip(names, row))
+
+    def _get_by_owner_stmt(self, model: RestaurantRequestUsingOwner) -> Select:
+        return self._get_all_fields().where(Restaurant.owner_id == model.owner_id)

@@ -1,5 +1,5 @@
 from contextlib import _AsyncGeneratorContextManager
-from typing import Callable, List
+from typing import Callable, List, Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,17 +46,22 @@ class RestaurantService:
             model: RestaurantRequestUsingID
     ) -> RestaurantDTO:
         data_from_repo = await self.restaurant_repo.get(model)
-        # добавляем бизнес логики
-        data = data_from_repo.model_dump()
-        data['favourite_flag'] = await self.fav_rest_repo.is_favourite(model.rest_id, model.user_id)
-        data['categories'] = await self._get_category_names(data_from_repo.categories)
-        return RestaurantDTO.model_validate(data, from_attributes=True)
+        return RestaurantDTO.model_validate(
+            await self._get_transformed_select_result_for_user(data_from_repo, model),
+            from_attributes=True
+        )
 
     async def get_by_owner(
             self,
             model: RestaurantRequestUsingOwner
-    ) -> list[RestaurantDTO]:
-        return await self.restaurant_repo.get_by_owner(model)
+    ) -> list[RestaurantRequestFullModel]:
+        data_from_repo = await self.restaurant_repo.get_by_owner(model)
+        return [
+            RestaurantRequestFullModel.model_validate(
+                await self._get_full_model(item),
+                from_attributes=True
+            ) for item in data_from_repo
+        ]
 
     async def get_by_geo(
             self,
@@ -131,3 +136,21 @@ class RestaurantService:
             category=await self._get_category_names(model.category),
             rating=model.rating
         )
+
+    async def _get_transformed_select_result_for_user(
+            self,
+            data_from_repo: RestaurantRequestUpdateModel,
+            model: RestaurantRequestUsingID
+    ) -> dict[str, Any]:
+        data = data_from_repo.model_dump()
+        data['favourite_flag'] = await self.fav_rest_repo.is_favourite(model.rest_id, model.user_id)
+        data['categories'] = await self._get_category_names(data_from_repo.categories)
+        return data
+
+    async def _get_full_model(
+            self,
+            data_from_repo: RestaurantRequestUpdateModel
+    ) -> dict[str, Any]:
+        data = data_from_repo.model_dump()
+        data['categories'] = await self._get_category_names(data_from_repo.categories)
+        return data

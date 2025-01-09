@@ -101,20 +101,18 @@ async def test_get_by_geo_and_name(create_categories_and_owner, truncate_db):
         )
         assert rest_list == get_search_result_from_repo()
 
-# async def test_get_by_owner(create_categories_and_owner, truncate_db):
-#     with does_not_raise():
-#         # создали 3 ресторана
-#         await rest_repo.create(restaurants()[0])
-#         await rest_repo.create(restaurants()[1])
-#
-#         # получить список всех рестиков у овнера 1
-#         rest_list = await RestaurantRepo(session_getter=get_session_test).get_by_owner(
-#             RestaurantRequestUsingOwner(owner_id=1)
-#         )
-#         expected_1, expected_2 = restaurants()[0].model_dump(), restaurants()[1].model_dump()
-#         expected_1['favourite_flag'] = True
-#         expected_2['favourite_flag'] = True
-#         assert [rest_list[0].model_dump(), rest_list[1].model_dump()] == [expected_1, expected_2]
+async def test_get_by_owner(create_categories_and_owner, truncate_db):
+    with does_not_raise():
+        # создали 3 ресторана
+        await rest_repo.create(create()[0])
+        await rest_repo.create(create()[1])
+
+        # получить список всех рестиков у овнера 1
+        rest_list = await RestaurantRepo(session_getter=get_session_test).get_by_owner(
+            RestaurantRequestUsingOwner(owner_id=1)
+        )
+
+        assert rest_list == [create()[0], create()[1]]
 
 async def test_get_name(create_categories_and_owner, truncate_db):
     rest_id = await rest_repo.create(create()[0])
