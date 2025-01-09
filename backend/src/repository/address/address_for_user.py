@@ -3,6 +3,7 @@ from src.models.dto.address_for_user import AddressesResponse, AddressForUserDTO
 from src.models.orm.schemas import AddressesForUser
 from src.repository.interface import TablesRepositoryInterface
 from src.repository.user import UserRepo
+from src.repository.utils import create_user_if_does_not_exist
 
 
 class AddressForUserRepo(TablesRepositoryInterface):
@@ -27,11 +28,7 @@ class AddressForUserRepo(TablesRepositoryInterface):
     ) -> AddressesResponse:
         async with self.session_getter() as session:
 
-            # если юзера раньше не было в базе, то добавим
-            user_repo = UserRepo(session_getter=self.session_getter)
-            is_user = await user_repo.is_user(user_id)
-            if not is_user:
-                await user_repo.create_user(user_id)
+            await create_user_if_does_not_exist(session_getter=self.session_getter, user_id=user_id)
 
             address_exists = await session.execute(
                 select(AddressesForUser)
