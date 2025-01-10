@@ -15,7 +15,7 @@ async def test_get_category(category_name: str, expected_id: int, test_app):
     assert response.json()['cat_id'] == expected_id
 
 async def test_get_all(test_app):
-    response = await test_app.get(f"/v1_test/Category/get_all_categories/")
+    response = await test_app.get(f"/v1_test/Category/get_all_categories/{1}")
     assert response.status_code == 200
     assert response.json() == [
         {"name": "Бургеры"}, {"name": "Суши"},
