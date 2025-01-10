@@ -17,20 +17,3 @@ async def add_address(
         service: AddressService = Depends(get_address_service)
 ) -> int:
     return await service.add_address(transform_to_dto(model))
-
-@address_router.delete("/delete_address")
-async def delete_address(
-        region: Optional[str] = Query(default=None),
-        city: str = Query(...),
-        district: Optional[str] = Query(default=None),
-        street: Optional[str] = Query(default=None),
-        house: Optional[str] = Query(default=None),
-        location: str = Query(...),
-        service: AddressService = Depends(get_address_service)
-) -> None:
-    await service.delete(
-        AddressDTO(
-            region=region, city=city, district=district,
-            street=street, house=house, location=location
-        )
-    )

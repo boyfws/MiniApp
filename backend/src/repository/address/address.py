@@ -11,14 +11,6 @@ from src.repository.interface import TablesRepositoryInterface
 
 class AddressRepo(TablesRepositoryInterface):
 
-    async def delete(
-            self,
-            address_id: int
-    ) -> None:
-        async with self.session_getter() as session:
-            stmt = delete(Address).where(Address.id == address_id)
-            await session.execute(stmt)
-
     async def add_address(
             self,
             model: AddressDTO

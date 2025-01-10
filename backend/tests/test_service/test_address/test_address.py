@@ -20,12 +20,3 @@ async def truncate_db():
             ]:
                 await session_test.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE;"))
             await session_test.commit()
-
-# @pytest.mark.parametrize(
-#     "model, expected_id",
-#     [(get_addresses()[0], 1), (get_addresses()[1], 1)]
-# )
-# async def test_add_and_delete_address(model: AddressDTO, expected_id: int, truncate_db):
-#     result = await address_service.add_address(model)
-#     assert result == expected_id
-#     await address_service.delete(address_id=expected_id)

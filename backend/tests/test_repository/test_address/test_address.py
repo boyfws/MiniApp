@@ -42,14 +42,3 @@ class TestAddressRepo:
         with expectation:
             result = await AddressRepo(session_getter=get_session_test).add_address(model)
             assert expected_id == result
-
-    @pytest.mark.parametrize(
-        "address_id, expectation",
-        [
-            (1, does_not_raise()),
-            (2, does_not_raise())
-        ]
-    )
-    async def test_delete_address(self, address_id: int, expectation: AbstractContextManager):
-        with expectation:
-            await AddressRepo(session_getter=get_session_test).delete(address_id)
