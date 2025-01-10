@@ -4,7 +4,7 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 from src.models.dto.favourites import FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest, \
     FavouriteRestaurantResponse
 from tests.test_handlers.fixtures import test_app
-from tests.test_repository.restaurants.test_favourite import create_db_values_restaurants, truncate_db_rest, create_db_values_all_restaurants
+from tests.test_repository.test_restaurants.test_favourite import create_db_values_restaurants, truncate_db_rest, create_db_values_all_restaurants
 
 
 @pytest.mark.parametrize(

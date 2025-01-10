@@ -1,7 +1,11 @@
-from fastapi import APIRouter, Depends
+from typing import Optional
 
-from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser
-from src.service.address import AddressesForUserService
+from fastapi import APIRouter, Depends, Query
+
+from src.models.dto.address import GeoJson
+from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser, \
+    DeleteAddressForUser
+from src.service.address import AddressesForUserService, transform_to_dto
 from tests.sql_connector import get_session_test
 
 addresses_for_user_router = APIRouter(
@@ -16,8 +20,18 @@ def get_test_address_for_user_service() -> AddressesForUserService:
 async def get_all_addresses(
         user_id: int,
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
-) -> list[AddressForUserDTO]:
-    return await service.get_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
+) -> list[Optional[GeoJson]]:
+    address_dto = await service.get_all_user_addresses(model=AllAddressesForUser(user_id=user_id))
+    result = []
+    for address in address_dto:
+        point_str = address.location.split(';')[1].split('(')[1].split(')')[0]
+        coordinates = [float(x) for x in point_str.split()]
+        result.append({
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": coordinates},
+            "properties": {key: value for key, value in address.model_dump().items() if key != "location"}
+        })
+    return result
 
 @addresses_for_user_router.delete("/drop_all_addresses/{user_id}")
 async def drop_all_addresses(
@@ -26,17 +40,28 @@ async def drop_all_addresses(
 ) -> AddressesResponse:
     return await service.drop_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
 
-@addresses_for_user_router.post("/add_address/")
+@addresses_for_user_router.post("/add_address/{user_id}")
 async def add_address(
-        model: AddressForUserDTO,
+        user_id: int,
+        model: GeoJson,
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.create(model)
+    return await service.create(user_id, transform_to_dto(model))
 
-@addresses_for_user_router.delete("/delete_address/{user_id}/{address_id}")
+@addresses_for_user_router.delete("/delete_address/{user_id}")
 async def delete_address(
         user_id: int,
-        address_id: int,
+        region: Optional[str] = Query(default=None),
+        city: str = Query(...),
+        district: Optional[str] = Query(default=None),
+        street: Optional[str] = Query(default=None),
+        house: Optional[str] = Query(default=None),
+        location: str = Query(...),
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.delete(AddressForUserDTO(user_id=user_id, address_id=address_id))
+    return await service.delete(
+        DeleteAddressForUser(
+            user_id=user_id, region=region, city=city, district=district,
+            street=street, house=house, location=location
+        )
+    )

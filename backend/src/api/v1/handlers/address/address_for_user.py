@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from typing import Any, Optional
 
 from src.models.dto.address import GeoJson
-from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser
+from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser, \
+    DeleteAddressForUser
 from src.service.address import AddressesForUserService, get_address_for_user_service, transform_to_dto
 
 addresses_for_user_router = APIRouter(
@@ -42,10 +43,20 @@ async def add_address(
 ) -> AddressesResponse:
     return await service.create(user_id, transform_to_dto(model))
 
-@addresses_for_user_router.delete("/delete_address/{user_id}/{address_id}")
+@addresses_for_user_router.delete("/delete_address/{user_id}")
 async def delete_address(
         user_id: int,
-        address_id: int,
+        region: Optional[str] = Query(default=None),
+        city: str = Query(...),
+        district: Optional[str] = Query(default=None),
+        street: Optional[str] = Query(default=None),
+        house: Optional[str] = Query(default=None),
+        location: str = Query(...),
         service: AddressesForUserService = Depends(get_address_for_user_service)
 ) -> AddressesResponse:
-    return await service.delete(AddressForUserDTO(user_id=user_id, address_id=address_id))
+    return await service.delete(
+        DeleteAddressForUser(
+            user_id=user_id, region=region, city=city, district=district,
+            street=street, house=house, location=location
+        )
+    )

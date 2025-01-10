@@ -5,7 +5,7 @@ from src.models.dto.restaurant import RestaurantRequestFullModel
 from tests.common.restaurants import restaurants, get_search_result
 from tests.sql_connector import get_session_test
 from tests.test_handlers.fixtures import test_app
-from tests.test_repository.restaurants.test_restaurant import create_categories_and_owner, truncate_db
+from tests.test_repository.test_restaurants.test_restaurants import create_categories_and_owner, truncate_db
 
 
 @pytest.mark.parametrize(

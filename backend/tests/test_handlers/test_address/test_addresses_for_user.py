@@ -1,46 +1,55 @@
 import pytest
 from sqlalchemy import text
 
+from src.models.dto.address import GeoJson
 from src.models.dto.address_for_user import AllAddressesForUser, AddressForUserDTO
+from tests.common.address import geojson, get_addresses, get_dicts
 from tests.sql_connector import get_session_test
 from tests.test_handlers.fixtures import test_app
 from tests.test_repository.test_address.test_addresses_for_user import create_db_values_1, truncate_db, create_db_values_2
+from tests.test_service.test_address.test_addresses_for_user import address_for_user_service
+
 
 @pytest.mark.parametrize(
-    "model",
+    "user_id, model",
     [
-        AddressForUserDTO(user_id=1, address_id=1)
+        (1, geojson()[0]),
+        (1, geojson()[1])
     ]
 )
-async def test_add_address_for_user(model: AddressForUserDTO, test_app, create_db_values_1, truncate_db):
-    response = await test_app.post('/v1_test/AddressesForUser/add_address/', json=model.model_dump())
+async def test_add_address_for_user(user_id: int, model: GeoJson, test_app, create_db_values_1, truncate_db):
+    response = await test_app.post(f'/v1_test/AddressesForUser/add_address/{user_id}', json=model.model_dump())
     assert response.status_code == 200
 
 @pytest.mark.parametrize(
-    "user_id, address_id",
+    "user_id",
     [
-        [1, 1],
-        [1, 2]
+        1
     ]
 )
-async def test_delete(user_id: int, address_id: int, test_app, create_db_values_1, truncate_db):
-    response = await test_app.delete(f'/v1_test/AddressesForUser/delete_address/{user_id}/{address_id}')
+async def test_delete(user_id: int, test_app, create_db_values_2, truncate_db):
+    response = await test_app.delete(
+        f'/v1_test/AddressesForUser/delete_address/{user_id}'
+        f'?&region={"Республика Чечня"}&city={"Санкт-Петербург"}&district={"Красноярск"}&street={"улица Аникутина"}&house={"12"}&location={"SRID=4326;POINT(37.617 55.755)"}'
+
+    )
     assert response.status_code == 200
+    assert [get_addresses()[2]] == await address_for_user_service.get_all_user_addresses(AllAddressesForUser(user_id=1))
 
 @pytest.mark.parametrize(
     "model, expected_list_result",
     [
-        (AllAddressesForUser(user_id=1), [AddressForUserDTO(user_id=1, address_id=1), AddressForUserDTO(user_id=1, address_id=2)]),
+        (AllAddressesForUser(user_id=1), get_dicts()),
         (AllAddressesForUser(user_id=1000), [])
     ]
 )
 async def test_get_all_user_addresses(
         model: AllAddressesForUser,
-        expected_list_result: list[AddressForUserDTO],
+        expected_list_result: list[GeoJson],
         test_app, create_db_values_2, truncate_db): # fixtures
     response = await test_app.get(f'/v1_test/AddressesForUser/get_all_addresses/{model.user_id}')
     assert response.status_code == 200
-    assert response.json() == [data.model_dump() for data in expected_list_result]
+    assert response.json() == expected_list_result
 
 @pytest.mark.parametrize(
     "model, expected_status",

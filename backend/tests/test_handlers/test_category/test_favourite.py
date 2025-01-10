@@ -1,27 +1,28 @@
 import pytest
 
 from src.models.dto.favourites import FavouriteCategoryDTO, FavouriteCategoryResponse, AllFavouriteCategoriesRequest
+from tests.common.category import burgers_1, sushi_1, pizza_2
 from tests.test_handlers.fixtures import test_app
 from tests.test_repository.test_category.test_favourite import create_db_values_categories, truncate_db, create_db_values_all_categories
 
 @pytest.mark.parametrize(
-    "model, expected_cat_id",
+    "model, expected_cat_name",
     [
-        (FavouriteCategoryDTO(user_id=1, cat_id=1), 1),
-        (FavouriteCategoryDTO(user_id=1, cat_id=2), 2),
-        (FavouriteCategoryDTO(user_id=2, cat_id=1), 1)
+        (burgers_1, "Бургеры"),
+        (sushi_1, "Суши"),
+        (pizza_2, "Пицца")
     ]
 )
 async def test_create(
         model: FavouriteCategoryDTO,
-        expected_cat_id: int,
+        expected_cat_name: str,
         create_db_values_categories,
         truncate_db,
         test_app
 ):
     response = await test_app.post("/v1_test/FavouriteCategory/add_fav_category/", json=model.model_dump())
     assert response.status_code == 200
-    assert expected_cat_id == response.json()['cat_id']
+    assert expected_cat_name == response.json()['cat_name']
 
 @pytest.mark.parametrize(
     "user_id, cat_id, expected_cat_id",
