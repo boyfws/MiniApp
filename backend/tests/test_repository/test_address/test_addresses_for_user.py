@@ -2,7 +2,7 @@ import pytest
 from contextlib import nullcontext as does_not_raise, AbstractContextManager
 from sqlalchemy import text, select
 
-from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser
+from src.models.dto.address_for_user import AddressForUserDTO
 from src.models.orm.schemas import AddressesForUser
 from src.repository.address.address import AddressRepo
 from src.repository.address.address_for_user import AddressForUserRepo
@@ -81,25 +81,25 @@ async def test_delete(
             assert all_addresses_for_user == expected_addresses
 
 @pytest.mark.parametrize(
-    "model, expected_list_result, expectation",
+    "user_id, expected_list_result, expectation",
     [
-        (AllAddressesForUser(user_id=1), [AddressForUserDTO(user_id=1, address_id=1), AddressForUserDTO(user_id=1, address_id=2)], does_not_raise()),
-        (AllAddressesForUser(user_id=1000), [], does_not_raise())
+        (1, [AddressForUserDTO(user_id=1, address_id=1), AddressForUserDTO(user_id=1, address_id=2)], does_not_raise()),
+        (1000, [], does_not_raise())
     ]
 )
-async def test_get_all_user_addresses(model: AllAddressesForUser, expected_list_result: list[AddressForUserDTO], expectation: AbstractContextManager, create_db_values_2, truncate_db):
+async def test_get_all_user_addresses(user_id: int, expected_list_result: list[AddressForUserDTO], expectation: AbstractContextManager, create_db_values_2, truncate_db):
     with expectation:
-        result = await ad_user_repo.get_all_user_addresses(model)
+        result = await ad_user_repo.get_all_user_addresses(user_id)
         assert expected_list_result == result
 
 @pytest.mark.parametrize(
-    "model, expectation",
+    "user_id, expectation",
     [
-        (AllAddressesForUser(user_id=1), does_not_raise()),
-        (AllAddressesForUser(user_id=1000), does_not_raise())
+        (1, does_not_raise()),
+        (1000, does_not_raise())
     ]
 )
-async def test_drop_all_user_addresses(model: AllAddressesForUser, expectation: AbstractContextManager, create_db_values_2, truncate_db):
+async def test_drop_all_user_addresses(user_id: int, expectation: AbstractContextManager, create_db_values_2, truncate_db):
     with expectation:
-        await ad_user_repo.drop_all_user_addresses(model)
-        assert await ad_user_repo.get_all_user_addresses(model) == []
+        await ad_user_repo.drop_all_user_addresses(user_id)
+        assert await ad_user_repo.get_all_user_addresses(user_id) == []

@@ -1,4 +1,4 @@
-from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
+from src.models.dto.address import AddressDTO
 from src.repository.address.address import AddressRepo
 
 
@@ -9,5 +9,6 @@ class AddressService:
     async def add_address(self, model: AddressDTO) -> int:
         return await self.repo.add_address(model)
 
-    async def delete(self, model: AddressRequest) -> None:
-        await self.repo.delete(model)
+    async def delete(self, model: AddressDTO) -> None:
+        address_id = ...
+        await self.repo.delete(address_id)

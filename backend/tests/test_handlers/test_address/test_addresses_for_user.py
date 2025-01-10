@@ -2,7 +2,6 @@ import pytest
 from sqlalchemy import text
 
 from src.models.dto.address import GeoJson
-from src.models.dto.address_for_user import AllAddressesForUser
 from tests.common.address import geojson, get_addresses, get_dicts
 from tests.sql_connector import get_session_test
 from tests.test_handlers.fixtures import test_app
@@ -34,35 +33,29 @@ async def test_delete(user_id: int, test_app, create_db_values_2, truncate_db):
 
     )
     assert response.status_code == 200
-    assert [get_addresses()[2]] == await address_for_user_service.get_all_user_addresses(AllAddressesForUser(user_id=1))
+    assert [get_addresses()[2]] == await address_for_user_service.get_all_user_addresses(1)
 
 @pytest.mark.parametrize(
-    "model, expected_list_result",
+    "user_id, expected_list_result",
     [
-        (AllAddressesForUser(user_id=1), get_dicts()),
-        (AllAddressesForUser(user_id=1000), [])
+        (1, get_dicts()),
+        (1000, [])
     ]
 )
 async def test_get_all_user_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         expected_list_result: list[GeoJson],
         test_app, create_db_values_2, truncate_db): # fixtures
-    response = await test_app.get(f'/v1_test/AddressesForUser/get_all_addresses/{model.user_id}')
+    response = await test_app.get(f'/v1_test/AddressesForUser/get_all_addresses/{user_id}')
     assert response.status_code == 200
     assert response.json() == expected_list_result
 
-@pytest.mark.parametrize(
-    "model",
-    [
-        AllAddressesForUser(user_id=1),
-        AllAddressesForUser(user_id=1000)
-    ]
-)
+@pytest.mark.parametrize("user_id", [1, 1000])
 async def test_drop_all_user_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         test_app, create_db_values_2, truncate_db):
-    response = await test_app.delete(f'/v1_test/AddressesForUser/drop_all_addresses/{model.user_id}')
+    response = await test_app.delete(f'/v1_test/AddressesForUser/drop_all_addresses/{user_id}')
     assert response.status_code == 200
     async with get_session_test() as session:
-        count = await session.execute(text(f"SELECT COUNT(*) FROM addresses_for_user WHERE user_id = {model.user_id}"))
+        count = await session.execute(text(f"SELECT COUNT(*) FROM addresses_for_user WHERE user_id = {user_id}"))
         assert count.scalar() == 0

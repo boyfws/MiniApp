@@ -1,6 +1,5 @@
 from src.database.sql_session import get_session
-from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser, \
-    DeleteAddressForUser
+from src.models.dto.address_for_user import AddressForUserDTO, DeleteAddressForUser
 from src.repository.address.address_for_user import AddressForUserRepo
 from src.repository.address.address import AddressRepo
 from src.models.dto.address import AddressDTO
@@ -21,9 +20,9 @@ class AddressesForUserService:
 
     async def get_all_user_addresses(
             self,
-            model: AllAddressesForUser
+            user_id: int
     ) -> list[AddressDTO]:
-        addresses = await self.repo.get_all_user_addresses(model)
+        addresses = await self.repo.get_all_user_addresses(user_id)
         addresses_geo = []
         # теперь надо для каждого адреса сделать запрос и получить пропертис
         for address in addresses:
@@ -32,9 +31,9 @@ class AddressesForUserService:
 
     async def drop_all_user_fav_restaurants(
             self,
-            model: AllAddressesForUser
+            user_id: int
     ) -> None:
-        await self.repo.drop_all_user_addresses(model)
+        await self.repo.drop_all_user_addresses(user_id)
 
     @staticmethod
     def _extract_address(model: DeleteAddressForUser) -> AddressDTO:

@@ -11,11 +11,6 @@ class AddressDTO(BaseModel):
     house: Optional[str]
     location: str
 
-class AddressRequest(BaseModel):
-    id: int
-
-class AddressResult(BaseModel):
-   id: int
 
 class Geometry(BaseModel):
     type: str = Field("Point")

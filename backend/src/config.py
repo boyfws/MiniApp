@@ -11,12 +11,12 @@ from sqlalchemy.engine import URL
 
 BASE_DIR = Path(__file__).parent.parent
 
-"""
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
-"""
+
 
 @dataclass(frozen=True)
 class AuthJWTConfig:
@@ -37,7 +37,7 @@ class YandexAPIConfig:
 
 @dataclass
 class MongoDBConfig:
-    host: Optional[str] = "mongodb"
+    host: Optional[str] = 'localhost'
     port: Union[str, int] = 27017
     database: str = os.getenv("MONGO_DATABASE", 'db')
     menu_collection: str = os.getenv("MENU_COLLECTION", 'collection')
@@ -59,7 +59,7 @@ class DatabaseConfig:
     user: Optional[str] = 'postgres' #"backend"
     password: Optional[str] = 'Tosya1253' #os.getenv('BACKEND_PASSWORD', None)
     port: int = 5432
-    host: str = 'db'
+    host: str = 'localhost' #'db'
 
     driver: str = 'asyncpg'
     database_system: str = 'postgresql'

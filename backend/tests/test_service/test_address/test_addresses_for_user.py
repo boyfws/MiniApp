@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import text
 
 from src.models.dto.address import AddressDTO
-from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser, DeleteAddressForUser
+from src.models.dto.address_for_user import DeleteAddressForUser
 from src.service.address import AddressesForUserService
 from tests.common.address import get_addresses
 from tests.sql_connector import get_session_test
@@ -36,7 +36,7 @@ async def test_create_if_address_exists(
         create_db_values_1, truncate_db
 ):
     await address_for_user_service.create(user_id, model)
-    all_addresses = await address_for_user_service.repo.get_all_user_addresses(AllAddressesForUser(user_id=user_id))
+    all_addresses = await address_for_user_service.repo.get_all_user_addresses(user_id)
     addresses_geo = []
     for address in all_addresses:
         addresses_geo.append(await address_for_user_service.address_repo.get(address.address_id))
@@ -55,7 +55,7 @@ async def test_create_if_address_new(
         truncate_db
 ):
     await address_for_user_service.create(user_id, model)
-    all_addresses = await address_for_user_service.repo.get_all_user_addresses(AllAddressesForUser(user_id=user_id))
+    all_addresses = await address_for_user_service.repo.get_all_user_addresses(user_id)
     addresses_geo = []
     for address in all_addresses:
         addresses_geo.append(await address_for_user_service.address_repo.get(address.address_id))
@@ -75,33 +75,27 @@ async def test_delete(
         expected_list_result: list[AddressDTO],
         create_db_values_2, truncate_db):
     await address_for_user_service.delete(model)
-    result = await address_for_user_service.get_all_user_addresses(model)
+    result = await address_for_user_service.get_all_user_addresses(model.user_id)
     assert result == expected_list_result
 
 @pytest.mark.parametrize(
-    "model, expected_list_result",
+    "user_id, expected_list_result",
     [
-        (AllAddressesForUser(user_id=1), [get_addresses()[1], get_addresses()[2]]),
-        (AllAddressesForUser(user_id=1000), [])
+        (1, [get_addresses()[1], get_addresses()[2]]),
+        (1000, [])
     ]
 )
 async def test_get_all_user_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         expected_list_result: list[AddressDTO],
         create_db_values_2, truncate_db): # fixtures
-    result = await address_for_user_service.get_all_user_addresses(model)
+    result = await address_for_user_service.get_all_user_addresses(user_id)
     assert result == expected_list_result
 
-@pytest.mark.parametrize(
-    "model",
-    [
-        AllAddressesForUser(user_id=1),
-        AllAddressesForUser(user_id=1000)
-    ]
-)
+@pytest.mark.parametrize("user_id", [1, 1000])
 async def test_drop_all_user_addresses(
-        model: AllAddressesForUser,
+        user_id: int,
         create_db_values_2, truncate_db):
-    await address_for_user_service.drop_all_user_fav_restaurants(model)
-    result = await address_for_user_service.get_all_user_addresses(model)
+    await address_for_user_service.drop_all_user_fav_restaurants(user_id)
+    result = await address_for_user_service.get_all_user_addresses(user_id)
     assert result == []

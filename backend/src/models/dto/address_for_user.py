@@ -9,6 +9,3 @@ class AddressForUserDTO(BaseModel):
 
 class DeleteAddressForUser(AddressDTO):
     user_id: int
-
-class AllAddressesForUser(BaseModel):
-    user_id: int

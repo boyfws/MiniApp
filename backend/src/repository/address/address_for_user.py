@@ -1,5 +1,5 @@
 from sqlalchemy import select, insert, delete
-from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser
+from src.models.dto.address_for_user import AddressForUserDTO
 from src.models.orm.schemas import AddressesForUser
 from src.repository.interface import TablesRepositoryInterface
 from src.repository.utils import create_user_if_does_not_exist
@@ -42,10 +42,10 @@ class AddressForUserRepo(TablesRepositoryInterface):
 
     async def get_all_user_addresses(
             self,
-            model: AllAddressesForUser
+            user_id: int
     ) -> list[AddressForUserDTO]:
         async with self.session_getter() as session:
-            stmt = select(AddressesForUser.user_id, AddressesForUser.address_id).where(AddressesForUser.user_id == model.user_id)
+            stmt = select(AddressesForUser.user_id, AddressesForUser.address_id).where(AddressesForUser.user_id == user_id)
             addresses = await session.execute(stmt)
             return [
                 AddressForUserDTO.model_validate(address, from_attributes=True) for address in addresses.all()
@@ -53,8 +53,8 @@ class AddressForUserRepo(TablesRepositoryInterface):
 
     async def drop_all_user_addresses(
             self,
-            model: AllAddressesForUser
+            user_id: int
     ) -> None:
         async with self.session_getter() as session:
-            stmt = delete(AddressesForUser).where(AddressesForUser.user_id == model.user_id)
+            stmt = delete(AddressesForUser).where(AddressesForUser.user_id == user_id)
             await session.execute(stmt)

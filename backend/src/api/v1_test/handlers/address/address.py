@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends
+from typing import Optional
 
-from src.models.dto.address import AddressDTO, AddressRequest
+from fastapi import APIRouter, Depends, Query
+
+from src.models.dto.address import AddressDTO
 from src.repository.address.address import AddressRepo
 from src.service.address import AddressService
 from tests.sql_connector import get_session_test
@@ -21,9 +23,19 @@ async def add_address(
 ) -> int:
     return await service.add_address(model)
 
-@address_router.delete("/delete_address/{address_id}")
+@address_router.delete("/delete_address")
 async def delete_address(
-        address_id: int,
+        region: Optional[str] = Query(default=None),
+        city: str = Query(...),
+        district: Optional[str] = Query(default=None),
+        street: Optional[str] = Query(default=None),
+        house: Optional[str] = Query(default=None),
+        location: str = Query(...),
         service: AddressService = Depends(get_test_address_service)
 ) -> None:
-    await service.delete(AddressRequest(id=address_id))
+    await service.delete(
+        AddressDTO(
+            region=region, city=city, district=district,
+            street=street, house=house, location=location
+        )
+    )

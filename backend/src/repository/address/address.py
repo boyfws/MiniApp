@@ -1,6 +1,6 @@
-from sqlalchemy import insert, delete, select, text
+from sqlalchemy import insert, delete, text
 
-from src.models.dto.address import AddressDTO, AddressRequest
+from src.models.dto.address import AddressDTO
 from src.models.orm.schemas import Address
 from src.repository import get_row
 from src.repository.address import check_address_exists, get_point_str, get_coordinates, get_house_string, \
@@ -13,10 +13,10 @@ class AddressRepo(TablesRepositoryInterface):
 
     async def delete(
             self,
-            model: AddressRequest
+            address_id: int
     ) -> None:
         async with self.session_getter() as session:
-            stmt = delete(Address).where(Address.id == model.id)
+            stmt = delete(Address).where(Address.id == address_id)
             await session.execute(stmt)
 
     async def add_address(

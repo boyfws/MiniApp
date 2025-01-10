@@ -1,7 +1,7 @@
 import pytest
 from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
-from src.models.dto.address import AddressDTO, AddressRequest
+from src.models.dto.address import AddressDTO
 from src.repository.address.address import AddressRepo
 from tests.conftest import get_session_test
 from tests.common.address import get_addresses
@@ -44,13 +44,12 @@ class TestAddressRepo:
             assert expected_id == result
 
     @pytest.mark.parametrize(
-        "model, expected_id, expectation",
+        "address_id, expectation",
         [
-            (AddressRequest(id=1), 1, does_not_raise()),
-            (AddressRequest(id=2), 2, does_not_raise()
-            )
+            (1, does_not_raise()),
+            (2, does_not_raise())
         ]
     )
-    async def test_delete_address(self, model: AddressRequest, expected_id: int, expectation: AbstractContextManager):
+    async def test_delete_address(self, address_id: int, expectation: AbstractContextManager):
         with expectation:
-            await AddressRepo(session_getter=get_session_test).delete(model)
+            await AddressRepo(session_getter=get_session_test).delete(address_id)

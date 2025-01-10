@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 
 from src.models.dto.address import GeoJson
-from src.models.dto.address_for_user import AllAddressesForUser, DeleteAddressForUser
+from src.models.dto.address_for_user import DeleteAddressForUser
 from src.service.address import AddressesForUserService, transform_to_dto
 from tests.sql_connector import get_session_test
 
@@ -20,7 +20,7 @@ async def get_all_addresses(
         user_id: int,
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
 ) -> list[Optional[GeoJson]]:
-    address_dto = await service.get_all_user_addresses(model=AllAddressesForUser(user_id=user_id))
+    address_dto = await service.get_all_user_addresses(user_id=user_id)
     result = []
     for address in address_dto:
         point_str = address.location.split(';')[1].split('(')[1].split(')')[0]
@@ -37,7 +37,7 @@ async def drop_all_addresses(
         user_id: int,
         service: AddressesForUserService = Depends(get_test_address_for_user_service)
 ) -> None:
-    await service.drop_all_user_fav_restaurants(model=AllAddressesForUser(user_id=user_id))
+    await service.drop_all_user_fav_restaurants(user_id=user_id)
 
 @addresses_for_user_router.post("/add_address/{user_id}")
 async def add_address(
