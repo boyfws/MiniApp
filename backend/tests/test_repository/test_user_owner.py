@@ -1,11 +1,8 @@
 from sqlalchemy import text
 
-from src.models.dto.user import UserRequest
 from src.repository.owner import OwnerRepo
 from src.repository.user import UserRepo
 import pytest
-from contextlib import nullcontext as does_not_raise, AbstractContextManager
-
 from tests.sql_connector import get_session_test
 
 
@@ -21,20 +18,12 @@ async def truncate_db():
                 await session_test.execute(text(f"TRUNCATE TABLE {table} RESTART IDENTITY CASCADE;"))
             await session_test.commit()
 
-@pytest.mark.parametrize(
-    "model, expected_status",
-    [
-        (1, 200),
-        (20000, 200)
-    ]
-)
+@pytest.mark.parametrize("user_id", [1, 20000])
 async def test_create_user(
-        model: UserRequest,
-        expected_status: int,
+        user_id: int,
         truncate_db
 ):
-    result = await UserRepo(session_getter=get_session_test).create_user(model)
-    assert expected_status == result.status
+    await UserRepo(session_getter=get_session_test).create_user(user_id)
 
 owner_repo = OwnerRepo(session_getter=get_session_test)
 

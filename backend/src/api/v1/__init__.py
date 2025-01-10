@@ -9,7 +9,6 @@ from src.api.v1.handlers.menu import menu_router
 from src.api.v1.handlers.owner import owner_router
 from src.api.v1.handlers.restaurant.favourite import fav_restaurant_router
 from src.api.v1.handlers.restaurant.restaurant import restaurant_router
-from src.api.v1.handlers.user import user_router
 from src.api.v1.handlers.yandex_api import yandex_api_router
 
 router_v1 = APIRouter(prefix="/v1")
@@ -20,7 +19,6 @@ router_v1.include_router(fav_category_router)
 router_v1.include_router(restaurant_router)
 router_v1.include_router(fav_restaurant_router)
 router_v1.include_router(owner_router)
-router_v1.include_router(user_router)
 router_v1.include_router(address_router)
 router_v1.include_router(addresses_for_user_router)
 router_v1.include_router(menu_router)
