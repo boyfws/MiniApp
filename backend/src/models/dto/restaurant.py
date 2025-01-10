@@ -10,8 +10,6 @@ class RestaurantRequestUsingGeoPointAndName(BaseModel):
     point: Point
     name_pattern: str
 
-class RestaurantRequestUsingOwner(BaseModel):
-    owner_id: int
 
 class RestaurantRequestUsingID(BaseModel):
     rest_id: int
@@ -50,10 +48,6 @@ class RestaurantRequestUpdateModel(RestaurantRequestBaseModel):
 
 class RestaurantDTO(RestaurantRequestFullModel):
     favourite_flag: bool
-
-
-class RestaurantResult(BaseModel):
-    rest_id: int
 
 
 class RestaurantGeoDTO(BaseModel):

@@ -6,8 +6,7 @@ from geoalchemy2.functions import ST_SetSRID, ST_MakePoint
 from sqlalchemy import select, insert, delete, update, Row, text, func, cast, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.dto.restaurant import (RestaurantResult, RestaurantRequestUsingOwner,
-                                       RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
+from src.models.dto.restaurant import (RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
                                        RestaurantGeoSearch, Point,
                                        RestaurantRequestUpdateModel, GeoSearchResult)
 from src.models.orm.schemas import Restaurant
@@ -30,21 +29,20 @@ class RestaurantRepo(TablesRepositoryInterface):
     async def create(
             self,
             model: RestaurantRequestUpdateModel
-    ) -> RestaurantResult:
+    ) -> int:
         async with self.session_getter() as session:
             await create_owner_if_does_not_exist(self.session_getter, model.owner_id)
             stmt = insert(Restaurant).values(**model.model_dump()).returning(Restaurant.id)
             row = await _execute_and_fetch_first(session, stmt, "Something went wrong")
-            return RestaurantResult(rest_id=int(row[0]))
+            return int(row[0])
 
     async def delete(
             self,
             model: RestaurantRequestUsingID
-    ) -> RestaurantResult:
+    ) -> None:
         async with self.session_getter() as session:
             stmt = delete(Restaurant).where(Restaurant.id == model.rest_id)
             await session.execute(stmt)
-            return RestaurantResult(rest_id=model.rest_id)
 
     async def update(
             self,
@@ -92,14 +90,14 @@ class RestaurantRepo(TablesRepositoryInterface):
 
     async def get_by_owner(
             self,
-            model: RestaurantRequestUsingOwner
+            owner_id: int
     ) -> list[RestaurantRequestUpdateModel]:
         async with self.session_getter() as session:
             return [
                 RestaurantRequestUpdateModel.model_validate(
                     rest,
                     from_attributes=True
-                ) for rest in await self._execute_select_stmt(session, self._get_by_owner_stmt(model))
+                ) for rest in await self._execute_select_stmt(session, self._get_by_owner_stmt(owner_id))
             ]
 
     async def get_name(self, rest_id: int) -> str:
@@ -188,5 +186,5 @@ class RestaurantRepo(TablesRepositoryInterface):
         )
         return dict(zip(names, row))
 
-    def _get_by_owner_stmt(self, model: RestaurantRequestUsingOwner) -> Select:
-        return self._get_all_fields().where(Restaurant.owner_id == model.owner_id)
+    def _get_by_owner_stmt(self, owner_id: int) -> Select:
+        return self._get_all_fields().where(Restaurant.owner_id == owner_id)

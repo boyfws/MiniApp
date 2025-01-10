@@ -4,9 +4,11 @@ from typing import Callable, List, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.sql_session import get_session
-from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
-    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, \
-    RestaurantGeoSearch, Point, RestaurantDTO, RestaurantRequestUpdateModel, GeoSearchResult
+from src.models.dto.restaurant import (
+    RestaurantRequestFullModel, RestaurantRequestUsingID, RestaurantRequestUsingGeoPointAndName,
+    RestaurantGeoSearch, Point, RestaurantDTO,
+    RestaurantRequestUpdateModel, GeoSearchResult
+)
 from src.repository.category import CategoryRepo
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
 from src.repository.restaurant.restaurant import RestaurantRepo
@@ -22,14 +24,14 @@ class RestaurantService:
     async def create(
             self,
             model: RestaurantRequestFullModel
-    ) -> RestaurantResult:
+    ) -> int:
         update_model = await self._get_update_model(model)
         return await self.restaurant_repo.create(update_model)
 
     async def delete(
             self,
             model: RestaurantRequestUsingID
-    ) -> RestaurantResult:
+    ) -> None:
         return await self.restaurant_repo.delete(model)
 
     async def update(
@@ -52,9 +54,9 @@ class RestaurantService:
 
     async def get_by_owner(
             self,
-            model: RestaurantRequestUsingOwner
+            owner_id: int
     ) -> list[RestaurantRequestFullModel]:
-        data_from_repo = await self.restaurant_repo.get_by_owner(model)
+        data_from_repo = await self.restaurant_repo.get_by_owner(owner_id)
         return [
             RestaurantRequestFullModel.model_validate(
                 await self._get_full_model(item),

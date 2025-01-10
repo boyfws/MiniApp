@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
 
-from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
-    RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, Point, \
+from src.models.dto.restaurant import (
+    RestaurantRequestFullModel, RestaurantRequestUsingID,
+    RestaurantRequestUsingGeoPointAndName, Point,
     RestaurantGeoSearch, RestaurantDTO, AnyField
+)
 from src.service.restaurant import RestaurantService
 from tests.sql_connector import get_session_test
 
@@ -18,7 +20,7 @@ def get_test_restaurant_service() -> RestaurantService:
 async def create_restaurant(
         model: RestaurantRequestFullModel,
         service: RestaurantService = Depends(get_test_restaurant_service)
-) -> RestaurantResult:
+) -> int:
     return await service.create(model)
 
 @restaurant_router.delete("/delete_restaurant/{rest_id}/{user_id}")
@@ -26,7 +28,7 @@ async def delete_restaurant(
         rest_id: int,
         user_id: int,
         service: RestaurantService = Depends(get_test_restaurant_service)
-) -> RestaurantResult:
+) -> None:
     return await service.delete(RestaurantRequestUsingID(rest_id=rest_id, user_id=user_id))
 
 @restaurant_router.patch("/update_restaurant/{rest_id}")
@@ -50,7 +52,7 @@ async def get_restaurant_by_owner(
         owner_id: int,
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> list[RestaurantRequestFullModel]:
-    return await service.get_by_owner(RestaurantRequestUsingOwner(owner_id=owner_id))
+    return await service.get_by_owner(owner_id)
 
 @restaurant_router.get("/get_by_geo/{lon}/{lat}/{user_id}")
 async def get_restaurant_by_geo(
