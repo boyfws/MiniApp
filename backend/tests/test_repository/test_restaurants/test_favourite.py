@@ -3,8 +3,7 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
 from sqlalchemy import text
 
-from src.models.dto.favourites import FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest, \
-    FavouriteRestaurantResponse
+from src.models.dto.favourites import FavouriteRestaurantDTO
 from src.repository.category.category import CategoryRepo
 from src.repository.owner import OwnerRepo
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
@@ -62,69 +61,49 @@ async def test_create(
 ):
     with expectation:
         result = await fav_rest_repo.create(model)
-        assert result.rest_id == expected_rest_id
+        assert result == expected_rest_id
 
 @pytest.mark.parametrize(
-    "model, expected_rest_id, expectation",
+    "model",
     [
-        (FavouriteRestaurantDTO(user_id=1, rest_id=1), 1, does_not_raise()),
-        (FavouriteRestaurantDTO(user_id=1, rest_id=2), 2, does_not_raise()),
-        (FavouriteRestaurantDTO(user_id=2, rest_id=1), 1, does_not_raise())
+        FavouriteRestaurantDTO(user_id=1, rest_id=1),
+        FavouriteRestaurantDTO(user_id=1, rest_id=2),
+        FavouriteRestaurantDTO(user_id=2, rest_id=1)
     ]
 )
 async def test_delete(
         model: FavouriteRestaurantDTO,
-        expected_rest_id: int,
-        expectation: AbstractContextManager,
         create_db_values_restaurants,
         truncate_db_rest
 ):
-    with expectation:
-        result = await fav_rest_repo.delete(model)
-        assert result.rest_id == expected_rest_id
+    await fav_rest_repo.delete(model)
 
 @pytest.mark.parametrize(
-    "model, expected_list_rest, expectation",
+    "user_id, expected_list_rest, expectation",
     [
-        (AllFavouriteRestaurantsRequest(user_id=10000),
-         [],
-         does_not_raise()),
-        (AllFavouriteRestaurantsRequest(user_id=1),
-         [FavouriteRestaurantResponse(rest_id=1), FavouriteRestaurantResponse(rest_id=2)],
-         does_not_raise()),
-        (AllFavouriteRestaurantsRequest(user_id=2),
-         [FavouriteRestaurantResponse(rest_id=1)],
-         does_not_raise())
+        (10000, [], does_not_raise()),
+        (1, [1, 2], does_not_raise()),
+        (2, [1], does_not_raise())
     ]
 )
 async def test_get_all_user_fav_restaurants(
-        model: AllFavouriteRestaurantsRequest,
-        expected_list_rest: list[FavouriteRestaurantResponse],
+        user_id: int,
+        expected_list_rest: list[int],
         expectation: AbstractContextManager,
         create_db_values_all_restaurants,
         truncate_db_rest
 ):
     with expectation:
-        result = await fav_rest_repo.get_all_user_fav_restaurants(model)
+        result = await fav_rest_repo.get_all_user_fav_restaurants(user_id)
         assert result == expected_list_rest
 
-@pytest.mark.parametrize(
-    "model, expected_user_id, expectation",
-    [
-        (AllFavouriteRestaurantsRequest(user_id=1), 1, does_not_raise()),
-        (AllFavouriteRestaurantsRequest(user_id=2), 2, does_not_raise())
-    ]
-)
+@pytest.mark.parametrize("user_id", [1, 2])
 async def test_drop_all_user_fav_restaurants(
-        model: AllFavouriteRestaurantsRequest,
-        expected_user_id: int,
-        expectation: AbstractContextManager,
+        user_id: int,
         create_db_values_all_restaurants,
         truncate_db_rest
 ):
-    with expectation:
-        result = await fav_rest_repo.drop_all_user_fav_restaurants(model)
-        assert expected_user_id == result.user_id
+    await fav_rest_repo.drop_all_user_fav_restaurants(user_id)
 
 @pytest.mark.parametrize(
     "user_id, rest_id, expectation",

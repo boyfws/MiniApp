@@ -1,8 +1,7 @@
 import pytest
 from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
-from src.models.dto.favourites import FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest, \
-    FavouriteRestaurantResponse
+from src.models.dto.favourites import FavouriteRestaurantDTO
 from tests.test_handlers.fixtures import test_app
 from tests.test_repository.test_restaurants.test_favourite import create_db_values_restaurants, truncate_db_rest, create_db_values_all_restaurants
 
@@ -24,64 +23,53 @@ async def test_create(
 ):
     response = await test_app.post("/v1_test/FavouriteRestaurant/add_fav_restaurant/", json=model.model_dump())
     assert response.status_code == 200
-    assert response.json()['rest_id'] == expected_rest_id
+    assert response.json() == expected_rest_id
 
 @pytest.mark.parametrize(
-    "user_id, rest_id, expected_rest_id",
-    [
-        (1, 1, 1),
-        (1, 2, 2),
-        (2, 1, 1)
-    ]
+    "user_id, rest_id",
+    [(1, 1),(1, 2),(2, 1)]
 )
 async def test_delete(
         user_id: int,
         rest_id: int,
-        expected_rest_id: int,
         create_db_values_restaurants,
         truncate_db_rest,
         test_app
 ):
     response = await test_app.delete(f"/v1_test/FavouriteRestaurant/delete_fav_restaurant/{user_id}/{rest_id}")
     assert response.status_code == 200
-    assert response.json()['rest_id'] == expected_rest_id
 
 @pytest.mark.parametrize(
     "user_id, expected_list_rest",
     [
         (10000, []),
-        (1, [FavouriteRestaurantResponse(rest_id=1), FavouriteRestaurantResponse(rest_id=2)]),
-        (2, [FavouriteRestaurantResponse(rest_id=1)])
+        (1, [1, 2]),
+        (2, [1])
     ]
 )
 async def test_get_all_user_fav_restaurants(
         user_id: int,
-        expected_list_rest: list[FavouriteRestaurantResponse],
+        expected_list_rest: list[int],
         create_db_values_all_restaurants,
         truncate_db_rest,
         test_app
 ):
     response = await test_app.get(f"/v1_test/FavouriteRestaurant/get_all_user_fav_restaurants/{user_id}")
     assert response.status_code == 200
-    assert response.json() == [data.model_dump() for data in expected_list_rest]
+    assert response.json() == expected_list_rest
 
 @pytest.mark.parametrize(
-    "user_id, expected_user_id",
-    [
-        (1, 1),
-        (2, 2)
-    ]
+    "user_id",
+    [1, 2]
 )
 async def test_drop_all_user_fav_restaurants(
         user_id: int,
-        expected_user_id: int,
         create_db_values_all_restaurants,
         truncate_db_rest,
         test_app
 ):
     response = await test_app.delete(f"/v1_test/FavouriteRestaurant/drop_all_user_fav_restaurants/{user_id}")
     assert response.status_code == 200
-    assert response.json()['user_id'] == expected_user_id
 
 @pytest.mark.parametrize(
     "user_id, rest_id, expectation",
