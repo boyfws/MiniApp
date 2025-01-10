@@ -1,18 +1,14 @@
 from typing import Any
 
-from sqlalchemy import (Integer, String, SmallInteger, BigInteger,
-    Boolean, JSON, ARRAY, ForeignKey, Index, CheckConstraint, Numeric, MetaData
+from sqlalchemy import (
+    Integer, String, SmallInteger, BigInteger,ARRAY,
+    ForeignKey, Index, CheckConstraint, Numeric, MetaData
 )
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import declarative_base, relationship, mapped_column, Mapped, as_declarative, DeclarativeBase
+from sqlalchemy.orm import relationship, mapped_column, Mapped, DeclarativeBase
 from geoalchemy2.types import Geometry
 
 metadata = MetaData()
-
-
-# @as_declarative(metadata=metadata)
-# class Base:
-#     """Abstract model with declarative base functionality."""
 
 class Base(DeclarativeBase):
     """Abstract model with declarative base functionality."""
@@ -47,9 +43,6 @@ class Category(Base):
 
     id: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
-
-    # Relationships
-    # restaurants = relationship("Restaurant", secondary='restaurants_categories', back_populates="categories")
 
 
 class Restaurant(Base):

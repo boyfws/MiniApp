@@ -1,12 +1,8 @@
-import json
-from typing import Any
-
-from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends
 
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, Point, \
-    RestaurantGeoSearch, RestaurantDTO
+    RestaurantGeoSearch, RestaurantDTO, AnyField
 from src.service.restaurant import RestaurantService
 from tests.sql_connector import get_session_test
 
@@ -88,9 +84,6 @@ async def get_restaurant_available_properties(
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> dict[str, bool]:
     return await service.get_available_properties(rest_id)
-
-class AnyField(BaseModel):
-    value: Any
 
 @restaurant_router.patch("/change_restaurant_property/{rest_id}/{key}")
 async def change_restaurant_property(
