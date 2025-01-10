@@ -6,8 +6,8 @@ class AddressService:
     def __init__(self, repo: AddressRepo):
         self.repo = repo
 
-    async def add_address(self, model: AddressDTO) -> AddressResult:
+    async def add_address(self, model: AddressDTO) -> int:
         return await self.repo.add_address(model)
 
-    async def delete(self, model: AddressRequest) -> AddressResult:
-        return await self.repo.delete(model)
+    async def delete(self, model: AddressRequest) -> None:
+        await self.repo.delete(model)

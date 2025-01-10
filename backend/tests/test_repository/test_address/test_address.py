@@ -17,7 +17,7 @@ class TestAddressRepo:
     async def test_add_address_different_addresses(self, model: AddressDTO, expected_id: int, expectation: AbstractContextManager):
         with expectation:
             result = await AddressRepo(session_getter=get_session_test).add_address(model)
-            assert expected_id == result.id
+            assert expected_id == result
 
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
@@ -29,7 +29,7 @@ class TestAddressRepo:
     async def test_add_address_same_city(self, model: AddressDTO, expected_id: int, expectation: AbstractContextManager):
         with expectation:
             result = await AddressRepo(session_getter=get_session_test).add_address(model)
-            assert expected_id == result.id
+            assert expected_id == result
 
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
@@ -41,7 +41,7 @@ class TestAddressRepo:
     async def test_add_address_same_city_and_district(self, model: AddressDTO, expected_id: int, expectation: AbstractContextManager):
         with expectation:
             result = await AddressRepo(session_getter=get_session_test).add_address(model)
-            assert expected_id == result.id
+            assert expected_id == result
 
     @pytest.mark.parametrize(
         "model, expected_id, expectation",
@@ -53,5 +53,4 @@ class TestAddressRepo:
     )
     async def test_delete_address(self, model: AddressRequest, expected_id: int, expectation: AbstractContextManager):
         with expectation:
-            result = await AddressRepo(session_getter=get_session_test).delete(model)
-            assert expected_id == result.id
+            await AddressRepo(session_getter=get_session_test).delete(model)

@@ -16,7 +16,7 @@ from tests.common.address import get_addresses
 async def test_create(model: AddressDTO, expected_id: int, test_app):
     response = await test_app.post('/v1_test/Address/add_address/', json=model.model_dump())
     assert response.status_code == 200
-    assert expected_id == response.json()['id']
+    assert expected_id == response.json()
 
 @pytest.mark.parametrize(
      "address_id",

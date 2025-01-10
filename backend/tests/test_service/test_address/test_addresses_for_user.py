@@ -24,21 +24,18 @@ async def truncate_db():
 
 
 @pytest.mark.parametrize(
-    "user_id, model, expected_status",
+    "user_id, model",
     [
-        (1, get_addresses()[1], 200),
-        (1, get_addresses()[2], 200),
+        (1, get_addresses()[1]),
+        (1, get_addresses()[2]),
     ]
 )
 async def test_create_if_address_exists(
         user_id: int,
         model: AddressDTO,
-        expected_status: int,
         create_db_values_1, truncate_db
 ):
-    result = await address_for_user_service.create(user_id, model)
-    assert result.status == expected_status
-
+    await address_for_user_service.create(user_id, model)
     all_addresses = await address_for_user_service.repo.get_all_user_addresses(AllAddressesForUser(user_id=user_id))
     addresses_geo = []
     for address in all_addresses:
@@ -46,21 +43,18 @@ async def test_create_if_address_exists(
     assert addresses_geo == [model]
 
 @pytest.mark.parametrize(
-    "user_id, model, expected_status",
+    "user_id, model",
     [
-        (1, get_addresses()[1], 200),
-        (1, get_addresses()[2], 200),
+        (1, get_addresses()[1]),
+        (1, get_addresses()[2]),
     ]
 )
 async def test_create_if_address_new(
         user_id: int,
         model: AddressDTO,
-        expected_status: int,
         truncate_db
 ):
-    result = await address_for_user_service.create(user_id, model)
-    assert result.status == expected_status
-
+    await address_for_user_service.create(user_id, model)
     all_addresses = await address_for_user_service.repo.get_all_user_addresses(AllAddressesForUser(user_id=user_id))
     addresses_geo = []
     for address in all_addresses:
@@ -70,19 +64,17 @@ async def test_create_if_address_new(
 
 
 @pytest.mark.parametrize(
-    'model, expected_status, expected_list_result',
+    'model, expected_list_result',
     [
-        (DeleteAddressForUser(user_id=1, **get_addresses()[1].model_dump()), 200, [get_addresses()[2]]),
-        (DeleteAddressForUser(user_id=1, **get_addresses()[2].model_dump()), 200, [get_addresses()[1]])
+        (DeleteAddressForUser(user_id=1, **get_addresses()[1].model_dump()), [get_addresses()[2]]),
+        (DeleteAddressForUser(user_id=1, **get_addresses()[2].model_dump()), [get_addresses()[1]])
     ]
 )
 async def test_delete(
         model: DeleteAddressForUser,
-        expected_status: int,
         expected_list_result: list[AddressDTO],
         create_db_values_2, truncate_db):
-    result = await address_for_user_service.delete(model)
-    assert result.status == expected_status
+    await address_for_user_service.delete(model)
     result = await address_for_user_service.get_all_user_addresses(model)
     assert result == expected_list_result
 
@@ -101,17 +93,15 @@ async def test_get_all_user_addresses(
     assert result == expected_list_result
 
 @pytest.mark.parametrize(
-    "model, expected_status",
+    "model",
     [
-        (AllAddressesForUser(user_id=1), 200),
-        (AllAddressesForUser(user_id=1000), 200)
+        AllAddressesForUser(user_id=1),
+        AllAddressesForUser(user_id=1000)
     ]
 )
 async def test_drop_all_user_addresses(
         model: AllAddressesForUser,
-        expected_status: int,
         create_db_values_2, truncate_db):
-    result = await address_for_user_service.drop_all_user_fav_restaurants(model)
-    assert result.status == expected_status
+    await address_for_user_service.drop_all_user_fav_restaurants(model)
     result = await address_for_user_service.get_all_user_addresses(model)
     assert result == []

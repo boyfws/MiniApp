@@ -1,9 +1,9 @@
 from src.database.sql_session import get_session
-from src.models.dto.address_for_user import AddressForUserDTO, AddressesResponse, AllAddressesForUser, \
+from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser, \
     DeleteAddressForUser
 from src.repository.address.address_for_user import AddressForUserRepo
 from src.repository.address.address import AddressRepo
-from src.models.dto.address import AddressDTO, AddressRequest
+from src.models.dto.address import AddressDTO
 
 
 class AddressesForUserService:
@@ -11,13 +11,13 @@ class AddressesForUserService:
         self.address_repo = AddressRepo(session_getter)
         self.repo = AddressForUserRepo(session_getter)
 
-    async def delete(self, model: DeleteAddressForUser) -> AddressesResponse:
+    async def delete(self, model: DeleteAddressForUser) -> None:
         address_id = await self.address_repo.add_address(self._extract_address(model))
-        return await self.repo.delete(AddressForUserDTO(address_id=address_id.id, user_id=model.user_id))
+        await self.repo.delete(AddressForUserDTO(address_id=address_id, user_id=model.user_id))
 
-    async def create(self, user_id: int, model: AddressDTO) -> AddressesResponse:
+    async def create(self, user_id: int, model: AddressDTO) -> None:
         address_id = await self.address_repo.add_address(model)
-        return await self.repo.create(user_id, address_id.id)
+        await self.repo.create(user_id, address_id)
 
     async def get_all_user_addresses(
             self,
@@ -33,8 +33,8 @@ class AddressesForUserService:
     async def drop_all_user_fav_restaurants(
             self,
             model: AllAddressesForUser
-    ) -> AddressesResponse:
-        return await self.repo.drop_all_user_addresses(model)
+    ) -> None:
+        await self.repo.drop_all_user_addresses(model)
 
     @staticmethod
     def _extract_address(model: DeleteAddressForUser) -> AddressDTO:

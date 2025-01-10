@@ -1,7 +1,7 @@
 from sqlalchemy import insert, delete, select, text
 
-from src.models.dto.address import AddressDTO, AddressResult, AddressRequest
-from src.models.orm.schemas import Address, City, District, Street, Region
+from src.models.dto.address import AddressDTO, AddressRequest
+from src.models.orm.schemas import Address
 from src.repository import get_row
 from src.repository.address import check_address_exists, get_point_str, get_coordinates, get_house_string, \
     _get_or_create_region, _get_or_create_city, _get_or_create_district, _get_or_create_street, _get_address_data, \
@@ -14,16 +14,15 @@ class AddressRepo(TablesRepositoryInterface):
     async def delete(
             self,
             model: AddressRequest
-    ) -> AddressResult:
+    ) -> None:
         async with self.session_getter() as session:
             stmt = delete(Address).where(Address.id == model.id)
             await session.execute(stmt)
-            return AddressResult(id=model.id)
 
     async def add_address(
             self,
             model: AddressDTO
-    ) -> AddressResult:
+    ) -> int:
         async with self.session_getter() as session:
             region_id = await _get_or_create_region(session, model.region)
             city_id = await _get_or_create_city(session, model.city, region_id)
@@ -51,7 +50,7 @@ class AddressRepo(TablesRepositoryInterface):
                 )
                 address_id = await get_row(session, address_stmt)
 
-            return AddressResult(id=address_id)
+            return address_id
         
     async def get(self, address_id: int) -> AddressDTO:
         async with self.session_getter() as session:

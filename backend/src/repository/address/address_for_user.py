@@ -1,5 +1,5 @@
-from sqlalchemy import select, insert, delete, text
-from src.models.dto.address_for_user import AddressesResponse, AddressForUserDTO, AllAddressesForUser
+from sqlalchemy import select, insert, delete
+from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser
 from src.models.orm.schemas import AddressesForUser
 from src.repository.interface import TablesRepositoryInterface
 from src.repository.utils import create_user_if_does_not_exist
@@ -10,7 +10,7 @@ class AddressForUserRepo(TablesRepositoryInterface):
     async def delete(
             self,
             model: AddressForUserDTO
-    ) -> AddressesResponse:
+    ) -> None:
         async with self.session_getter() as session:
             stmt = (
                 delete(AddressesForUser)
@@ -18,13 +18,12 @@ class AddressForUserRepo(TablesRepositoryInterface):
                 .where(AddressesForUser.address_id == model.address_id)
             )
             await session.execute(stmt)
-            return AddressesResponse(status=200)
 
     async def create(
             self,
             user_id: int,
             address_id: int
-    ) -> AddressesResponse:
+    ) -> None:
         async with self.session_getter() as session:
 
             await create_user_if_does_not_exist(session_getter=self.session_getter, user_id=user_id)
@@ -40,7 +39,6 @@ class AddressForUserRepo(TablesRepositoryInterface):
                 stmt = insert(AddressesForUser).values(user_id=user_id, address_id=address_id)
                 await session.execute(stmt)
 
-            return AddressesResponse(status=200)
 
     async def get_all_user_addresses(
             self,
@@ -56,8 +54,7 @@ class AddressForUserRepo(TablesRepositoryInterface):
     async def drop_all_user_addresses(
             self,
             model: AllAddressesForUser
-    ) -> AddressesResponse:
+    ) -> None:
         async with self.session_getter() as session:
             stmt = delete(AddressesForUser).where(AddressesForUser.user_id == model.user_id)
             await session.execute(stmt)
-            return AddressesResponse(status=200)

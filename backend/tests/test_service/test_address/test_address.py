@@ -27,6 +27,5 @@ async def truncate_db():
 )
 async def test_add_and_delete_address(model: AddressDTO, expected_id: int, truncate_db):
     result = await address_service.add_address(model)
-    assert result.id == expected_id
-    delete_result = await address_service.delete((AddressRequest(id=expected_id)))
-    assert delete_result.id == expected_id
+    assert result == expected_id
+    await address_service.delete((AddressRequest(id=expected_id)))

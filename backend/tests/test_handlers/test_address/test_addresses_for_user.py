@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import text
 
 from src.models.dto.address import GeoJson
-from src.models.dto.address_for_user import AllAddressesForUser, AddressForUserDTO
+from src.models.dto.address_for_user import AllAddressesForUser
 from tests.common.address import geojson, get_addresses, get_dicts
 from tests.sql_connector import get_session_test
 from tests.test_handlers.fixtures import test_app
@@ -52,15 +52,14 @@ async def test_get_all_user_addresses(
     assert response.json() == expected_list_result
 
 @pytest.mark.parametrize(
-    "model, expected_status",
+    "model",
     [
-        (AllAddressesForUser(user_id=1), 200),
-        (AllAddressesForUser(user_id=1000), 200)
+        AllAddressesForUser(user_id=1),
+        AllAddressesForUser(user_id=1000)
     ]
 )
 async def test_drop_all_user_addresses(
         model: AllAddressesForUser,
-        expected_status: int,
         test_app, create_db_values_2, truncate_db):
     response = await test_app.delete(f'/v1_test/AddressesForUser/drop_all_addresses/{model.user_id}')
     assert response.status_code == 200
