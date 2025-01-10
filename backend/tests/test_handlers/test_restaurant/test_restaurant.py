@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from sqlalchemy import text
 
@@ -27,7 +29,7 @@ async def test_delete(create_categories_and_owner, truncate_db, test_app):
     response = await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
     assert response.status_code == 200
     inserted_id = response.json()['rest_id']
-    result = await test_app.delete(f'/v1_test/Restaurant/delete_restaurant/{inserted_id}')
+    result = await test_app.delete(f'/v1_test/Restaurant/delete_restaurant/{inserted_id}/{1}')
     assert result.status_code == 200
     delete_result_id = result.json()['rest_id']
     assert delete_result_id ==  inserted_id
@@ -46,16 +48,18 @@ async def test_get(create_categories_and_owner, truncate_db, test_app):
     response = await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
     assert response.status_code == 200
     inserted_id = response.json()['rest_id']
-    result = await test_app.get(f"/v1_test/Restaurant/get_by_id/{inserted_id}")
+    result = await test_app.get(f"/v1_test/Restaurant/get_by_id/{inserted_id}/{1}")
     assert result.status_code == 200
-    assert result.json() == restaurants()[0].model_dump()
+    expected = restaurants()[0].model_dump()
+    expected['favourite_flag'] = False
+    assert result.json() == expected
 
 async def test_get_by_geo(create_categories_and_owner, truncate_db, test_app):
     await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
     await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
     await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
 
-    rest_list_response = await test_app.get(f"/v1_test/Restaurant/get_by_geo/{30}/{60}")
+    rest_list_response = await test_app.get(f"/v1_test/Restaurant/get_by_geo/{125.6}/{10.1}/{1}")
     assert rest_list_response.status_code == 200
     assert rest_list_response.json() == [data.model_dump() for data in get_search_result()]
 
@@ -64,7 +68,7 @@ async def test_get_by_geo_and_name(create_categories_and_owner, truncate_db, tes
     await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
     await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
 
-    rest_list_response = await test_app.get(f"/v1_test/Restaurant/get_by_geo_and_name/{30}/{60}/{'kf'}")
+    rest_list_response = await test_app.get(f"/v1_test/Restaurant/get_by_geo_and_name/{125.6}/{10.1}/{'kf'}/{1}")
     assert rest_list_response.status_code == 200
     assert rest_list_response.json() == [data.model_dump() for data in get_search_result()]
 
@@ -113,3 +117,34 @@ async def test_get_properties(create_categories_and_owner, truncate_db, test_app
         'address': True,
         'categories': True
     }
+
+@pytest.mark.parametrize(
+    "key, value",
+    [
+        ('name', 'КОТИК КОМАРУ'),
+        ('photos', ["pic.jpg", "citty.jpg", "cat.jpg", "dog.jpg"]),
+        ('location', 'SRID=4326;POINT(125.6 10.1)'),
+        ('address', {"type": "Feature", "geometry": {"type": "Point", "coordinates": [90.6, 10.1]}, "properties": {"name": "Moscow"}})
+    ]
+)
+async def test_change_property(key: Any, value: Any, create_categories_and_owner, truncate_db, test_app):
+    response = await test_app.post('/v1_test/Restaurant/create_restaurant/', json=restaurants()[0].model_dump())
+    assert response.status_code == 200
+    response_change = await test_app.patch(
+        f"/v1_test/Restaurant/change_restaurant_property/{1}/{key}",
+        json={'value': value}
+    )
+    assert response_change.status_code == 200
+    async with get_session_test() as session:
+        # получить измененное проперти
+        if key != "location":
+            stmt = (
+                f"SELECT {key} FROM restaurants WHERE id = {1};"
+            )
+        else:
+            stmt = (
+                f"SELECT ST_AsEWKT(location) AS location FROM restaurants WHERE id = {1};"
+            )
+        result = await session.execute(text(stmt))
+        actual_value = result.first()[0]
+        assert actual_value == value

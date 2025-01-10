@@ -102,7 +102,7 @@ class RestaurantService:
 
         return field_status
 
-    async def change_restaurant_property(self, rest_id: int, key: str, value: str) -> None:
+    async def change_restaurant_property(self, rest_id: int, key: str, value: Any) -> None:
         await self.restaurant_repo.change_restaurant_property(rest_id, key, value)
 
     async def _get_category_ids(self, category_names: List[str]) -> List[int]:

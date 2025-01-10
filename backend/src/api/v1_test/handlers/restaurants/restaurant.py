@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Depends
+import json
+from typing import Any
+
+from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
 
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, Point, \
-    RestaurantGeoSearch
+    RestaurantGeoSearch, RestaurantDTO
 from src.service.restaurant import RestaurantService
 from tests.sql_connector import get_session_test
 
@@ -21,12 +25,13 @@ async def create_restaurant(
 ) -> RestaurantResult:
     return await service.create(model)
 
-@restaurant_router.delete("/delete_restaurant/{rest_id}")
+@restaurant_router.delete("/delete_restaurant/{rest_id}/{user_id}")
 async def delete_restaurant(
         rest_id: int,
+        user_id: int,
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> RestaurantResult:
-    return await service.delete(RestaurantRequestUsingID(rest_id=rest_id))
+    return await service.delete(RestaurantRequestUsingID(rest_id=rest_id, user_id=user_id))
 
 @restaurant_router.patch("/update_restaurant/{rest_id}")
 async def update_restaurant(
@@ -36,12 +41,13 @@ async def update_restaurant(
 ) -> None:
     await service.update(rest_id, model)
 
-@restaurant_router.get("/get_by_id/{rest_id}")
+@restaurant_router.get("/get_by_id/{rest_id}/{user_id}")
 async def get_restaurant_by_id(
         rest_id: int,
+        user_id: int,
         service: RestaurantService = Depends(get_test_restaurant_service)
-) -> RestaurantRequestFullModel:
-    return await service.get(RestaurantRequestUsingID(rest_id=rest_id))
+) -> RestaurantDTO:
+    return await service.get(RestaurantRequestUsingID(rest_id=rest_id, user_id=user_id))
 
 @restaurant_router.get("/get_by_owner/{owner_id}")
 async def get_restaurant_by_owner(
@@ -50,22 +56,24 @@ async def get_restaurant_by_owner(
 ) -> list[RestaurantRequestFullModel]:
     return await service.get_by_owner(RestaurantRequestUsingOwner(owner_id=owner_id))
 
-@restaurant_router.get("/get_by_geo/{lon}/{lat}")
+@restaurant_router.get("/get_by_geo/{lon}/{lat}/{user_id}")
 async def get_restaurant_by_geo(
         lon: float,
         lat: float,
+        user_id: int,
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> list[RestaurantGeoSearch]:
-    return await service.get_by_geo(Point(lon=lon, lat=lat))
+    return await service.get_by_geo(user_id, Point(lon=lon, lat=lat))
 
-@restaurant_router.get("/get_by_geo_and_name/{lon}/{lat}/{name_pattern}")
+@restaurant_router.get("/get_by_geo_and_name/{lon}/{lat}/{name_pattern}/{user_id}")
 async def get_restaurant_by_geo_and_name(
         lon: float,
         lat: float,
         name_pattern: str,
+        user_id: int,
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> list[RestaurantGeoSearch]:
-    return await service.get_by_geo_and_name(RestaurantRequestUsingGeoPointAndName(point=Point(lon=lon, lat=lat), name_pattern=name_pattern))
+    return await service.get_by_geo_and_name(model=RestaurantRequestUsingGeoPointAndName(point=Point(lon=lon, lat=lat), name_pattern=name_pattern), user_id=user_id)
 
 @restaurant_router.get("/get_restaurant_name_by_id/{rest_id}")
 async def get_restaurant_name_by_id(
@@ -81,11 +89,14 @@ async def get_restaurant_available_properties(
 ) -> dict[str, bool]:
     return await service.get_available_properties(rest_id)
 
-@restaurant_router.patch("/change_restaurant_property/{rest_id}/{key}/{value}")
+class AnyField(BaseModel):
+    value: Any
+
+@restaurant_router.patch("/change_restaurant_property/{rest_id}/{key}")
 async def change_restaurant_property(
         rest_id: int,
         key: str,
-        value: str,
+        value: AnyField,
         service: RestaurantService = Depends(get_test_restaurant_service)
 ) -> None:
-    await service.change_restaurant_property(rest_id, key, value)
+    await service.change_restaurant_property(rest_id, key, value.value)

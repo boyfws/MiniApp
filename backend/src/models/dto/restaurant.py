@@ -70,3 +70,7 @@ class GeoSearchResult(RestaurantGeoDTO):
 class RestaurantGeoSearch(RestaurantGeoDTO):
     category: list[str]
     favourite_flag: bool
+
+
+class AnyField(BaseModel):
+    value: Any

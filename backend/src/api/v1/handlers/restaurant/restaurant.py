@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, Point, \
-    RestaurantGeoSearch, RestaurantDTO
+    RestaurantGeoSearch, RestaurantDTO, AnyField
 from src.service.restaurant import get_restaurant_service, RestaurantService
 
 restaurant_router = APIRouter(
@@ -17,12 +17,13 @@ async def create_restaurant(
 ) -> RestaurantResult:
     return await service.create(model)
 
-@restaurant_router.delete("/delete_restaurant/{rest_id}")
+@restaurant_router.delete("/delete_restaurant/{rest_id}/{user_id}")
 async def delete_restaurant(
         rest_id: int,
+        user_id: int,
         service: RestaurantService = Depends(get_restaurant_service)
 ) -> RestaurantResult:
-    return await service.delete(RestaurantRequestUsingID(rest_id=rest_id))
+    return await service.delete(RestaurantRequestUsingID(rest_id=rest_id, user_id=user_id))
 
 @restaurant_router.patch("/update_restaurant/{rest_id}")
 async def update_restaurant(
@@ -44,7 +45,7 @@ async def get_restaurant_by_id(
 async def get_restaurant_by_owner(
         owner_id: int,
         service: RestaurantService = Depends(get_restaurant_service)
-) -> list[RestaurantDTO]:
+) -> list[RestaurantRequestFullModel]:
     return await service.get_by_owner(RestaurantRequestUsingOwner(owner_id=owner_id))
 
 @restaurant_router.get("/get_by_geo/{lon}/{lat}/{user_id}")
@@ -73,18 +74,18 @@ async def get_restaurant_name_by_id(
 ) -> str:
     return await service.get_name(rest_id)
 
-# @restaurant_router.get("/get_restaurant_available_properties/{rest_id}")
-# async def get_restaurant_available_properties(
-#         rest_id: int,
-#         service: RestaurantService = Depends(get_restaurant_service)
-# ) -> dict[str, bool]:
-#     return await service.get_available_properties(rest_id)
+@restaurant_router.get("/get_restaurant_available_properties/{rest_id}")
+async def get_restaurant_available_properties(
+        rest_id: int,
+        service: RestaurantService = Depends(get_restaurant_service)
+) -> dict[str, bool]:
+    return await service.get_available_properties(rest_id)
 
-# @restaurant_router.patch("/change_restaurant_property/{rest_id}/{key}/{value}")
-# async def change_restaurant_property(
-#         rest_id: int,
-#         key: str,
-#         value: str,
-#         service: RestaurantService = Depends(get_restaurant_service)
-# ) -> None:
-#     await service.change_restaurant_property(rest_id, key, value)
+@restaurant_router.patch("/change_restaurant_property/{rest_id}/{key}")
+async def change_restaurant_property(
+        rest_id: int,
+        key: str,
+        value: AnyField,
+        service: RestaurantService = Depends(get_restaurant_service)
+) -> None:
+    await service.change_restaurant_property(rest_id, key, value.value)

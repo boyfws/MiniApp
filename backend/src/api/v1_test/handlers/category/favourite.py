@@ -35,11 +35,11 @@ async def add_fav_category(
 ) -> FavouriteCategoryResponse:
     return await service.create(model)
 
-@fav_category_router.delete("/delete_fav_category/{user_id}/{cat_id}")
+@fav_category_router.delete("/delete_fav_category/{user_id}/{cat_name}")
 async def delete_fav_category(
         user_id: int,
-        cat_id: int,
+        cat_name: str,
         service: FavouriteCategoriesService = Depends(get_test_fav_category_service)
 ) -> FavouriteCategoryResponse:
-    return await service.delete(FavouriteCategoryDTO(user_id=user_id, cat_id=cat_id))
+    return await service.delete(FavouriteCategoryDTO(user_id=user_id, cat_name=cat_name))
 
