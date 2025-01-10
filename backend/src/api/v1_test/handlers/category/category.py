@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 
-from src.models.dto.category import CategoryResult, CategoryDTO
 from src.repository.category.category import CategoryRepo
 from src.service.category import CategoryService
 from tests.sql_connector import get_session_test
@@ -17,12 +16,12 @@ def get_test_category_service() -> CategoryService:
 async def get_category_id(
         category_name: str,
         service: CategoryService = Depends(get_test_category_service)
-) -> CategoryResult:
-    return await service.get(CategoryDTO(name=category_name))
+) -> int:
+    return await service.get(cat_name=category_name)
 
 @category_router.get("/get_all_categories/{user_id}")
 async def get_all_categories(
         user_id: int,
         service: CategoryService = Depends(get_test_category_service)
-) -> list[CategoryDTO]:
+) -> list[str]:
     return await service.get_all()

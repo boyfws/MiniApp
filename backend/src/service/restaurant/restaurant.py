@@ -4,7 +4,6 @@ from typing import Callable, List, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.sql_session import get_session
-from src.models.dto.category import CategoryDTO
 from src.models.dto.restaurant import RestaurantRequestFullModel, RestaurantResult, RestaurantRequestUsingID, \
     RestaurantRequestUsingOwner, RestaurantRequestUsingGeoPointAndName, \
     RestaurantGeoSearch, Point, RestaurantDTO, RestaurantRequestUpdateModel, GeoSearchResult
@@ -108,9 +107,8 @@ class RestaurantService:
     async def _get_category_ids(self, category_names: List[str]) -> List[int]:
          category_ids = []
          for name in category_names:
-            category_dto = CategoryDTO(name=name)
-            category = await self.cat_repo.get(category_dto)
-            category_ids.append(category.cat_id)
+            category = await self.cat_repo.get(name)
+            category_ids.append(category)
          return category_ids
 
     async def _get_category_names(self, category_ids: List[int]) -> List[str]:

@@ -3,10 +3,8 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
 from sqlalchemy import text
 
-from src.models.dto.category import CategoryDTO
 from src.models.dto.favourites import FavouriteRestaurantDTO, AllFavouriteRestaurantsRequest, \
     FavouriteRestaurantResponse
-from src.models.dto.user import UserRequest
 from src.repository.category.category import CategoryRepo
 from src.repository.owner import OwnerRepo
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo

@@ -1,10 +1,5 @@
 from pydantic import BaseModel
 
-class AllFavouriteCategoriesRequest(BaseModel):
-    user_id: int
-
-class FavouriteCategoryResponse(BaseModel):
-    cat_name: str
 
 class FavouriteCategoryDTO(BaseModel):
     user_id: int
