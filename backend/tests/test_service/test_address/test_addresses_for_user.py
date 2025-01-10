@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import text
 
 from src.models.dto.address import AddressDTO
-from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser
+from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser, DeleteAddressForUser
 from src.service.address import AddressesForUserService
 from tests.common.address import get_addresses
 from tests.sql_connector import get_session_test
@@ -69,16 +69,22 @@ async def test_create_if_address_new(
 
 
 
-# @pytest.mark.parametrize(
-#     'model, expected_status',
-#     [
-#         (AddressForUserDTO(user_id=1, address_id=1), 200),
-#         (AddressForUserDTO(user_id=1, address_id=2), 200)
-#     ]
-# )
-# async def test_delete(model: AddressForUserDTO, expected_status: int, create_db_values_1, truncate_db):
-#     result = await address_for_user_service.delete(model)
-#     assert result.status == expected_status
+@pytest.mark.parametrize(
+    'model, expected_status, expected_list_result',
+    [
+        (DeleteAddressForUser(user_id=1, **get_addresses()[1].model_dump()), 200, [get_addresses()[2]]),
+        (DeleteAddressForUser(user_id=1, **get_addresses()[2].model_dump()), 200, [get_addresses()[1]])
+    ]
+)
+async def test_delete(
+        model: DeleteAddressForUser,
+        expected_status: int,
+        expected_list_result: list[AddressDTO],
+        create_db_values_2, truncate_db):
+    result = await address_for_user_service.delete(model)
+    assert result.status == expected_status
+    result = await address_for_user_service.get_all_user_addresses(model)
+    assert result == expected_list_result
 
 @pytest.mark.parametrize(
     "model, expected_list_result",
@@ -89,7 +95,7 @@ async def test_create_if_address_new(
 )
 async def test_get_all_user_addresses(
         model: AllAddressesForUser,
-        expected_list_result: list[AddressForUserDTO],
+        expected_list_result: list[AddressDTO],
         create_db_values_2, truncate_db): # fixtures
     result = await address_for_user_service.get_all_user_addresses(model)
     assert result == expected_list_result
@@ -107,3 +113,5 @@ async def test_drop_all_user_addresses(
         create_db_values_2, truncate_db):
     result = await address_for_user_service.drop_all_user_fav_restaurants(model)
     assert result.status == expected_status
+    result = await address_for_user_service.get_all_user_addresses(model)
+    assert result == []

@@ -2,7 +2,6 @@ from sqlalchemy import select, insert, delete, text
 from src.models.dto.address_for_user import AddressesResponse, AddressForUserDTO, AllAddressesForUser
 from src.models.orm.schemas import AddressesForUser
 from src.repository.interface import TablesRepositoryInterface
-from src.repository.user import UserRepo
 from src.repository.utils import create_user_if_does_not_exist
 
 

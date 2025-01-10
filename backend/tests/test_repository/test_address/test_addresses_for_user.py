@@ -1,10 +1,11 @@
 import pytest
 from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
-from sqlalchemy import text
+from sqlalchemy import text, select
 
 from src.models.dto.address_for_user import AddressForUserDTO, AllAddressesForUser
 from src.models.dto.user import UserRequest
+from src.models.orm.schemas import AddressesForUser
 from src.repository.address.address import AddressRepo
 from src.repository.address.address_for_user import AddressForUserRepo
 from src.repository.user import UserRepo
@@ -60,16 +61,28 @@ async def test_create(user_id: int, address_id: int, expected_status: int, expec
         assert expected_status == result.status
 
 @pytest.mark.parametrize(
-    'model, expected_status, expectation',
+    'model, expected_status, expected_addresses, expectation',
     [
-        (AddressForUserDTO(user_id=1, address_id=1), 200, does_not_raise()),
-        (AddressForUserDTO(user_id=1, address_id=2), 200, does_not_raise())
+        (AddressForUserDTO(user_id=1, address_id=1), 200, [AddressForUserDTO(user_id=1, address_id=2)], does_not_raise()),
+        (AddressForUserDTO(user_id=1, address_id=2), 200, [AddressForUserDTO(user_id=1, address_id=1)], does_not_raise())
     ]
 )
-async def test_delete(model: AddressForUserDTO, expected_status: int, expectation: AbstractContextManager, create_db_values_1, truncate_db):
-    async with expectation:
+async def test_delete(
+        model: AddressForUserDTO,
+        expected_status: int,
+        expected_addresses: list[AddressForUserDTO],
+        expectation: AbstractContextManager,
+        create_db_values_2, truncate_db):
+    with expectation:
         result = await ad_user_repo.delete(model)
         assert expected_status == result.status
+        async with get_session_test() as session:
+            stmt = select(AddressesForUser.user_id, AddressesForUser.address_id).where(AddressesForUser.user_id == model.user_id)
+            addresses = await session.execute(stmt)
+            all_addresses_for_user = [
+                AddressForUserDTO.model_validate(address, from_attributes=True) for address in addresses.all()
+            ]
+            assert all_addresses_for_user == expected_addresses
 
 @pytest.mark.parametrize(
     "model, expected_list_result, expectation",
@@ -79,7 +92,7 @@ async def test_delete(model: AddressForUserDTO, expected_status: int, expectatio
     ]
 )
 async def test_get_all_user_addresses(model: AllAddressesForUser, expected_list_result: list[AddressForUserDTO], expectation: AbstractContextManager, create_db_values_2, truncate_db):
-    async with expectation:
+    with expectation:
         result = await ad_user_repo.get_all_user_addresses(model)
         assert expected_list_result == result
 
@@ -91,6 +104,7 @@ async def test_get_all_user_addresses(model: AllAddressesForUser, expected_list_
     ]
 )
 async def test_drop_all_user_addresses(model: AllAddressesForUser, expected_status: int, expectation: AbstractContextManager, create_db_values_2, truncate_db):
-    async with expectation:
+    with expectation:
         result = await ad_user_repo.drop_all_user_addresses(model)
         assert expected_status == result.status
+        assert await ad_user_repo.get_all_user_addresses(model) == []
