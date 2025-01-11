@@ -22,17 +22,8 @@ async def get_all_addresses(
     Получить все адреса пользователя. Принимает айди.
     Возвращает данные по схеме GeoJson.
     """
-    address_dto = await service.get_all_user_addresses(user_id=user_id)
-    result = []
-    for address in address_dto:
-        point_str = address.location.split(';')[1].split('(')[1].split(')')[0]
-        coordinates = [float(x) for x in point_str.split()]
-        result.append({
-            "type": "Feature",
-            "geometry": {"type": "Point", "coordinates": coordinates},
-            "properties": {key: value for key, value in address.model_dump().items() if key != "location"}
-        })
-    return result
+    return await service.get_all_user_addresses(user_id=user_id)
+
 
 @addresses_for_user_router.delete(
     "/drop_all_addresses/{user_id}",

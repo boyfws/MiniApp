@@ -33,7 +33,7 @@ async def test_delete(user_id: int, test_app, create_db_values_2, truncate_db):
 
     )
     assert response.status_code == 200
-    assert [get_addresses()[2]] == await address_for_user_service.get_all_user_addresses(1)
+    assert [get_dicts()[1]] == [model.model_dump() for model in await address_for_user_service.get_all_user_addresses(1)]
 
 @pytest.mark.parametrize(
     "user_id, expected_list_result",

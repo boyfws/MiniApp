@@ -1,10 +1,10 @@
 import pytest
 from sqlalchemy import text
 
-from src.models.dto.address import AddressDTO
+from src.models.dto.address import AddressDTO, GeoJson
 from src.models.dto.address_for_user import DeleteAddressForUser
 from src.service.address import AddressesForUserService
-from tests.common.address import get_addresses
+from tests.common.address import get_addresses, get_dicts
 from tests.sql_connector import get_session_test
 from tests.test_repository.test_address.test_addresses_for_user import create_db_values_1, create_db_values_2
 
@@ -66,31 +66,31 @@ async def test_create_if_address_new(
 @pytest.mark.parametrize(
     'model, expected_list_result',
     [
-        (DeleteAddressForUser(user_id=1, **get_addresses()[1].model_dump()), [get_addresses()[2]]),
-        (DeleteAddressForUser(user_id=1, **get_addresses()[2].model_dump()), [get_addresses()[1]])
+        (DeleteAddressForUser(user_id=1, **get_addresses()[1].model_dump()), [get_dicts()[1]]),
+        (DeleteAddressForUser(user_id=1, **get_addresses()[2].model_dump()), [get_dicts()[0]])
     ]
 )
 async def test_delete(
         model: DeleteAddressForUser,
-        expected_list_result: list[AddressDTO],
+        expected_list_result: list[GeoJson],
         create_db_values_2, truncate_db):
     await address_for_user_service.delete(model)
     result = await address_for_user_service.get_all_user_addresses(model.user_id)
-    assert result == expected_list_result
+    assert [model.model_dump() for model in result] == expected_list_result
 
 @pytest.mark.parametrize(
     "user_id, expected_list_result",
     [
-        (1, [get_addresses()[1], get_addresses()[2]]),
+        (1, get_dicts()),
         (1000, [])
     ]
 )
 async def test_get_all_user_addresses(
         user_id: int,
-        expected_list_result: list[AddressDTO],
+        expected_list_result: list[GeoJson],
         create_db_values_2, truncate_db): # fixtures
     result = await address_for_user_service.get_all_user_addresses(user_id)
-    assert result == expected_list_result
+    assert [model.model_dump() for model in result] == expected_list_result
 
 @pytest.mark.parametrize("user_id", [1, 1000])
 async def test_drop_all_user_addresses(
