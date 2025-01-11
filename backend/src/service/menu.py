@@ -16,8 +16,8 @@ class MenuService:
     async def get_menu_by_rest_id(self, model: RestaurantRequestUsingID) -> Optional[MenuDTO]:
         return await self.repo.get_menu_by_rest_id(model)
 
-    async def update_menu_by_rest_id(self, model: MenuDTO) -> int:
-        return await self.repo.update_menu_by_rest_id(model)
+    async def update_menu_by_rest_id(self, model: MenuDTO) -> None:
+        await self.repo.update_menu_by_rest_id(model)
 
-    async def delete_menu_by_rest_id(self, model: RestaurantRequestUsingID) -> bool:
-        return await self.repo.delete_menu_by_rest_id(model)
+    async def delete_menu_by_rest_id(self, model: RestaurantRequestUsingID) -> None:
+        await self.repo.delete_menu_by_rest_id(model)

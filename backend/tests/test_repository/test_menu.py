@@ -15,28 +15,27 @@ burgers = Item(Name='Чизбургер комбо', Price=[500, 600, 700], Cond
 food = Category(category_name='Бургеры', items=[burgers])
 
 @pytest.mark.parametrize(
-    "model, expected_id, expectation",
+    "model, expectation",
     [
         (
             MenuDTO(
                 restaurant_id=1,
                 categories=[drinks],
                 restaurant_description='ресторан где можно выпить вино и коктейли'
-            ), 1, does_not_raise()
+            ), does_not_raise()
         ),
         (
             MenuDTO(
                 restaurant_id=2,
                 categories=[food],
                 restaurant_description='бургерная'
-            ), 2, does_not_raise()
+            ), does_not_raise()
         ),
     ]
 )
-async def test_update_menu(model: MenuDTO, expected_id: int, expectation: AbstractContextManager):
+async def test_update_menu(model: MenuDTO, expectation: AbstractContextManager):
     async with expectation:
-        rest_id = await MenuRepository(session_getter=get_test_db).update_menu_by_rest_id(model)
-        assert rest_id == expected_id
+        await MenuRepository(session_getter=get_test_db).update_menu_by_rest_id(model)
 
 
 @pytest.mark.parametrize(
@@ -77,20 +76,17 @@ async def test_get_menu_by_rest_id(
         assert result == expected_dto
 
 @pytest.mark.parametrize(
-    "model, expectation",
+    "model",
     [
-        (RestaurantRequestUsingID(rest_id=1, user_id=1), does_not_raise()),
-        (RestaurantRequestUsingID(rest_id=4, user_id=1), pytest.raises(AssertionError)),
-        (RestaurantRequestUsingID(rest_id=2, user_id=1), does_not_raise())
+        RestaurantRequestUsingID(rest_id=1, user_id=1),
+        RestaurantRequestUsingID(rest_id=4, user_id=1),
+        RestaurantRequestUsingID(rest_id=2, user_id=1)
     ]
 )
 async def test_delete_menu_by_rest_id(
         model: RestaurantRequestUsingID,
-        expectation: AbstractContextManager
 ):
-    with expectation:
-        result = await MenuRepository(session_getter=get_test_db).delete_menu_by_rest_id(model)
-        assert result
+    await MenuRepository(session_getter=get_test_db).delete_menu_by_rest_id(model)
 
 async def test_empty_database():
     """После выполнения всех тестов тестовая база пустая"""

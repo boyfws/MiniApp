@@ -7,9 +7,16 @@ owner_router = APIRouter(
     tags=["Owner"]
 )
 
-@owner_router.get("/is_owner/{owner_id}")
+@owner_router.get(
+    "/is_owner/{owner_id}",
+    summary="Является ли владельцем"
+)
 async def is_owner(
         owner_id: int,
         service: OwnerService = Depends(get_owner_service)
 ) -> bool:
+    """
+    Принимает айди владельца.
+    Возвращает булево значение о том, есть ли в базе данных владелец с данным айди.
+    """
     return await service.is_owner(owner_id)

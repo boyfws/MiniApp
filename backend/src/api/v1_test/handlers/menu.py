@@ -25,12 +25,12 @@ async def get_menu_by_rest_id(
 async def update_menu_by_rest_id(
         model: MenuDTO,
         service: MenuService = Depends(get_test_menu_service)
-) -> int:
+) -> None:
     return await service.update_menu_by_rest_id(model)
 
 @menu_router.delete('/delete_menu_by_rest_id/{rest_id}')
 async def delete_menu_by_rest_id(
         rest_id: int,
         service: MenuService = Depends(get_test_menu_service)
-) -> bool:
+) -> None:
     return await service.delete_menu_by_rest_id(RestaurantRequestUsingID(rest_id=rest_id, user_id=1))

@@ -10,12 +10,11 @@ from tests.common.menu import get_menus
 from tests.mongo_connector import get_test_db
 
 @pytest.mark.parametrize(
-    "model, expected_id",
-    [(get_menus()[0], 1), (get_menus()[1], 2),]
+    "model",
+    [get_menus()[0], get_menus()[1]]
 )
-async def test_update_menu(model: MenuDTO, expected_id: int):
-    rest_id = await MenuService(session_getter=get_test_db).update_menu_by_rest_id(model)
-    assert rest_id == expected_id
+async def test_update_menu(model: MenuDTO):
+    await MenuService(session_getter=get_test_db).update_menu_by_rest_id(model)
 
 
 @pytest.mark.parametrize(
@@ -43,20 +42,17 @@ async def test_get_menu_by_rest_id(
     assert result == expected_dto
 
 @pytest.mark.parametrize(
-    "model, expectation",
+    "model",
     [
-        (RestaurantRequestUsingID(rest_id=1, user_id=1), does_not_raise()),
-        (RestaurantRequestUsingID(rest_id=4, user_id=1), pytest.raises(AssertionError)),
-        (RestaurantRequestUsingID(rest_id=2, user_id=1), does_not_raise())
+        RestaurantRequestUsingID(rest_id=1, user_id=1),
+        RestaurantRequestUsingID(rest_id=4, user_id=1),
+        RestaurantRequestUsingID(rest_id=2, user_id=1)
     ]
 )
 async def test_delete_menu_by_rest_id(
         model: RestaurantRequestUsingID,
-        expectation: AbstractContextManager
 ):
-    with expectation:
-        result = await MenuService(session_getter=get_test_db).delete_menu_by_rest_id(model)
-        assert result
+    await MenuService(session_getter=get_test_db).delete_menu_by_rest_id(model)
 
 async def test_empty_database():
     """После выполнения всех тестов тестовая база пустая"""

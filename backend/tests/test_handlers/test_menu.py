@@ -8,13 +8,12 @@ from tests.test_handlers.fixtures import test_app
 
 
 @pytest.mark.parametrize(
-    "model, expected_id",
-    [(get_menus()[0], 1), (get_menus()[1], 2),]
+    "model",
+    [get_menus()[0], get_menus()[1]]
 )
-async def test_update_menu(model: MenuDTO, expected_id: int, test_app):
+async def test_update_menu(model: MenuDTO, test_app):
     response = await test_app.post("/v1_test/Menu/update_menu_by_rest_id/", json=model.model_dump())
     assert response.status_code == 200
-    assert response.json() == expected_id
 
 @pytest.mark.parametrize(
     "rest_id, expected_dto",

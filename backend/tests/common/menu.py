@@ -14,3 +14,6 @@ def get_menus() -> tuple[MenuDTO, MenuDTO]:
         restaurant_description='бургерная'
     )
     return menu1, menu2
+
+if __name__ == "__main__":
+    print(get_menus()[0].model_dump())
