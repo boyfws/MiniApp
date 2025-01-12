@@ -1,10 +1,11 @@
 from sqlalchemy import text
 
-from src.models.dto.favourites import FavouriteCategoryDTO
+from src.models.dto.favourites import FavouriteCategoryDTO, FavouriteCategoryRequest
 import pytest
 from src.repository.category.favourite_categories import FavouriteCategoryRepo
 from src.repository.user import UserRepo
-from tests.common.category import burgers_1, sushi_1, burgers_2, pizza_2
+from tests.common.category import burgers_1, sushi_1, burgers_2, pizza_2, dto_burgers_1, dto_sushi_1, dto_pizza_2, \
+    dto_burgers_2
 from tests.conftest import get_session_test
 
 user_repo = UserRepo(session_getter=get_session_test)
@@ -30,12 +31,19 @@ async def create_db_values_categories():
 
 @pytest.fixture(scope="function")
 async def create_db_values_all_categories(create_db_values_categories):
-    await fav_cat_repo.create(burgers_1)
-    await fav_cat_repo.create(sushi_1)
-    await fav_cat_repo.create(burgers_2)
+    await fav_cat_repo.create(dto_burgers_1)
+    await fav_cat_repo.create(dto_sushi_1)
+    await fav_cat_repo.create(dto_burgers_2)
 
 
-@pytest.mark.parametrize("model", [burgers_1, sushi_1, pizza_2])
+@pytest.mark.parametrize(
+    "model",
+    [
+        dto_burgers_1,
+        dto_sushi_1,
+        dto_pizza_2
+    ]
+)
 async def test_create(
         model: FavouriteCategoryDTO,
         create_db_values_categories,
@@ -43,9 +51,16 @@ async def test_create(
 ):
     await fav_cat_repo.create(model)
 
-@pytest.mark.parametrize("model", [burgers_1, sushi_1, pizza_2])
+@pytest.mark.parametrize(
+    "model",
+    [
+        dto_burgers_1,
+        dto_sushi_1,
+        dto_pizza_2
+    ]
+)
 async def test_delete(
-        model: FavouriteCategoryDTO,
+        model: FavouriteCategoryRequest,
         create_db_values_categories,
         truncate_db
 ):
@@ -55,13 +70,13 @@ async def test_delete(
     "user_id, expected_list_cat",
     [
         (10000, []),
-        (1, ["Бургеры", "Суши"]),
-        (2, ["Бургеры"])
+        (1, [1, 2]),
+        (2, [1])
     ]
 )
 async def test_get_all_user_fav_categories(
         user_id: int,
-        expected_list_cat: list[str],
+        expected_list_cat: list[int],
         create_db_values_all_categories,
         truncate_db
 ):

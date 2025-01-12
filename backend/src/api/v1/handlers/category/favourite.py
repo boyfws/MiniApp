@@ -70,14 +70,7 @@ async def delete_fav_category(
         service: FavouriteCategoriesService = Depends(get_fav_category_service)
 ) -> None:
     """
-    Удалить любимую категорию пользователя. Принимает в url путь название и айди пользователя.
-    Пример json такой модели:
-    ```
-    {
-        user_id=1,
-        cat_name="Бургеры"
-    }
-    ```
+    Удалить любимую категорию пользователя. Принимает в url путь название категории и айди пользователя.
     Ничего не возвращает.
     """
     await service.delete(FavouriteCategoryDTO(user_id=user_id, cat_name=cat_name))

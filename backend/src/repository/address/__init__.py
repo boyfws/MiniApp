@@ -11,35 +11,9 @@ from src.repository.utils import _execute_and_fetch_first
 def get_point_str(location: str) -> str:
     return location.split(';')[1].split('(')[1].split(')')[0]
 
-def get_coordinates(point_str: str) -> list[float]:
+def get_coordinates(point_str: str) -> list[float, float]:
     return [float(x) for x in point_str.split()]
 
-def get_house_string(house: str) -> str:
-    return f"house = '{house}' AND " if house else ""
-
-
-async def check_address_exists(
-        session: AsyncSession,
-        location: str,
-        house: str,
-        street_id: int,
-) -> bool:
-    """
-    Check if an address with similar parameters already exists.
-    """
-    point_str = get_point_str(location)
-    coordinates = get_coordinates(point_str)
-    house_string = get_house_string(house)
-
-    address_stmt = text(
-        f"SELECT id FROM address "
-        f"WHERE street_id = {street_id} AND "
-        f"{house_string}"
-        f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
-    )
-
-    result = await session.execute(address_stmt)
-    return result.scalar_one_or_none() is not None
 
 async def _get_or_create_region(session: AsyncSession, region_name: str) -> int:
     return await get_or_create_item(

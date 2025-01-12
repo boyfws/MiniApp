@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 
 from src.models.dto.favourites import FavouriteRestaurantDTO
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
+from src.repository.user import UserRepo
 from src.service.restaurant import FavouriteRestaurantService
 from tests.sql_connector import get_session_test
 
@@ -11,7 +12,10 @@ fav_restaurant_router = APIRouter(
 )
 
 def get_test_fav_restaurant_service() -> FavouriteRestaurantService:
-    return FavouriteRestaurantService(repo=FavouriteRestaurantRepo(session_getter=get_session_test))
+    return FavouriteRestaurantService(
+        repo=FavouriteRestaurantRepo(session_getter=get_session_test),
+        user_repo=UserRepo(session_getter=get_session_test)
+    )
 
 
 @fav_restaurant_router.get("/get_all_user_fav_restaurants/{user_id}")

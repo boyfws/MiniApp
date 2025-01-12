@@ -2,14 +2,20 @@ import pytest
 from sqlalchemy import text
 
 from src.models.dto.favourites import FavouriteCategoryDTO
+from src.repository.category import CategoryRepo
 from src.repository.category.favourite_categories import FavouriteCategoryRepo
+from src.repository.user import UserRepo
 from src.service.category import FavouriteCategoriesService
 from tests.sql_connector import get_session_test
 from tests.test_repository.test_category.test_favourite import create_db_values_categories, create_db_values_all_categories
 from tests.common.category import burgers_1, sushi_1, pizza_2
 
 
-fav_cat_service = FavouriteCategoriesService(repo=FavouriteCategoryRepo(session_getter=get_session_test))
+fav_cat_service = FavouriteCategoriesService(
+    repo=FavouriteCategoryRepo(session_getter=get_session_test),
+    cat_repo=CategoryRepo(session_getter=get_session_test),
+    user_repo=UserRepo(get_session_test)
+)
 
 @pytest.fixture(scope="function")
 async def truncate_db():

@@ -4,18 +4,22 @@ from src.repository.address import get_point_str, get_coordinates
 from src.repository.address.address_for_user import AddressForUserRepo
 from src.repository.address.address import AddressRepo
 from src.models.dto.address import AddressDTO, GeoJson
+from src.repository.user import UserRepo
+from src.repository.utils import create_user_if_does_not_exist
 
 
 class AddressesForUserService:
     def __init__(self, session_getter=get_session) -> None:
         self.address_repo = AddressRepo(session_getter)
         self.repo = AddressForUserRepo(session_getter)
+        self.user_repo = UserRepo(session_getter)
 
     async def delete(self, model: DeleteAddressForUser) -> None:
         address_id = await self.address_repo.add_address(self._extract_address(model))
         await self.repo.delete(AddressForUserDTO(address_id=address_id, user_id=model.user_id))
 
     async def create(self, user_id: int, model: AddressDTO) -> None:
+        await create_user_if_does_not_exist(user_repo=self.user_repo, user_id=user_id)
         address_id = await self.address_repo.add_address(model)
         await self.repo.create(user_id, address_id)
 

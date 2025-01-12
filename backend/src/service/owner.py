@@ -12,12 +12,6 @@ class OwnerService:
     def __init__(self, session_getter: Callable[[], _AsyncGeneratorContextManager[AsyncSession]]=get_session) -> None:
         self.repo = OwnerRepo(session_getter=session_getter)
 
-    # async def create_owner(
-    #         self,
-    #         owner_id: int
-    # ) -> None:
-    #     return await self.repo.create_owner(owner_id)
-
     async def is_owner(
             self,
             owner_id: int

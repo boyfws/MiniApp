@@ -4,11 +4,15 @@ from contextlib import nullcontext as does_not_raise, AbstractContextManager
 
 from src.models.dto.favourites import FavouriteRestaurantDTO
 from src.repository.restaurant.favourite_restaurants import FavouriteRestaurantRepo
+from src.repository.user import UserRepo
 from src.service.restaurant import FavouriteRestaurantService
 from tests.sql_connector import get_session_test
 from tests.test_repository.test_restaurants.test_favourite import create_db_values_restaurants, create_db_values_all_restaurants
 
-fav_rest_service = FavouriteRestaurantService(FavouriteRestaurantRepo(get_session_test))
+fav_rest_service = FavouriteRestaurantService(
+    FavouriteRestaurantRepo(get_session_test),
+    UserRepo(get_session_test)
+)
 
 
 @pytest.fixture(scope="function")

@@ -3,7 +3,7 @@ from sqlalchemy import select, insert, delete, exists
 from src.models.dto.favourites import FavouriteRestaurantDTO
 from src.models.orm.schemas import FavRestForUser
 from src.repository.interface import TablesRepositoryInterface
-from src.repository.utils import create_user_if_does_not_exist, _execute_and_fetch_first
+from src.repository.utils import _execute_and_fetch_first
 
 
 class FavouriteRestaurantRepo(TablesRepositoryInterface):
@@ -19,7 +19,6 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
 
     async def create(self, model: FavouriteRestaurantDTO) -> int:
         async with self.session_getter() as session:
-            await create_user_if_does_not_exist(session_getter=self.session_getter, user_id=model.user_id)
             stmt = insert(FavRestForUser).values(**model.model_dump()).returning(FavRestForUser.rest_id)
             row = await _execute_and_fetch_first(session, stmt, "No restaurant created")
             return int(row[0])
@@ -43,7 +42,6 @@ class FavouriteRestaurantRepo(TablesRepositoryInterface):
 
     async def is_favourite(self, user_id: int, rest_id: int) -> bool:
         async with (self.session_getter() as session):
-            await create_user_if_does_not_exist(session_getter=self.session_getter, user_id=user_id)
             stmt = select(exists().where(
                 FavRestForUser.user_id == user_id, FavRestForUser.rest_id == rest_id
             ))

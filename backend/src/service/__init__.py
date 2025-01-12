@@ -1,8 +1,6 @@
 from .menu import MenuService
 from .owner import OwnerService
 from .user import UserService
-from ..database.mongo_db import get_db
-from ..database.sql_session import get_session
 from ..repository.user import UserRepo
 
 

@@ -1,9 +1,14 @@
-from sqlalchemy import insert, delete, text
+from typing import Optional
+
+from geoalchemy2 import Geography
+from geoalchemy2.functions import ST_SetSRID, ST_MakePoint
+from sqlalchemy import insert, select, text, cast, func, Select, Insert
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.dto.address import AddressDTO
 from src.models.orm.schemas import Address
 from src.repository import get_row
-from src.repository.address import check_address_exists, get_point_str, get_coordinates, get_house_string, \
+from src.repository.address import get_point_str, get_coordinates, \
     _get_or_create_region, _get_or_create_city, _get_or_create_district, _get_or_create_street, _get_address_data, \
     _get_street_data, _get_district_data, _get_city_data, _get_region_data
 from src.repository.interface import TablesRepositoryInterface
@@ -22,26 +27,15 @@ class AddressRepo(TablesRepositoryInterface):
             street_id = await _get_or_create_street(session, model.street, district_id)
 
             point_str = get_point_str(model.location)
-            coordinates = get_coordinates(point_str)
-            house_string = get_house_string(model.house)
-            exist_flag = await check_address_exists(session, model.location, model.house, street_id)
+            lon, lat = get_coordinates(point_str)
 
-            if not exist_flag:
-                address_insert_stmt = insert(Address).values(
-                    street_id=street_id,
-                    house=model.house,
-                    location=model.location
-                ).returning(Address.id)
-                address_id = await get_row(session, address_insert_stmt)
-            else:
-                address_stmt = text(
-                    f"SELECT id FROM address "
-                    f"WHERE street_id = {street_id} AND "
-                    f"{house_string}"
-                    f"ST_Distance(location, ST_SetSRID(ST_MakePoint({coordinates[0]}, {coordinates[1]}), 4326)::geography) <= 0.05"
+            address_id = await self._get_address_id(session, street_id, model.house, lon, lat)
+
+            if not address_id:
+                return await get_row(
+                    session,
+                    self._get_insert_address_stmt(street_id, model.house, model.location)
                 )
-                address_id = await get_row(session, address_stmt)
-
             return address_id
         
     async def get(self, address_id: int) -> AddressDTO:
@@ -60,3 +54,32 @@ class AddressRepo(TablesRepositoryInterface):
                 house=str(address_data.house),
                 location=address_data.location
             )
+
+    @staticmethod
+    def _get_address_stmt(street_id: int, house: str, lon: float, lat: float) -> Select:
+        point = ST_SetSRID(ST_MakePoint(lon, lat), 4326)
+        distance = func.ST_Distance(Address.location, cast(point, Geography)).label("distance")
+        stmt = (
+            select(Address.id)
+            .where(Address.street_id == street_id)
+            .where(distance <= 0.05)
+        )
+        if house:
+            stmt = stmt.where(Address.house == house)
+        return stmt
+
+    @staticmethod
+    def _get_insert_address_stmt(street_id: int, house: str, location: str) -> Insert:
+        return insert(Address).values(
+            street_id=street_id,
+            house=house,
+            location=location
+        ).returning(Address.id)
+
+    async def _get_address_id(
+            self,
+            session: AsyncSession,
+            street_id: int, house: str, lon: float, lat: float
+    ) -> Optional[int]:
+        address_id = await session.execute(self._get_address_stmt(street_id, house, lon, lat))
+        return address_id.scalar_one_or_none()
