@@ -1,6 +1,6 @@
 # Агрегатор ресторанов внутри Telegram MiniApps
 
-## Intro 
+# Intro 
 
 Данный проект разрабатывался в рамках курса "Продвинутый Python" на ПМИ ФКН. [Ссылка](https://drive.google.com/file/d/1AvHGcyTqKBE6HdrBNByh4D1UvXLyyZKJ/view?usp=sharing) на презентацию.
 В репозитории присутствует, две ветки 
