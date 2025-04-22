@@ -3,7 +3,7 @@
 # Intro 
 
 Данный проект разрабатывался в рамках курса "Продвинутый Python" на ПМИ ФКН. [Ссылка](https://drive.google.com/file/d/1AvHGcyTqKBE6HdrBNByh4D1UvXLyyZKJ/view?usp=sharing) на презентацию.
-В репозитории присутствует, две ветки 
+В репозитории присутствует две ветки 
 
 - master (Является dev веткой)
 - prod (Является prod веткой)
